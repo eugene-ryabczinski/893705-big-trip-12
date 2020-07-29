@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Евгений Рябчинский](https://up.htmlacademy.ru/ecmascript/12/user/893705).
-* Наставник: `Неизвестно`.
+* Наставник: [Жора Милевский](https://github.com/G-Milevski).
 
 ---
 
