@@ -323,11 +323,11 @@ const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-control
 
 render(headerTripContainerElement, createHeaderTripInfo(), `afterbegin`);
 
-const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`)
-const tripControsMakrsElementsArray = [...tripControsMakrsElements]
+const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
+const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 
-render(controlMakrsElementArray[0], createSiteMenuTemplate(), `afterend`);
-render(controlMakrsElementArray[1], createFilterTemplate(), `afterend`);
+render(tripControsMakrsElementsArray[0], createSiteMenuTemplate(), `afterend`);
+render(tripControsMakrsElementsArray[1], createFilterTemplate(), `afterend`);
 
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
