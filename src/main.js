@@ -33,8 +33,7 @@ const createSiteMenuTemplate = () => {
 
 const createFilterTemplate = () => {
   return (
-    `<h2 class="visually-hidden">Switch trip view</h2>
-    <form class="trip-filters" action="#" method="get">
+    `<form class="trip-filters" action="#" method="get">
       <div class="trip-filters__filter">
         <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
         <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
@@ -57,8 +56,7 @@ const createFilterTemplate = () => {
 
 const createSortTemplate = () => {
   return (
-    `<h2 class="visually-hidden">Filter events</h2>
-    <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+    `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <span class="trip-sort__item  trip-sort__item--day">Day</span>
   
     <div class="trip-sort__item  trip-sort__item--event">
@@ -87,19 +85,7 @@ const createSortTemplate = () => {
     </div>
   
     <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
-  </form>`);
-};
-
-const createTripEventsContainerTemplate = () => {
-  return (
-    `<section class="trip-events">
-        <h2 class="visually-hidden">Trip events</h2>
-
-        <!-- Сортировка -->
-
-        <!-- Контент -->
-      </section>
-    `
+  </form>`
   );
 };
 
@@ -125,7 +111,7 @@ const createTripEventsListTemplate = () => {
   return (
     `<ul class="trip-events__list">
     </ul>`
-    );
+  );
 };
 
 const createTripEventItemTemplate = () => {
@@ -335,15 +321,15 @@ const siteHeaderElement = document.querySelector(`.page-header`);
 const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`);
 const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 
-const mainContentContainerElemant = document.querySelector(`.page-main`);
-const pageBodyElemant = mainContentContainerElemant.querySelector(`.page-body__container`);
-
 render(headerTripContainerElement, createHeaderTripInfo(), `afterbegin`);
 
-render(headerTripControlsElement, createSiteMenuTemplate(), `beforeend`);
-render(headerTripControlsElement, createFilterTemplate(), `beforeend`);
-render(pageBodyElemant, createTripEventsContainerTemplate(), `beforeend`);
+const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`)
+const tripControsMakrsElementsArray = [...tripControsMakrsElements]
 
+render(controlMakrsElementArray[0], createSiteMenuTemplate(), `afterend`);
+render(controlMakrsElementArray[1], createFilterTemplate(), `afterend`);
+
+const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
 
 render(tripEventsContainerElement, createSortTemplate(), `beforeend`);
