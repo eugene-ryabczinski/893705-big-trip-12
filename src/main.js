@@ -1,4 +1,5 @@
 import { render } from './util';
+import { generateEvent } from './mock/event'
 
 import { createHeaderTripInfo } from './view/header-trip-info';
 import { createSiteMenuTemplate } from './view/site-menu';
@@ -9,6 +10,9 @@ import { createTripDayItemTemplate } from './view/trip-day-item';
 import { createTripEventsListTemplate } from './view/trip-events-list';
 import { createTripEventItemTemplate } from './view/trip-event-Item';
 import { createTripEventItemEditTemplate } from './view/trip-event-item-edit';
+
+let a = generateEvent();
+console.log(a)
 
 const EVENT_COUNT = 3;
 
