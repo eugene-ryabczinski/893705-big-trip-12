@@ -1,3 +1,5 @@
+import { range } from 'lodash';
+
 const randomInt = (a = 1, b = 0) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -15,7 +17,7 @@ const generatEventType = () => {
     `Drive`, 
     `Flight`, 
     `Check-in`, 
-    `Sightseeng`, 
+    `Sightseeing`, 
     `Restaurant`
   ]
   const randomIndex = randomInt(0, eventTypes.length -1);
@@ -63,66 +65,84 @@ const generateDestinationPictures = () => {
   return pictures;
 }
 
-const generateCost = () => {
-  const cost = randomInt(20, 600)
-  return cost 
+const generateCost = (start = 20, end = 600, step = 25) => {
+  const cost = range(start, end, step);
+
+  const randomIndex = randomInt(0, cost.length -1);
+
+  return cost[randomIndex]
 }
 
 const generateStartDate = () => {
   const startDate = new Date();
+  const minutes = [...Array(13).keys()].map(k => k * 5);
 
   startDate.setDate(startDate.getDate() + randomInt(1, 7));
+  startDate.setHours(randomInt(24), minutes[randomInt(0, minutes.length -1)], 0);
 
   return startDate;
 }
 
 const generateEndDate = (startDate) => {
   const endDate = new Date(startDate.getTime());
+  const minutes = [...Array(13).keys()].map(k => k * 5);
 
-  endDate.setHours(endDate.getHours(), endDate.getMinutes() + randomInt(1, 60) * randomInt(1, 5));
-
+  endDate.setHours(endDate.getHours() + randomInt(0, 12), endDate.getMinutes() + minutes[randomInt(0, minutes.length -1)], 0);
+  
   return endDate
 }
 
-const generateOffers = (type) => {
-  const offers = [
-    { name: `Add luggage`, type: [`Flight`], cost: generateCost() },
-    { name: `Switch to comfort class`, type: [`Flight`, `Train`, `Ship`, `Taxi`], cost: generateCost() },
-    { name: `Add meal`, type: [`Flight`], cost: generateCost() },
-    { name: `Choose seats`, type: [`Flight`], cost: generateCost() },
-    { name: `Rent a car`, type: [`Drive`], cost: generateCost() },
-    { name: `Add breakfast`, type: [`Check-in`],  cost: generateCost() },
-    { name: `Book tickets`, type: [`Sightseeing`],  cost: generateCost() },
-    { name: `City Tour`, type: [`Sightseeing`], cost: generateCost() },
-    { name: `Lunch in city `, type: [`Sightseeing`], cost: generateCost() },
-    { name: `Add breakfast`, type: [`Check-in`], cost: generateCost() },
-  ];
+const generateOffers = () => {
+  const offersMap = new Map();
 
-  const result = offers
-    .filter(offer => offer.type.find(eventType => eventType == type))
-    .map((offer) => {
-      return {
-        name: offer.name,
-        cost: offer.cost
-      }
-    })
-
-  return result
+  offersMap
+    .set('Flight', [
+      { name: 'Add luggage', cost: generateCost(20, 80, 25) }, 
+      { name: 'Switch to comfort class', cost: generateCost(20, 80, 15) },
+      { name: 'Add meal', cost: generateCost(20, 80, 25) },
+      { name: 'Choose seats', cost: generateCost(20, 80, 25) }
+    ])
+    .set('Taxi', [
+      { name: 'Switch to comfort class', cost: generateCost(20, 80, 25) },
+      { name: 'Order Uber', cost: generateCost(20, 80, 25) }
+    ])
+    .set('Train', [
+      { name: 'Switch to comfort class', cost: generateCost(20, 80, 25) }
+    ])
+    .set('Ship', [
+      { name: 'Switch to comfort class', cost: generateCost(20, 80, 25) }
+    ])
+    .set('Check-in', [
+      { name: 'Add breakfast', cost: generateCost(20, 80, 25) }
+    ])
+    .set('Sightseeing', [
+      { name: `Book tickets`, cost: generateCost(20, 80, 25) },
+      { name: `City Tour`, cost: generateCost(20, 80, 25) },
+      { name: `Lunch in city`, cost: generateCost(20, 80, 25) }
+    ])
+    .set('Drive', [
+      { name: 'Rent a car', cost: generateCost(20, 80, 25) }
+    ]);
+  
+  return offersMap;
 }
 
 export const generateEvent = () => {
   const type = generatEventType();
 
-  const offers = generateOffers(type).map(offer => {
-    return {
-      ...offer,
-      isChecked: Boolean(randomInt(0,1)) 
-    }
-  })
+  const offers = generateOffers().has(type) 
+    ? generateOffers().get(type).map(offer => { return { ...offer, isChecked: Boolean(randomInt(0,1)) }})
+    : [];
 
   const startDate = generateStartDate();
 
   const endDate = generateEndDate(startDate);
+
+  const offersSum = offers.filter(offer => offer.isChecked).reduce(function(prev, cur) {
+    return prev + cur.cost;
+  }, 0);
+
+  const cost = generateCost() + offersSum;
 
   return {
     type,
@@ -131,7 +151,7 @@ export const generateEvent = () => {
       description: generatDestinationDescription(),
       pictures: generateDestinationPictures()
     },
-    cost: generateCost(),
+    cost,
     offers,
     startDate,
     endDate,
