@@ -11,7 +11,7 @@ import { createTripEventsListTemplate } from './view/trip-events-list';
 import { createTripEventItemTemplate } from './view/trip-event-Item';
 import { createTripEventItemEditTemplate } from './view/trip-event-item-edit';
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 const siteHeaderElement = document.querySelector(`.page-header`);
@@ -43,6 +43,6 @@ render(dayItemElement, createTripEventsListTemplate(), `beforeend`);
 
 const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < events.length - 1; i++) {
+for (let i = 0; i < EVENT_COUNT; i++) {
   render(eventsListElement, createTripEventItemTemplate(events[i]), `beforeend`);
 }
