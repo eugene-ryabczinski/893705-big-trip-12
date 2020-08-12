@@ -27,7 +27,6 @@ export const createTripEventItemTemplate = (event) => {
       }
     }
     
-    console.log(resultString)
     return resultString
   }
 
