@@ -7,30 +7,35 @@ const randomInt = (a = 1, b = 0) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1))
 }
 
-const generatEventType = () => {
-  const eventTypes = [
-    `Taxi`, 
-    `Bus`, 
-    `Train`, 
-    `Ship`, 
-    `Transport`, 
-    `Drive`, 
-    `Flight`, 
-    `Check-in`, 
-    `Sightseeing`, 
-    `Restaurant`
-  ]
-  const randomIndex = randomInt(0, eventTypes.length -1);
+export const EVENT_TYPES = [
+  `Taxi`, 
+  `Bus`, 
+  `Train`, 
+  `Ship`, 
+  `Transport`, 
+  `Drive`, 
+  `Flight`, 
+  `Check-in`, 
+  `Sightseeing`, 
+  `Restaurant`
+]
 
-  return eventTypes[randomIndex];
+export const CITIES = [
+  `Amsterdam`, 
+  `Chamonix`, 
+  `Geneva`
+]
+
+const generatEventType = () => {
+  const randomIndex = randomInt(0, EVENT_TYPES.length -1);
+
+  return EVENT_TYPES[randomIndex];
 }
 
 const generateСities = () => {
-  const cities = [`Amsterdam`, `Chamonix`, `Geneva`];
-
-  const randomIndex = randomInt(0, cities.length -1);
+  const randomIndex = randomInt(0, CITIES.length -1);
   
-  return cities[randomIndex];
+  return CITIES[randomIndex];
 }
 
 const generatDestinationDescription = () => {
@@ -155,5 +160,6 @@ export const generateEvent = () => {
     offers,
     startDate,
     endDate,
+    isFavourite: Boolean(randomInt(0,1))
   }
 }

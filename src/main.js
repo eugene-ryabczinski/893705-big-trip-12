@@ -30,7 +30,7 @@ const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
 
 render(tripEventsContainerElement, createSortTemplate(), `beforeend`);
-render(tripEventsContainerElement, createTripEventItemEditTemplate(), `beforeend`);
+render(tripEventsContainerElement, createTripEventItemEditTemplate(events[0]), `beforeend`);
 render(tripEventsContainerElement, createTripDaysListTemplate(), `beforeend`);
 
 const daysListElement = mainContentContainerElemant.querySelector(`.trip-days`);
@@ -43,6 +43,6 @@ render(dayItemElement, createTripEventsListTemplate(), `beforeend`);
 
 const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < EVENT_COUNT; i++) {
+for (let i = 1; i < EVENT_COUNT; i++) {
   render(eventsListElement, createTripEventItemTemplate(events[i]), `beforeend`);
 }
