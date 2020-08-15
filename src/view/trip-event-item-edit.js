@@ -9,6 +9,7 @@ const createOffersSelectorTemplate = (offers) => {
 
   const createOffersSelectorList = () => {
     return offers.map(({name, cost, isChecked}) => {
+      debugger
       const attributeName = name.toLowerCase().replace(/ /g, `_`);
       return (
         `<div class="event__offer-selector">
@@ -21,7 +22,7 @@ const createOffersSelectorTemplate = (offers) => {
         </div>`
       );
     }).join(``);
-  }
+  };
 
   const offersList = createOffersSelectorList();
 
@@ -33,22 +34,22 @@ const createOffersSelectorTemplate = (offers) => {
       </div>
     </section>`
   );
-}
+};
 
 const createDescriptionTemplate = (destinationInfo) => {
-  const { description, pictures } = destinationInfo;
+  const {description, pictures} = destinationInfo;
 
-  if (description == null, pictures.length == 0) {
-    return ``
+  if (description === null && pictures.length === 0) {
+    return ``;
   }
 
-  const createPhotosListtemplate = (pictures) => {
-    return pictures.map(picture => {
+  const createPhotosListtemplate = () => {
+    return pictures.map((picture) => {
       return (
         `<img class="event__photo" src="${picture}" alt="Event photo">`
-      )
+      );
     }).join(` `);
-  }
+  };
 
   const photosList = createPhotosListtemplate(pictures);
 
@@ -65,12 +66,12 @@ const createDescriptionTemplate = (destinationInfo) => {
         </div>
       </div>
     </section>`
-  )
-}
+  );
+};
 
 const createEventDetailsTemplate = (offers = [], destinationInfo = null) => {
-  if (offers.length == 0 && destinationInfo == null) {
-    return ``
+  if (offers.length === 0 && destinationInfo === null) {
+    return ``;
   }
 
   const offersSelectorTemplate = createOffersSelectorTemplate(offers);
@@ -81,45 +82,43 @@ const createEventDetailsTemplate = (offers = [], destinationInfo = null) => {
       ${offersSelectorTemplate}
       ${descriptionTemplate}
     </section>`
-  )
-}
+  );
+};
 
 const createEventSelectorTemplate = (type) => {
 
-  const createEventTransferListTemplate = (type) => {
-    const transfer = EVENT_TYPES.filter(event => {
-      return (event !== "Restaurant" && event !== "Sightseeing" && event !== "Check-in")
-    })
+  const createEventTransferListTemplate = () => {
+    const transfer = EVENT_TYPES.filter((event) => {
+      return (event !== `Restaurant` && event !== `Sightseeing` && event !== `Check-in`);
+    });
     return transfer.map((event) => {
       return (
         `<div class="event__type-item">
-          <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event == type ? `checked` : ``}>
+          <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event === type ? `checked` : ``}>
           <label class="event__type-label  event__type-label--${event.toLowerCase()}" for="event-type-${event.toLowerCase()}">${event}</label>
         </div>
         `
-      )
-    }).join(` `)
-  }
+      );
+    }).join(` `);
+  };
 
-  const createEventActivitiesListTemplate = (type) => {
-    const activities = EVENT_TYPES.filter(event => {
-      return (event == "Restaurant" || event == "Sightseeing" || event == "Check-in")
-    })
+  const createEventActivitiesListTemplate = () => {
+    const activities = EVENT_TYPES.filter((event) => {
+      return (event === `Restaurant` || event === `Sightseeing` || event === `Check-in`);
+    });
     return activities.map((event) => {
       return (
         `<div class="event__type-item">
-          <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event == type ? `checked` : ``}>
+          <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event === type ? `checked` : ``}>
           <label class="event__type-label  event__type-label--${event.toLowerCase()}" for="event-type-${event.toLowerCase()}">${event}</label>
-        </div>
-        `
-      )
-    }).join(` `)
-  }
+        </div>`);
+    }).join(` `);
+  };
 
-  const eventTransferListTemplate = createEventTransferListTemplate(type);
-  const eventActivitiesListTemplate = createEventActivitiesListTemplate(type);
+  const eventTransferListTemplate = createEventTransferListTemplate();
+  const eventActivitiesListTemplate = createEventActivitiesListTemplate();
 
-  return `
+  return (`
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
       <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
@@ -137,42 +136,41 @@ const createEventSelectorTemplate = (type) => {
         ${eventActivitiesListTemplate}
       </fieldset>
     </div>
-  </div>`
-}
+  </div>`);
+};
 
 const createDestinationList = () => {
-  return CITIES.map(city => {
+  return CITIES.map((city) => {
     return (`
       <option value="${city}"></option>
-    `)
-  }).join(` `)
-}
+    `);
+  }).join(` `);
+};
 
 export const createTripEventItemEditTemplate = (event = {}) => {
   const {
     type = EVENT_TYPES[0],
     destination = null,
     destinationInfo = null,
-    cost = '',
+    cost = ``,
     offers = [],
     startDate = null,
     endDate = null,
-    isFavourite = false
-  } = event
+  } = event;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
   const eventDetailsTemplate = createEventDetailsTemplate(offers, destinationInfo);
   const destinationList = createDestinationList();
-  const startDateFormated = startDate ? moment(startDate).format('DD/MM/YY hh:mm') : moment().format('DD/MM/YY hh:mm');
-  const endDateFormated = endDate ? moment(endDate).format('DD/MM/YY hh:mm') : moment().format('DD/MM/YY hh:mm');
-  
+  const startDateFormated = startDate ? moment(startDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
+  const endDateFormated = endDate ? moment(endDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
+
   const placeholder = () => {
-    if (type !== "Restaurant" && type !== "Sightseeing" && type !== "Check-in") {
-      return `${type} to`
+    if (type !== `Restaurant` && type !== `Sightseeing` && type !== `Check-in`) {
+      return `${type} to`;
     } else {
-      return `${type} in`
+      return `${type} in`;
     }
-  }
+  };
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">

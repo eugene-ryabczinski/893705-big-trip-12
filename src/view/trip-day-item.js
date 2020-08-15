@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export const createTripDayItemTemplate = (day, index) => {
-  const formatedDate = moment(day).format(`MMM DD`)
+  const formatedDate = moment(day).format(`MMM DD`);
   return (
     `<li class="trip-days__item day">
       <div class="day__info">

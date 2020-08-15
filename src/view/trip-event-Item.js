@@ -1,53 +1,51 @@
 import moment from 'moment';
 
 export const createTripEventItemTemplate = (event) => {
-  const { type, destination, endDate, startDate, offers = [], cost } = event;
-  
+  const {type, destination, endDate, startDate, offers = [], cost} = event;
+
   const formatDate = (date) => {
-    const momentDate = moment(date)    
-    return momentDate.format("HH:mm")
-  }
+    const momentDate = moment(date);
+    return momentDate.format(`HH:mm`);
+  };
 
   const getDuration = (start, end) => {
     const momentStart = moment(start);
     const momentEnd = moment(end);
 
     const diff = momentEnd.diff(momentStart);
-  
-  
-    const duration = moment.duration(diff)
 
-    const dateParts = ['days', 'hours', 'minutes'];
+    const duration = moment.duration(diff);
 
-    let resultString = '';
+    const dateParts = [`days`, `hours`, `minutes`];
+
+    let resultString = ``;
 
     for (let part of dateParts) {
       if (duration[part]() !== 0) {
-        resultString = resultString.concat(`${duration[part]()}${(part.substring(0,1)).toUpperCase()} `)
+        resultString = resultString.concat(`${duration[part]()}${(part.substring(0, 1)).toUpperCase()} `);
       }
     }
-    
-    return resultString
-  }
+
+    return resultString;
+  };
 
   const duration = getDuration(startDate, endDate);
 
-  const createSelectedOffersTemplate = (offers) => {
-    if (offers.length === 0) {
-      return (`<li class="event__offer"></li>`)
+  const createSelectedOffersTemplate = (offersToRender) => {
+    if (offersToRender.length === 0) {
+      return (`<li class="event__offer"></li>`);
     } else {
-      return offers.map(({name, cost}) => {
+      return offersToRender.map(({name, offerCost}) => {
         return (
           `<li class="event__offer">
-            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${cost}</span>
+            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${offerCost}</span>
           </li>`
-        )
+        );
       }).join(``);
-    };
+    }
   };
-  
-  const selectedOffersToRender = offers.slice(0,3)
-  
+  const selectedOffersToRender = offers.slice(0, 3);
+
   const selectedOffersTemplate = createSelectedOffersTemplate(selectedOffersToRender);
 
   return (
