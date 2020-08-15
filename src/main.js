@@ -1,7 +1,8 @@
 import { render } from './util';
-import { generateEvent } from './mock/event'
+import { generateEvent } from './mock/event';
+import { getTripInfo } from './mock/trip';
 import moment from 'moment';
-import { sortBy, groupBy, constant, cloneWith } from 'lodash';
+import { groupBy } from 'lodash';
 
 import { createHeaderTripInfo } from './view/header-trip-info';
 import { createSiteMenuTemplate } from './view/site-menu';
@@ -12,30 +13,6 @@ import { createTripDayItemTemplate } from './view/trip-day-item';
 import { createTripEventsListTemplate } from './view/trip-events-list';
 import { createTripEventItemTemplate } from './view/trip-event-Item';
 import { createTripEventItemEditTemplate } from './view/trip-event-item-edit';
-
-const EVENT_COUNT = 10;
-const events = new Array(EVENT_COUNT).fill().map(generateEvent);
-
-const siteHeaderElement = document.querySelector(`.page-header`);
-const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`);
-const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
-
-render(headerTripContainerElement, createHeaderTripInfo(), `afterbegin`);
-
-const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
-const tripControsMakrsElementsArray = [...tripControsMakrsElements];
-
-render(tripControsMakrsElementsArray[0], createSiteMenuTemplate(), `afterend`);
-render(tripControsMakrsElementsArray[1], createFilterTemplate(), `afterend`);
-
-const mainContentContainerElemant = document.querySelector(`.page-main`);
-const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
-
-render(tripEventsContainerElement, createSortTemplate(), `beforeend`);
-render(tripEventsContainerElement, createTripEventItemEditTemplate(events[0]), `beforeend`);
-render(tripEventsContainerElement, createTripDaysListTemplate(), `beforeend`);
-
-const daysListContainerElement = mainContentContainerElemant.querySelector(`.trip-days`);
 
 const groupEventsByDay = (events) => {
   const sortedDates = events.slice();
@@ -54,9 +31,34 @@ const groupEventsByDay = (events) => {
       return moment(item.startDate).startOf(`day`).format()
     })
 
-    console.log(groupedByDates)
     return groupedByDates;
 }
+
+const EVENT_COUNT = 10;
+const events = new Array(EVENT_COUNT).fill().map(generateEvent);
+const groupedByDay = groupEventsByDay(events);
+const tripInfo = getTripInfo(groupedByDay);
+
+const siteHeaderElement = document.querySelector(`.page-header`);
+const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`);
+const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
+
+render(headerTripContainerElement, createHeaderTripInfo(tripInfo), `afterbegin`);
+
+const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
+const tripControsMakrsElementsArray = [...tripControsMakrsElements];
+
+render(tripControsMakrsElementsArray[0], createSiteMenuTemplate(), `afterend`);
+render(tripControsMakrsElementsArray[1], createFilterTemplate(), `afterend`);
+
+const mainContentContainerElemant = document.querySelector(`.page-main`);
+const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
+
+render(tripEventsContainerElement, createSortTemplate(), `beforeend`);
+render(tripEventsContainerElement, createTripEventItemEditTemplate(events[0]), `beforeend`);
+render(tripEventsContainerElement, createTripDaysListTemplate(), `beforeend`);
+
+const daysListContainerElement = mainContentContainerElemant.querySelector(`.trip-days`);
 
 const renderEventsByDay = (groupedByDay) => {
   Object.entries(groupedByDay).forEach(([day, events], index) => {
@@ -74,5 +76,4 @@ const renderEventsByDay = (groupedByDay) => {
   })
 }
 
-const groupedByDay = groupEventsByDay(events);
-renderEventsByDay(groupedByDay)
+renderEventsByDay(groupedByDay);

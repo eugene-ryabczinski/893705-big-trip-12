@@ -1,15 +1,15 @@
-import { EVENT_TYPES } from '../mock/event';
-import { CITIES } from '../mock/event';
+import {EVENT_TYPES} from '../mock/event';
+import {CITIES} from '../mock/event';
 import moment from 'moment';
 
 const createOffersSelectorTemplate = (offers) => {
-  if (offers.length == 0) {
-    return ``
+  if (offers.length === 0) {
+    return ``;
   }
 
-  const createOffersSelectorList = (offers) => {
+  const createOffersSelectorList = () => {
     return offers.map(({name, cost, isChecked}) => {
-      const attributeName = name.toLowerCase().replace(/ /g,"_")
+      const attributeName = name.toLowerCase().replace(/ /g, `_`);
       return (
         `<div class="event__offer-selector">
           <input class="event__offer-checkbox  visually-hidden" id="event-offer-${attributeName}" type="checkbox" name="event-offer-${attributeName}" ${isChecked ? `checked` : ``}>
@@ -19,11 +19,11 @@ const createOffersSelectorTemplate = (offers) => {
             &euro;&nbsp;<span class="event__offer-price">${cost}</span>
           </label>
         </div>`
-      )
+      );
     }).join(``);
   }
 
-  const offersList = createOffersSelectorList(offers)
+  const offersList = createOffersSelectorList();
 
   return (
     `<section class="event__section  event__section--offers">
@@ -32,7 +32,7 @@ const createOffersSelectorTemplate = (offers) => {
         ${offersList}
       </div>
     </section>`
-  )
+  );
 }
 
 const createDescriptionTemplate = (destinationInfo) => {
@@ -148,12 +148,12 @@ const createDestinationList = () => {
   }).join(` `)
 }
 
-export const createTripEventItemEditTemplate = (event) => {
+export const createTripEventItemEditTemplate = (event = {}) => {
   const {
-    type = `Flight`,
+    type = EVENT_TYPES[0],
     destination = null,
     destinationInfo = null,
-    cost = null,
+    cost = '',
     offers = [],
     startDate = null,
     endDate = null,
@@ -163,8 +163,8 @@ export const createTripEventItemEditTemplate = (event) => {
   const eventSelectorTemplate = createEventSelectorTemplate(type);
   const eventDetailsTemplate = createEventDetailsTemplate(offers, destinationInfo);
   const destinationList = createDestinationList();
-  const startDateFormated = moment(startDate).format('DD/MM/YY hh:mm');
-  const endDateFormated = moment(endDate).format('DD/MM/YY hh:mm');
+  const startDateFormated = startDate ? moment(startDate).format('DD/MM/YY hh:mm') : moment().format('DD/MM/YY hh:mm');
+  const endDateFormated = endDate ? moment(endDate).format('DD/MM/YY hh:mm') : moment().format('DD/MM/YY hh:mm');
   
   const placeholder = () => {
     if (type !== "Restaurant" && type !== "Sightseeing" && type !== "Check-in") {
