@@ -9,7 +9,6 @@ const createOffersSelectorTemplate = (offers) => {
 
   const createOffersSelectorList = () => {
     return offers.map(({name, cost, isChecked}) => {
-      debugger
       const attributeName = name.toLowerCase().replace(/ /g, `_`);
       return (
         `<div class="event__offer-selector">

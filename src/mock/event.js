@@ -123,7 +123,7 @@ export const generateEvent = () => {
   const offers = generateOffers().has(type)
     ? generateOffers().get(type).map((offer) => {
       return {
-        offer, isChecked: Boolean(randomInt(0, 1))
+        ...offer, isChecked: Boolean(randomInt(0, 1))
       };
     })
     : [];
