@@ -1,5 +1,7 @@
 import { render } from './util';
 import { generateEvent } from './mock/event'
+import moment from 'moment';
+import { sortBy, groupBy, constant, cloneWith } from 'lodash';
 
 import { createHeaderTripInfo } from './view/header-trip-info';
 import { createSiteMenuTemplate } from './view/site-menu';
@@ -33,16 +35,44 @@ render(tripEventsContainerElement, createSortTemplate(), `beforeend`);
 render(tripEventsContainerElement, createTripEventItemEditTemplate(events[0]), `beforeend`);
 render(tripEventsContainerElement, createTripDaysListTemplate(), `beforeend`);
 
-const daysListElement = mainContentContainerElemant.querySelector(`.trip-days`);
+const daysListContainerElement = mainContentContainerElemant.querySelector(`.trip-days`);
 
-render(daysListElement, createTripDayItemTemplate(), `beforeend`);
+const groupEventsByDay = (events) => {
+  const sortedDates = events.slice();
 
-const dayItemElement = mainContentContainerElemant.querySelector(`.trip-days__item`);
+  sortedDates
+    .sort((event, event2) => {
+      const date1 = event.endDate;
+      const date2 = event2.startDate;
+  
+      if (date1 > date2) return 1;
+      if (date1 < date2) return -1;
+    return 0;
+    })
+    
+    const groupedByDates = groupBy(sortedDates, item => {
+      return moment(item.startDate).startOf(`day`).format()
+    })
 
-render(dayItemElement, createTripEventsListTemplate(), `beforeend`);
-
-const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
-
-for (let i = 1; i < EVENT_COUNT; i++) {
-  render(eventsListElement, createTripEventItemTemplate(events[i]), `beforeend`);
+    console.log(groupedByDates)
+    return groupedByDates;
 }
+
+const renderEventsByDay = (groupedByDay) => {
+  Object.entries(groupedByDay).forEach(([day, events], index) => {
+    render(daysListContainerElement, createTripDayItemTemplate(day, index + 1), `beforeend`);
+  
+    const dayItemElement = Array.from(mainContentContainerElemant.querySelectorAll(`.trip-days__item`))[index]
+  
+    render(dayItemElement, createTripEventsListTemplate(), `beforeend`);
+  
+    const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
+    
+    events.forEach(event => {
+      render(eventsListElement, createTripEventItemTemplate(event), `beforeend`);
+    })
+  })
+}
+
+const groupedByDay = groupEventsByDay(events);
+renderEventsByDay(groupedByDay)

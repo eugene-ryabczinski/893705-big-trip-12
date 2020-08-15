@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export const createTripEventItemTemplate = (event) => {
-  const { type, destination, endDate, startDate, offers, cost } = event;
+  const { type, destination, endDate, startDate, offers = [], cost } = event;
   
   const formatDate = (date) => {
     const momentDate = moment(date)    

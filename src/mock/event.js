@@ -91,8 +91,8 @@ const generateStartDate = () => {
 const generateEndDate = (startDate) => {
   const endDate = new Date(startDate.getTime());
   const minutes = [...Array(13).keys()].map(k => k * 5);
-
-  endDate.setHours(endDate.getHours() + randomInt(0, 36), endDate.getMinutes() + minutes[randomInt(0, minutes.length -1)], 0);
+  
+  endDate.setHours(endDate.getHours() + randomInt(0, 3), endDate.getMinutes() + minutes[randomInt(0, minutes.length -1)], 0);
   
   return endDate
 }
@@ -132,7 +132,7 @@ const generateOffers = () => {
   return offersMap;
 }
 
-export const generateEvent = () => {
+export const generateEvent = (start) => {
   const type = generatEventType();
 
   const offers = generateOffers().has(type) 
