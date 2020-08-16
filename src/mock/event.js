@@ -1,3 +1,4 @@
+import {EVENT_TYPES, CITIES} from '../const';
 import {range} from 'lodash';
 
 const randomInt = (a = 1, b = 0) => {
@@ -6,10 +7,6 @@ const randomInt = (a = 1, b = 0) => {
 
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
-
-export const EVENT_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`];
-
-export const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`];
 
 const generatEventType = () => {
   const randomIndex = randomInt(0, EVENT_TYPES.length - 1);
