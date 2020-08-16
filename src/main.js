@@ -1,8 +1,7 @@
-import { render } from './util';
+import { render, groupBy } from './utils';
 import { generateEvent } from './mock/event';
 import { getTripInfo } from './mock/trip';
 import moment from 'moment';
-import { groupBy } from 'lodash';
 
 import { createHeaderTripInfo } from './view/header-trip-info';
 import { createSiteMenuTemplate } from './view/site-menu';

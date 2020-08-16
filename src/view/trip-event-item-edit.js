@@ -105,12 +105,12 @@ const createEventSelectorTemplate = (type) => {
     <div class="event__type-list">
       <fieldset class="event__type-group">
         <legend class="visually-hidden">Transfer</legend>
-        ${EVENT_TRANSFER_LIST.map(event => createElementListTemplate(event)).join(' ')}
+        ${EVENT_TRANSFER_LIST.map((event) => createElementListTemplate(event)).join(` `)}
       </fieldset>
 
       <fieldset class="event__type-group">
         <legend class="visually-hidden">Activity</legend>
-        ${EVENT_ACTIVITIES_LIST.map(event => createElementListTemplate(event)).join(' ')}
+        ${EVENT_ACTIVITIES_LIST.map((event) => createElementListTemplate(event)).join(` `)}
       </fieldset>
     </div>
   </div>`);

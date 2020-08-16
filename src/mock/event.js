@@ -1,5 +1,5 @@
+import {range} from '../utils';
 import {EVENT_TYPES, CITIES} from '../const';
-import {range} from 'lodash';
 
 const randomInt = (a = 1, b = 0) => {
   const lower = Math.ceil(Math.min(a, b));
