@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { createElement } from '../utils';
 
 export const createTripEventItemTemplate = (event) => {
   const {type, destination, endDate, startDate, offers = [], cost} = event;
@@ -81,3 +82,26 @@ export const createTripEventItemTemplate = (event) => {
   </li>`
   );
 };
+
+export default class TripEventItem {
+  constructor(event) {
+    this._event = event; 
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventItemTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

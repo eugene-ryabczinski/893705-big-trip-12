@@ -1,5 +1,16 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
+import { createElement, isEqual } from '../utils';
 import moment from 'moment';
+
+const NEW_EVENT = {
+  type: EVENT_TYPES[0],
+  destination: ``,
+  destinationInfo: null,
+  cost: ``,
+  offers: [],
+  startDate: null,
+  endDate: null,
+}
 
 const createOffersSelectorTemplate = (offers) => {
   if (offers.length === 0) {
@@ -126,13 +137,13 @@ const createDestinationList = () => {
 
 export const createTripEventItemEditTemplate = (event = {}) => {
   const {
-    type = EVENT_TYPES[0],
-    destination = null,
-    destinationInfo = null,
-    cost = ``,
-    offers = [],
-    startDate = null,
-    endDate = null,
+    type,
+    destination,
+    destinationInfo,
+    cost,
+    offers,
+    startDate,
+    endDate,
   } = event;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
@@ -144,6 +155,14 @@ export const createTripEventItemEditTemplate = (event = {}) => {
   const placeholder = () => {
     return EVENT_ACTIVITIES_LIST.includes(type) ? `${type} in` : `${type} to`;
   };
+
+  const isNewEvent = () => {
+    if (isEqual(event, NEW_EVENT)) {
+      return (`<button class="event__reset-btn" type="reset">Cancel</button>`)
+    } else {
+      return (`<button class="event__reset-btn">Delete</button>`) 
+    }
+  }
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -183,9 +202,32 @@ export const createTripEventItemEditTemplate = (event = {}) => {
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Cancel</button>
+      ${isNewEvent()}
     </header>
     ${eventDetailsTemplate}
   </form>`
   );
 };
+
+export default class TripEventItemEdit {
+  constructor(event) {
+    this._event = event || NEW_EVENT;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventItemEditTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

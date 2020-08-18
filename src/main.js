@@ -1,17 +1,17 @@
-import { render, groupBy } from './utils';
+import { groupBy, renderElement, renderTemplate, RenderPosition } from './utils';
 import { generateEvent } from './mock/event';
 import { getTripInfo } from './mock/trip';
 import moment from 'moment';
 
-import { createHeaderTripInfo } from './view/header-trip-info';
-import { createSiteMenuTemplate } from './view/site-menu';
-import { createFilterTemplate } from './view/filter';
-import { createSortTemplate } from './view/sort';
-import { createTripDaysListTemplate } from './view/trip-days-list';
-import { createTripDayItemTemplate } from './view/trip-day-item';
-import { createTripEventsListTemplate } from './view/trip-events-list';
-import { createTripEventItemTemplate } from './view/trip-event-Item';
-import { createTripEventItemEditTemplate } from './view/trip-event-item-edit';
+import SiteMenu from './view/site-menu';
+import Filter from './view/filter';
+import HeaderTripInfo from './view/header-trip-info';
+import Sort from './view/sort';
+import TripDaysList from './view/trip-days-list';
+import TripDayItem from './view/trip-day-item';
+import TripEventsList from './view/trip-events-list';
+import TripEventItem from './view/trip-event-Item';
+import TripEventItemEdit from './view/trip-event-item-edit';
 
 const groupEventsByDay = (events) => {
   const sortedDates = events.slice();
@@ -42,35 +42,35 @@ const siteHeaderElement = document.querySelector(`.page-header`);
 const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`);
 const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 
-render(headerTripContainerElement, createHeaderTripInfo(tripInfo), `afterbegin`);
+renderElement(headerTripContainerElement, new HeaderTripInfo(tripInfo).getElement(), RenderPosition.AFTERBEGIN);
 
 const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
 const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 
-render(tripControsMakrsElementsArray[0], createSiteMenuTemplate(), `afterend`);
-render(tripControsMakrsElementsArray[1], createFilterTemplate(), `afterend`);
+renderElement(tripControsMakrsElementsArray[0], new SiteMenu().getElement(), RenderPosition.AFTEREND);
+renderElement(tripControsMakrsElementsArray[1], new Filter().getElement(), RenderPosition.AFTEREND);
 
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
 
-render(tripEventsContainerElement, createSortTemplate(), `beforeend`);
-render(tripEventsContainerElement, createTripEventItemEditTemplate(events[0]), `beforeend`);
-render(tripEventsContainerElement, createTripDaysListTemplate(), `beforeend`);
+renderElement(tripEventsContainerElement, new Sort().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripEventsContainerElement, new TripEventItemEdit().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripEventsContainerElement, new TripDaysList().getElement(), RenderPosition.BEFOREEND);
 
 const daysListContainerElement = mainContentContainerElemant.querySelector(`.trip-days`);
 
 const renderEventsByDay = (groupedByDay) => {
   Object.entries(groupedByDay).forEach(([day, events], index) => {
-    render(daysListContainerElement, createTripDayItemTemplate(day, index + 1), `beforeend`);
-  
+    renderElement(daysListContainerElement, new TripDayItem(day, index + 1).getElement(), RenderPosition.BEFOREEND);
+
     const dayItemElement = Array.from(mainContentContainerElemant.querySelectorAll(`.trip-days__item`))[index]
-  
-    render(dayItemElement, createTripEventsListTemplate(), `beforeend`);
+
+    renderElement(dayItemElement, new TripEventsList().getElement(), RenderPosition.BEFOREEND);
   
     const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
     
     events.forEach(event => {
-      render(eventsListElement, createTripEventItemTemplate(event), `beforeend`);
+      renderElement(eventsListElement, new TripEventItem(event).getElement(), RenderPosition.BEFOREEND);
     })
   })
 }
