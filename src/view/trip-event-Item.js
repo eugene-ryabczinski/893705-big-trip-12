@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { createElement } from '../utils';
+import {createElement} from '../utils';
 
 export const createTripEventItemTemplate = (event) => {
   const {type, destination, endDate, startDate, offers = [], cost} = event;
@@ -36,10 +36,10 @@ export const createTripEventItemTemplate = (event) => {
     if (offersToRender.length === 0) {
       return (`<li class="event__offer"></li>`);
     } else {
-      return offersToRender.map(({name, cost}) => {
+      return offersToRender.map(({name, offetCost = cost}) => {
         return (
           `<li class="event__offer">
-            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${cost}</span>
+            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${offetCost}</span>
           </li>`
         );
       }).join(``);
@@ -85,7 +85,7 @@ export const createTripEventItemTemplate = (event) => {
 
 export default class TripEventItem {
   constructor(event) {
-    this._event = event; 
+    this._event = event;
     this._element = null;
   }
 

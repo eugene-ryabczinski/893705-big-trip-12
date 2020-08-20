@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { createElement } from '../utils';
+import {createElement} from '../utils';
 
 const createTripDayItemTemplate = (day, index) => {
   const formatedDate = moment(day).format(`MMM DD`);

@@ -1,4 +1,4 @@
-import { createElement } from '../utils';
+import {createElement} from '../utils';
 
 export const createHeaderTripInfoTemplate = ({route, duration, cost}) => {
   return (
@@ -19,7 +19,7 @@ export const createHeaderTripInfoTemplate = ({route, duration, cost}) => {
 export default class HeaderTripInfo {
   constructor(tripInfo) {
     this._element = null;
-    this._tripInfo = tripInfo
+    this._tripInfo = tripInfo;
   }
 
   getTemplate() {

@@ -1,4 +1,4 @@
-import { createElement } from '../utils';
+import {createElement} from '../utils';
 
 const createTripEventsListTemplate = () => {
   return (
@@ -8,7 +8,7 @@ const createTripEventsListTemplate = () => {
 };
 
 export default class TripEventsList {
-  constructor() {    
+  constructor() {
     this._element = null;
   }
 

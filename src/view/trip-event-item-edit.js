@@ -1,5 +1,5 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
-import { createElement, isEqual } from '../utils';
+import {createElement, isEqual} from '../utils';
 import moment from 'moment';
 
 const NEW_EVENT = {
@@ -10,7 +10,7 @@ const NEW_EVENT = {
   offers: [],
   startDate: null,
   endDate: null,
-}
+};
 
 const createOffersSelectorTemplate = (offers) => {
   if (offers.length === 0) {
@@ -158,11 +158,11 @@ export const createTripEventItemEditTemplate = (event = {}) => {
 
   const isNewEvent = () => {
     if (isEqual(event, NEW_EVENT)) {
-      return (`<button class="event__reset-btn" type="reset">Cancel</button>`)
+      return (`<button class="event__reset-btn" type="reset">Cancel</button>`);
     } else {
-      return (`<button class="event__reset-btn">Delete</button>`) 
+      return (`<button class="event__reset-btn">Delete</button>`);
     }
-  }
+  };
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
