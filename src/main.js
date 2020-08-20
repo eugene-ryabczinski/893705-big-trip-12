@@ -59,6 +59,30 @@ renderElement(tripEventsContainerElement, new TripDaysList().getElement(), Rende
 
 const daysListContainerElement = mainContentContainerElemant.querySelector(`.trip-days`);
 
+const renderEvent = (eventsListElement ,event) => {
+  const eventComponent = new TripEventItem(event); 
+  const eventEditComponent = new TripEventItemEdit(event);
+  
+    eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+      replaceEventToForm();
+    })
+
+    eventEditComponent.getElement().parentElement.querySelector(`.event--edit`).addEventListener(`submit`, (evt) => {
+      evt.preventDefault();
+      replaceFormToEvent();
+    })
+
+    const replaceEventToForm = () => {
+      eventsListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    }
+
+    const replaceFormToEvent = () => {
+      eventsListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    }
+    
+    renderElement(eventsListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+}
+
 const renderEventsByDay = (groupedByDay) => {
   Object.entries(groupedByDay).forEach(([day, events], index) => {
     renderElement(daysListContainerElement, new TripDayItem(day, index + 1).getElement(), RenderPosition.BEFOREEND);
@@ -70,7 +94,7 @@ const renderEventsByDay = (groupedByDay) => {
     const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
     
     events.forEach(event => {
-      renderElement(eventsListElement, new TripEventItem(event).getElement(), RenderPosition.BEFOREEND);
+      renderEvent(eventsListElement, event)
     })
   })
 }
