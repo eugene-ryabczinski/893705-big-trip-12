@@ -158,12 +158,11 @@ export const createTripEventItemEditTemplate = (event = {}) => {
 
   const isNewEvent = () => isEqual(event, NEW_EVENT);
 
-  return (
-    `<form class="trip-events__item  event  event--edit" action="#" method="post">
-    <header class="event__header">
-    <div class="event__type-wrapper">
-      ${eventSelectorTemplate}
-    </div>
+  return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
+      <header class="event__header">
+      <div class="event__type-wrapper">
+        ${eventSelectorTemplate}
+      </div>
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">

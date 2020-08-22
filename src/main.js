@@ -12,6 +12,7 @@ import TripDayItem from './view/trip-day-item';
 import TripEventsList from './view/trip-events-list';
 import TripEventItem from './view/trip-event-Item';
 import TripEventItemEdit from './view/trip-event-item-edit';
+import NoEvents from './view/no-events';
 
 const groupEventsByDay = (events) => {
   const sortedDates = events.slice();
@@ -42,7 +43,9 @@ const siteHeaderElement = document.querySelector(`.page-header`);
 const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`);
 const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 
-renderElement(headerTripContainerElement, new HeaderTripInfo(tripInfo).getElement(), RenderPosition.AFTERBEGIN);
+if (events.length !== 0) {
+  renderElement(headerTripContainerElement, new HeaderTripInfo(tripInfo).getElement(), RenderPosition.AFTERBEGIN);
+}
 
 const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
 const tripControsMakrsElementsArray = [...tripControsMakrsElements];
@@ -62,25 +65,34 @@ const daysListContainerElement = mainContentContainerElemant.querySelector(`.tri
 const renderEvent = (eventsListElement ,event) => {
   const eventComponent = new TripEventItem(event); 
   const eventEditComponent = new TripEventItemEdit(event);
-  
-    eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
-      replaceEventToForm();
-    })
 
-    eventEditComponent.getElement().parentElement.querySelector(`.event--edit`).addEventListener(`submit`, (evt) => {
+  const replaceEventToForm = () => {
+    eventsListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  }
+
+  const replaceFormToEvent = () => {
+    eventsListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  }
+
+  const onEsc = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
       replaceFormToEvent();
-    })
-
-    const replaceEventToForm = () => {
-      eventsListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+      document.removeEventListener(`keydown`, onEsc);
     }
+  }
+  
+  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceEventToForm();
+    document.addEventListener(`keydown`, onEsc)
+  })
 
-    const replaceFormToEvent = () => {
-      eventsListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
-    }
-    
-    renderElement(eventsListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  eventEditComponent.getElement().parentElement.querySelector(`.event--edit`).addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToEvent();
+  })
+  
+  renderElement(eventsListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 }
 
 const renderEventsByDay = (groupedByDay) => {
@@ -99,4 +111,8 @@ const renderEventsByDay = (groupedByDay) => {
   })
 }
 
-renderEventsByDay(groupedByDay);
+if (events.length === 0) {
+  renderElement(tripEventsContainerElement, new NoEvents().getElement(), RenderPosition.BEFOREEND);
+} else {
+  renderEventsByDay(groupedByDay);
+}
