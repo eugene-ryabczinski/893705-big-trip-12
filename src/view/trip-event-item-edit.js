@@ -156,13 +156,7 @@ export const createTripEventItemEditTemplate = (event = {}) => {
     return EVENT_ACTIVITIES_LIST.includes(type) ? `${type} in` : `${type} to`;
   };
 
-  const isNewEvent = () => {
-    if (isEqual(event, NEW_EVENT)) {
-      return (`<button class="event__reset-btn" type="reset">Cancel</button>`);
-    } else {
-      return (`<button class="event__reset-btn">Delete</button>`);
-    }
-  };
+  const isNewEvent = () => isEqual(event, NEW_EVENT);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -202,7 +196,7 @@ export const createTripEventItemEditTemplate = (event = {}) => {
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      ${isNewEvent()}
+      ${isNewEvent() ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`} 
     </header>
     ${eventDetailsTemplate}
   </form>`
