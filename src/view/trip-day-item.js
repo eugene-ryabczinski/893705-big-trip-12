@@ -1,6 +1,7 @@
 import moment from 'moment';
+import {createElement} from '../utils';
 
-export const createTripDayItemTemplate = (day, index) => {
+const createTripDayItemTemplate = (day, index) => {
   const formatedDate = moment(day).format(`MMM DD`);
   return (
     `<li class="trip-days__item day">
@@ -11,3 +12,27 @@ export const createTripDayItemTemplate = (day, index) => {
     </li>`
   );
 };
+
+export default class TripDayItem {
+  constructor(day, dayCount) {
+    this._day = day;
+    this._dayCount = dayCount;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripDayItemTemplate(this._day, this._dayCount);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

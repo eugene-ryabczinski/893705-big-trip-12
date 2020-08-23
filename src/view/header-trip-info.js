@@ -1,4 +1,6 @@
-export const createHeaderTripInfo = ({route, duration, cost}) => {
+import {createElement} from '../utils';
+
+export const createHeaderTripInfoTemplate = ({route, duration, cost}) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
@@ -13,3 +15,26 @@ export const createHeaderTripInfo = ({route, duration, cost}) => {
     </section>`
   );
 };
+
+export default class HeaderTripInfo {
+  constructor(tripInfo) {
+    this._element = null;
+    this._tripInfo = tripInfo;
+  }
+
+  getTemplate() {
+    return createHeaderTripInfoTemplate(this._tripInfo);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
