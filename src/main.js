@@ -1,4 +1,5 @@
-import { groupBy, renderElement, renderTemplate, RenderPosition } from './utils';
+import { groupBy } from './utils/common';
+import { renderElement, RenderPosition, replace } from './utils/render';
 import { generateEvent } from './mock/event';
 import { getTripInfo } from './mock/trip';
 import moment from 'moment';
@@ -44,21 +45,21 @@ const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`)
 const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 
 if (events.length !== 0) {
-  renderElement(headerTripContainerElement, new HeaderTripInfo(tripInfo).getElement(), RenderPosition.AFTERBEGIN);
+  renderElement(headerTripContainerElement, new HeaderTripInfo(tripInfo), RenderPosition.AFTERBEGIN);
 }
 
 const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
 const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 
-renderElement(tripControsMakrsElementsArray[0], new SiteMenu().getElement(), RenderPosition.AFTEREND);
-renderElement(tripControsMakrsElementsArray[1], new Filter().getElement(), RenderPosition.AFTEREND);
+renderElement(tripControsMakrsElementsArray[0], new SiteMenu(), RenderPosition.AFTEREND);
+renderElement(tripControsMakrsElementsArray[1], new Filter(), RenderPosition.AFTEREND);
 
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
 
-renderElement(tripEventsContainerElement, new Sort().getElement(), RenderPosition.BEFOREEND);
-renderElement(tripEventsContainerElement, new TripEventItemEdit().getElement(), RenderPosition.BEFOREEND);
-renderElement(tripEventsContainerElement, new TripDaysList().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripEventsContainerElement, new Sort(), RenderPosition.BEFOREEND);
+renderElement(tripEventsContainerElement, new TripEventItemEdit(), RenderPosition.BEFOREEND);
+renderElement(tripEventsContainerElement, new TripDaysList(), RenderPosition.BEFOREEND);
 
 const daysListContainerElement = mainContentContainerElemant.querySelector(`.trip-days`);
 
@@ -66,13 +67,8 @@ const renderEvent = (eventsListElement ,event) => {
   const eventComponent = new TripEventItem(event); 
   const eventEditComponent = new TripEventItemEdit(event);
 
-  const replaceEventToForm = () => {
-    eventsListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
-  }
-
-  const replaceFormToEvent = () => {
-    eventsListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
-  }
+  const replaceEventToForm = () => replace(eventEditComponent, eventComponent);
+  const replaceFormToEvent = () => replace(eventComponent, eventEditComponent);
 
   const onEsc = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -91,16 +87,16 @@ const renderEvent = (eventsListElement ,event) => {
     replaceFormToEvent();
   })
     
-  renderElement(eventsListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  renderElement(eventsListElement, eventComponent, RenderPosition.BEFOREEND);
 }
 
 const renderEventsByDay = (groupedByDay) => {
   Object.entries(groupedByDay).forEach(([day, events], index) => {
-    renderElement(daysListContainerElement, new TripDayItem(day, index + 1).getElement(), RenderPosition.BEFOREEND);
+    renderElement(daysListContainerElement, new TripDayItem(day, index + 1), RenderPosition.BEFOREEND);
 
     const dayItemElement = Array.from(mainContentContainerElemant.querySelectorAll(`.trip-days__item`))[index]
 
-    renderElement(dayItemElement, new TripEventsList().getElement(), RenderPosition.BEFOREEND);
+    renderElement(dayItemElement, new TripEventsList(), RenderPosition.BEFOREEND);
   
     const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
     
@@ -111,7 +107,7 @@ const renderEventsByDay = (groupedByDay) => {
 }
 
 if (events.length === 0) {
-  renderElement(tripEventsContainerElement, new NoEvents().getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripEventsContainerElement, new NoEvents(), RenderPosition.BEFOREEND);
 } else {
   renderEventsByDay(groupedByDay);
 }

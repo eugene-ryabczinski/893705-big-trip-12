@@ -1,5 +1,5 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
-import {isEqual} from '../utils';
+import {isEqual} from '../utils/common';
 import moment from 'moment';
 import AbstractView from './abstract-view';
 
