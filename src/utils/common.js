@@ -1,3 +1,3 @@
-import { groupBy, range, isEqual, random } from 'lodash';
+import {groupBy, range, isEqual, random} from 'lodash';
 
-export { groupBy, range, isEqual, random }
+export {groupBy, range, isEqual, random};

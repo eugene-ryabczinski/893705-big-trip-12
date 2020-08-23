@@ -16,9 +16,9 @@ export const createHeaderTripInfoTemplate = ({route, duration, cost}) => {
   );
 };
 
-export default class HeaderTripInfo extends AbstractView{
+export default class HeaderTripInfo extends AbstractView {
   constructor(tripInfo) {
-    super()
+    super();
     this._tripInfo = tripInfo;
   }
 

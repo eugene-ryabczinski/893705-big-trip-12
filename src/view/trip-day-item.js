@@ -13,7 +13,7 @@ const createTripDayItemTemplate = (day, index) => {
   );
 };
 
-export default class TripDayItem extends AbstractView{
+export default class TripDayItem extends AbstractView {
   constructor(day, dayCount) {
     super();
     this._day = day;

@@ -85,7 +85,7 @@ export const createTripEventItemTemplate = (event) => {
 
 export default class TripEventItem extends AbstractView {
   constructor(event) {
-    super()
+    super();
     this._event = event;
 
     this._rollupEventClickHandler = this._rollupEventClickHandler.bind(this);

@@ -24,7 +24,7 @@ export const renderElement = (container, element, place) => {
       break;
     case RenderPosition.AFTEREND:
       container.after(element);
-    break;
+      break;
   }
 };
 
@@ -55,7 +55,7 @@ export const replace = (newComponent, oldComponent) => {
   }
 
   parentNode.replaceChild(newComponent, oldComponent);
-}
+};
 
 export const remove = (component) => {
   if (!(component instanceof AbstractView)) {
