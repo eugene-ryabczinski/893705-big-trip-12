@@ -22,6 +22,8 @@ export default class Trip {
     this._tripEventItemComponent = new TripEventItem();
     this._tripEventItemEditComponent = new TripEventItemEdit();
     this._noEventsComponent = new NoEvents();
+
+    this._sortChangeHandler = this._sortChangeHandler.bind(this);
   }
 
   init(events) {
@@ -37,8 +39,13 @@ export default class Trip {
     this._renderTrip(this._events);
   }
 
+  _sortChangeHandler(event) {
+    // implement handler
+  }
+
   _renderSort() {
-    renderElement(this._tripEventsContainerElement, new Sort(), RenderPosition.BEFOREEND);
+    renderElement(this._tripEventsContainerElement, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortChangeHandler(this._sortChangeHandler);
   }
 
   _renderNoEvents() {
@@ -65,8 +72,7 @@ export default class Trip {
       document.addEventListener(`keydown`, onEsc);
     });
 
-    eventEditComponent.setFormSubmitHandler((evt) => {
-      evt.preventDefault();
+    eventEditComponent.setFormSubmitHandler(() => {
       replaceFormToEvent();
     });
 
