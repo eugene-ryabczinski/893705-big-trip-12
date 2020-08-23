@@ -96,7 +96,7 @@ const renderEvent = (eventsListElement ,event) => {
   
   eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onRollup);
 
-  eventEditComponent.getElement().parentElement.querySelector(`.event--edit`).addEventListener(`submit`, onSave)
+  eventEditComponent.getElement().addEventListener(`submit`, onSave)
   
   renderElement(eventsListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 }
