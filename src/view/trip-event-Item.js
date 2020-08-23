@@ -87,9 +87,21 @@ export default class TripEventItem extends AbstractView {
   constructor(event) {
     super()
     this._event = event;
+
+    this._rollupEventClickHandler = this._rollupEventClickHandler.bind(this);
   }
 
   getTemplate() {
     return createTripEventItemTemplate(this._event);
+  }
+
+  _rollupEventClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
+  }
+
+  setRollupEventClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().addEventListener(`click`, this._rollupEventClickHandler);
   }
 }

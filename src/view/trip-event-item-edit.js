@@ -207,9 +207,21 @@ export default class TripEventItemEdit extends AbstractView {
   constructor(event) {
     super();
     this._event = event || NEW_EVENT;
+
+    this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this)
   }
 
   getTemplate() {
     return createTripEventItemEditTemplate(this._event);
+  }
+
+  _formSubmitClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit= callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitClickHandler)
   }
 }
