@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstractView from './abstract-view';
 
 export const createHeaderTripInfoTemplate = ({route, duration, cost}) => {
   return (
@@ -16,25 +16,13 @@ export const createHeaderTripInfoTemplate = ({route, duration, cost}) => {
   );
 };
 
-export default class HeaderTripInfo {
+export default class HeaderTripInfo extends AbstractView{
   constructor(tripInfo) {
-    this._element = null;
+    super()
     this._tripInfo = tripInfo;
   }
 
   getTemplate() {
     return createHeaderTripInfoTemplate(this._tripInfo);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

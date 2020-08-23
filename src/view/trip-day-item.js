@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {createElement} from '../utils';
+import AbstractView from './abstract-view';
 
 const createTripDayItemTemplate = (day, index) => {
   const formatedDate = moment(day).format(`MMM DD`);
@@ -13,26 +13,14 @@ const createTripDayItemTemplate = (day, index) => {
   );
 };
 
-export default class TripDayItem {
+export default class TripDayItem extends AbstractView{
   constructor(day, dayCount) {
+    super();
     this._day = day;
     this._dayCount = dayCount;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripDayItemTemplate(this._day, this._dayCount);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

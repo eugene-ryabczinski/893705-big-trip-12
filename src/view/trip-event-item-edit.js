@@ -1,6 +1,7 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
-import {createElement, isEqual} from '../utils';
+import {isEqual} from '../utils';
 import moment from 'moment';
+import AbstractView from './abstract-view';
 
 const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -202,25 +203,13 @@ export const createTripEventItemEditTemplate = (event = {}) => {
   );
 };
 
-export default class TripEventItemEdit {
+export default class TripEventItemEdit extends AbstractView {
   constructor(event) {
+    super();
     this._event = event || NEW_EVENT;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripEventItemEditTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
