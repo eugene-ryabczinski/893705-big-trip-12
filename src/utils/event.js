@@ -26,3 +26,19 @@ export const groupEventsByDay = (events) => {
 
   return groupedByDates;
 };
+
+export const sortByDuration = (dayA, dayB) => {
+  const momentStartA = moment(dayA.startDate);
+  const momentEndA = moment(dayA.endDate);
+  const diffA = momentEndA.diff(momentStartA);
+
+  const momentStartB = moment(dayB.startDate);
+  const momentEndB = moment(dayB.endDate);
+  const diffB = momentEndB.diff(momentStartB);
+
+  return diffB - diffA;
+}
+
+export const sortByPrice = (dayA, dayB) => {
+  return dayB.cost - dayA.cost;
+}
