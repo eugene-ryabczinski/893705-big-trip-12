@@ -81,16 +81,22 @@ const renderEvent = (eventsListElement ,event) => {
       document.removeEventListener(`keydown`, onEsc);
     }
   }
-  
-  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
-    replaceEventToForm();
-    document.addEventListener(`keydown`, onEsc)
-  })
 
-  eventEditComponent.getElement().parentElement.querySelector(`.event--edit`).addEventListener(`submit`, (evt) => {
+  const onSave = (evt) => {
     evt.preventDefault();
     replaceFormToEvent();
-  })
+    document.removeEventListener(`keydown`, onEsc);
+  }
+
+  const onRollup = (evt) => {
+    evt.preventDefault()
+    replaceEventToForm();
+    document.addEventListener(`keydown`, onEsc);
+  }
+  
+  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onRollup);
+
+  eventEditComponent.getElement().addEventListener(`submit`, onSave)
   
   renderElement(eventsListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 }
