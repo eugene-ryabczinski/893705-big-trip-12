@@ -37,8 +37,8 @@ export const sortByDuration = (dayA, dayB) => {
   const diffB = momentEndB.diff(momentStartB);
 
   return diffB - diffA;
-}
+};
 
 export const sortByPrice = (dayA, dayB) => {
   return dayB.cost - dayA.cost;
-}
+};

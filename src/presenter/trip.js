@@ -1,7 +1,4 @@
-import moment from 'moment';
-
 import {SortType} from '../const';
-
 import {renderElement, RenderPosition, replace} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice} from '../utils/event';
 
@@ -14,14 +11,11 @@ import TripEventItemEdit from '../view/trip-event-item-edit';
 import NoEvents from '../view/no-events';
 
 export default class Trip {
-  constructor(tripEventsContainerElement) {
-    this._tripEventsContainerElement = tripEventsContainerElement;
+  constructor(tripEventsMainContainerElement) {
+    this._tripEventsMainContainerElement = tripEventsMainContainerElement;
 
     this._sortComponent = new Sort();
-
     this._tripDaysListComponent = new TripDaysList();
-    // this._tripDayItemComponent = new TripDayItem();
-
     this._tripEventsListComponent = new TripEventsList();
     this._tripEventItemComponent = new TripEventItem();
     this._tripEventItemEditComponent = new TripEventItemEdit();
@@ -38,10 +32,9 @@ export default class Trip {
       this._renderSort();
     }
 
-    renderElement(this._tripEventsContainerElement, this._tripDaysListComponent, RenderPosition.BEFOREEND); // render main events container
+    renderElement(this._tripEventsMainContainerElement, this._tripDaysListComponent, RenderPosition.BEFOREEND); // render main events container
 
     this._renderTrip(this._events);
-    // this._renderEvents(this._events);
   }
 
   _sortChangeHandler(event) {
@@ -52,29 +45,29 @@ export default class Trip {
         this._renderEventsByDay(this._eventsGroupedByDay);
         break;
       case SortType.TIME:
-        this._events.sort(sortByDuration)
-        this._renderEvents(this._events);
+        this._events.sort(sortByDuration);
+        this._renderEvents(null, 0, this._events);
         break;
       case SortType.PRICE:
-        this._clearEventList();
-        this._renderEvents(this._events);
+        this._events.sort(sortByPrice);
+        this._renderEvents(null, 0, this._events);
         break;
     }
   }
 
   _clearEventList() {
-    this._tripDaysListComponent.getElement().innerHTML = ``
+    this._tripDaysListComponent.getElement().innerHTML = ``;
   }
 
   _renderSort() {
-    renderElement(this._tripEventsContainerElement, this._sortComponent, RenderPosition.BEFOREEND);
+    renderElement(this._tripEventsMainContainerElement, this._sortComponent, RenderPosition.BEFOREEND);
     this._sortComponent.setSortChangeHandler(this._sortChangeHandler);
   }
 
   _renderNoEvents() {
-    renderElement(this._tripEventsContainerElement, new NoEvents(), RenderPosition.BEFOREEND);
+    renderElement(this._tripEventsMainContainerElement, new NoEvents(), RenderPosition.BEFOREEND);
   }
-  
+
   _renderEvent(eventsListElement, event) {
     const eventComponent = new TripEventItem(event);
     const eventEditComponent = new TripEventItemEdit(event);
@@ -102,40 +95,25 @@ export default class Trip {
     renderElement(eventsListElement, eventComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderEvents(events) {
-    renderElement(this._tripDaysListComponent, new TripDayItem(null, null), RenderPosition.BEFOREEND); // day item container for events
+  _renderEvents(dayDate, count, events) {
+    const tripDayItemComponent = new TripDayItem(dayDate = undefined, count = undefined);
+    renderElement(this._tripDaysListComponent, tripDayItemComponent, RenderPosition.BEFOREEND);
 
-    const dayItemElement = Array.from(this._tripDaysListComponent.getElement().querySelectorAll(`.trip-days__item`))[0];
-
-    renderElement(dayItemElement, new TripEventsList(), RenderPosition.BEFOREEND);
-
-    const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
+    const tripEventsListComponent = new TripEventsList();
+    renderElement(tripDayItemComponent, tripEventsListComponent, RenderPosition.BEFOREEND);
 
     events.forEach((event) => {
-      this._renderEvent(eventsListElement, event);
-    })
+      this._renderEvent(tripEventsListComponent.getElement(), event);
+    });
   }
 
   _renderEventsByDay(eventsGroupedByDay) {
-    const daysListContainerElement = this._tripEventsContainerElement.querySelector(`.trip-days`);
-
     Object.entries(eventsGroupedByDay).forEach(([day, events], index) => {
-      renderElement(daysListContainerElement, new TripDayItem(day, index + 1), RenderPosition.BEFOREEND);
-
-      const dayItemElement = Array.from(daysListContainerElement.querySelectorAll(`.trip-days__item`))[index];
-
-      renderElement(dayItemElement, new TripEventsList(), RenderPosition.BEFOREEND);
-
-      const eventsListElement = dayItemElement.querySelector(`.trip-events__list`);
-
-      events.forEach((event) => {
-        this._renderEvent(eventsListElement, event);
-      });
+      this._renderEvents(day, index, events);
     });
   }
 
   _renderTrip(events) {
-    // render main trip content
     if (events.length === 0) {
       this._renderNoEvents();
     } else {
