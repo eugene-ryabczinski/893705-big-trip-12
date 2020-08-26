@@ -9,3 +9,4 @@ export const SORT_TYPE = {
   PRICE: `sort-price`,
   TIME: `sort-time`
 };
+
