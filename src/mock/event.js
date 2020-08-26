@@ -1,6 +1,5 @@
-import {range} from '../utils/common';
+import {range, random} from '../utils/common';
 import {EVENT_TYPES, CITIES} from '../const';
-import {random} from '../utils/common';
 
 const generatEventType = () => {
   const randomIndex = random(0, EVENT_TYPES.length - 1);

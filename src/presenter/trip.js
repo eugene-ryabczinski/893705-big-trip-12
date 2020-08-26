@@ -1,4 +1,4 @@
-import {SortType} from '../const';
+import {SORT_TYPE} from '../const';
 import {renderElement, RenderPosition, replace} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice} from '../utils/event';
 
@@ -41,14 +41,14 @@ export default class Trip {
     this._clearEventList();
 
     switch (event) {
-      case SortType.EVENT:
+      case SORT_TYPE.EVENT:
         this._renderEventsByDay(this._eventsGroupedByDay);
         break;
-      case SortType.TIME:
+      case SORT_TYPE.TIME:
         this._events.sort(sortByDuration);
         this._renderEvents(null, 0, this._events);
         break;
-      case SortType.PRICE:
+      case SORT_TYPE.PRICE:
         this._events.sort(sortByPrice);
         this._renderEvents(null, 0, this._events);
         break;
@@ -96,7 +96,7 @@ export default class Trip {
   }
 
   _renderEvents(dayDate, count, events) {
-    const tripDayItemComponent = new TripDayItem(dayDate = undefined, count = undefined);
+    const tripDayItemComponent = new TripDayItem(dayDate, count);
     renderElement(this._tripDaysListComponent, tripDayItemComponent, RenderPosition.BEFOREEND);
 
     const tripEventsListComponent = new TripEventsList();
@@ -109,7 +109,7 @@ export default class Trip {
 
   _renderEventsByDay(eventsGroupedByDay) {
     Object.entries(eventsGroupedByDay).forEach(([day, events], index) => {
-      this._renderEvents(day, index, events);
+      this._renderEvents(day, index + 1, events);
     });
   }
 
