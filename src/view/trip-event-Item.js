@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {createElement} from '../utils';
+import AbstractView from './abstract-view';
 
 export const createTripEventItemTemplate = (event) => {
   const {type, destination, endDate, startDate, offers = [], cost} = event;
@@ -83,25 +83,25 @@ export const createTripEventItemTemplate = (event) => {
   );
 };
 
-export default class TripEventItem {
+export default class TripEventItem extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+
+    this._rollupEventClickHandler = this._rollupEventClickHandler.bind(this);
   }
 
   getTemplate() {
     return createTripEventItemTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _rollupEventClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setRollupEventClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().addEventListener(`click`, this._rollupEventClickHandler);
   }
 }

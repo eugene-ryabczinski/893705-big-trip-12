@@ -1,21 +1,14 @@
-import {range} from '../utils';
+import {range, random} from '../utils/common';
 import {EVENT_TYPES, CITIES} from '../const';
 
-const randomInt = (a = 1, b = 0) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
 const generatEventType = () => {
-  const randomIndex = randomInt(0, EVENT_TYPES.length - 1);
+  const randomIndex = random(0, EVENT_TYPES.length - 1);
 
   return EVENT_TYPES[randomIndex];
 };
 
 const generateСities = () => {
-  const randomIndex = randomInt(0, CITIES.length - 1);
+  const randomIndex = random(0, CITIES.length - 1);
 
   return CITIES[randomIndex];
 };
@@ -25,12 +18,12 @@ const generatDestinationDescription = () => {
 
   const texts = source.split(`.`).map((text) => text.trim()).filter((el) => el);
 
-  const takes = randomInt(1, 5);
+  const takes = random(1, 5);
 
   let resultString = ``;
 
   for (let i = 0; i <= takes; i++) {
-    let randomIndex = randomInt(0, texts.length - 1);
+    let randomIndex = random(0, texts.length - 1);
 
     resultString = resultString.concat(texts[randomIndex]).concat(`. `).trim();
     if (i === takes) {
@@ -42,7 +35,7 @@ const generatDestinationDescription = () => {
 };
 
 const generateDestinationPictures = () => {
-  const takes = randomInt(1, 5);
+  const takes = random(1, 5);
   let pictures = [];
 
   for (let i = 0; i < takes; i++) {
@@ -55,7 +48,7 @@ const generateDestinationPictures = () => {
 const generateCost = (start = 20, end = 600, step = 25) => {
   const cost = range(start, end, step);
 
-  const randomIndex = randomInt(0, cost.length - 1);
+  const randomIndex = random(0, cost.length - 1);
 
   return cost[randomIndex];
 };
@@ -64,8 +57,8 @@ const generateStartDate = () => {
   const startDate = new Date();
   const minutes = [...Array(13).keys()].map((k) => k * 5);
 
-  startDate.setDate(startDate.getDate() + randomInt(1, 7));
-  startDate.setHours(randomInt(24), minutes[randomInt(0, minutes.length - 1)], 0);
+  startDate.setDate(startDate.getDate() + random(1, 7));
+  startDate.setHours(random(24), minutes[random(0, minutes.length - 1)], 0);
 
   return startDate;
 };
@@ -74,7 +67,7 @@ const generateEndDate = (startDate) => {
   const endDate = new Date(startDate.getTime());
   const minutes = [...Array(13).keys()].map((k) => k * 5);
 
-  endDate.setHours(endDate.getHours() + randomInt(0, 3), endDate.getMinutes() + minutes[randomInt(0, minutes.length - 1)], 0);
+  endDate.setHours(endDate.getHours() + random(0, 3), endDate.getMinutes() + minutes[random(0, minutes.length - 1)], 0);
 
   return endDate;
 };
@@ -120,7 +113,7 @@ export const generateEvent = () => {
   const offers = generateOffers().has(type)
     ? generateOffers().get(type).map((offer) => {
       return {
-        ...offer, isChecked: Boolean(randomInt(0, 1))
+        ...offer, isChecked: Boolean(random(0, 1))
       };
     })
     : [];
@@ -146,6 +139,6 @@ export const generateEvent = () => {
     offers,
     startDate,
     endDate,
-    isFavourite: Boolean(randomInt(0, 1))
+    isFavourite: Boolean(random(0, 1))
   };
 };
