@@ -102,6 +102,6 @@ export default class TripEventItem extends AbstractView {
 
   setRollupEventClickHandler(callback) {
     this._callback.click = callback;
-    this.getElement().addEventListener(`click`, this._rollupEventClickHandler);
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupEventClickHandler);
   }
 }

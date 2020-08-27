@@ -219,6 +219,7 @@ export default class TripEventItemEdit extends AbstractView {
     this._event = event || NEW_EVENT;
 
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
+    this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -227,11 +228,21 @@ export default class TripEventItemEdit extends AbstractView {
 
   _formSubmitClickHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._event);
+  }
+
+  _isFavouriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favouriteClick(evt.target.checked); // 3. in handler run callback function
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitClickHandler);
+  }
+
+  setFavouriteClickHandler(callback) {
+    this._callback.favouriteClick = callback; // 1. write callback here
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._isFavouriteClickHandler); // 2. add handler
   }
 }

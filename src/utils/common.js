@@ -5,5 +5,10 @@ export {groupBy, range, isEqual, random};
 export const updateItem = (source, updatedItem) => {
   const index = source.findIndex((item) => item.id === updatedItem.id);
 
-  return index < 0 ? source : source[index] = cloneDeep(updatedItem);
+  if (index < 0) {
+    return source
+  } else {
+    source[index] = cloneDeep(updatedItem);
+    return source;
+  }
 }

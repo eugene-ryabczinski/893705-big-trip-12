@@ -3,8 +3,9 @@ import TripEventItem from '../view/trip-event-Item';
 import TripEventItemEdit from '../view/trip-event-item-edit';
 
 export default class Event {
-  constructor(tripEventsListContainer) {
+  constructor(tripEventsListContainer, changeData) {
     this._tripEventsListConteiner = tripEventsListContainer;
+    this._changeData = changeData;
 
     this._tripEventItemComponent = null;
     this._tripEventItemEditComponent = null;
@@ -12,6 +13,7 @@ export default class Event {
     this._handleRollupClick = this._handleRollupClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleEcs = this._handleEcs.bind(this);
+    this._isFavouriteClick = this._isFavouriteClick.bind(this)
   }
 
   init(event) {
@@ -25,17 +27,18 @@ export default class Event {
 
     this._tripEventItemComponent.setRollupEventClickHandler(this._handleRollupClick);
     this._tripEventItemEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._tripEventItemEditComponent.setFavouriteClickHandler(this._isFavouriteClick)
 
     if (prevTripEventItemComponent === null || prevTripEventItemEditComponent === null) {
       renderElement(this._tripEventsListConteiner.getElement(), this._tripEventItemComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    if (this._tripEventsListConteiner.contains(prevTripEventItemComponent.getElement())) {
+    if (this._tripEventsListConteiner.getElement().contains(prevTripEventItemComponent.getElement())) {
       replace(this._tripEventItemComponent, prevTripEventItemComponent);
     }
 
-    if (this._tripEventsListConteiner.contains(prevTripEventItemEditComponent.getElement())) {
+    if (this._tripEventsListConteiner.getElement().contains(prevTripEventItemEditComponent.getElement())) {
       replace(this._tripEventItemEditComponent, prevTripEventItemEditComponent);
     }
 
@@ -63,8 +66,9 @@ export default class Event {
     this._replaceEventToForm();
   }
 
-  _handleFormSubmit() {
+  _handleFormSubmit(tripEvent) {
     this._replaceFormToEvent();
+    this._changeData(tripEvent);
   }
 
   _handleEcs(evt) {
@@ -73,6 +77,11 @@ export default class Event {
       this._replaceFormToEvent();
       document.removeEventListener(`keydown`, this._handleEcs);
     }
+  }
+  
+  _isFavouriteClick(evt) {
+    let updated = Object.assign({}, this._event, { isFavourite: evt }); // this._event.isFavourite = evt;
+    this._changeData(updated);
   }
 }
 
