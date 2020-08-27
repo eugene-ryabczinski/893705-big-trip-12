@@ -1,5 +1,5 @@
 import {SORT_TYPE} from '../const';
-import {renderElement, RenderPosition, replace} from '../utils/render';
+import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice} from '../utils/event';
 
 import Sort from '../view/sort';
@@ -9,6 +9,7 @@ import TripEventsList from '../view/trip-events-list';
 import TripEventItem from '../view/trip-event-Item';
 import TripEventItemEdit from '../view/trip-event-item-edit';
 import NoEvents from '../view/no-events';
+import Event from '../presenter/event';
 
 export default class Trip {
   constructor(tripEventsMainContainerElement) {
@@ -21,6 +22,8 @@ export default class Trip {
     this._tripEventItemEditComponent = new TripEventItemEdit();
     this._noEventsComponent = new NoEvents();
 
+    this._eventPresenter = {};
+
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
   }
 
@@ -31,9 +34,6 @@ export default class Trip {
     if (this._events) {
       this._renderSort();
     }
-
-    renderElement(this._tripEventsMainContainerElement, this._tripDaysListComponent, RenderPosition.BEFOREEND); // render main events container
-
     this._renderTrip(this._events);
   }
 
@@ -56,7 +56,11 @@ export default class Trip {
   }
 
   _clearEventList() {
-    this._tripDaysListComponent.getElement().innerHTML = ``;
+    Object.values(this._eventPresenter).forEach((presenter) => {
+      presenter.destroy();
+    });
+    this._eventPresenter = {};
+    removeCommponent(this._tripDaysListComponent); // оставить это здесь?
   }
 
   _renderSort() {
@@ -69,33 +73,13 @@ export default class Trip {
   }
 
   _renderEvent(eventsListElement, event) {
-    const eventComponent = new TripEventItem(event);
-    const eventEditComponent = new TripEventItemEdit(event);
-
-    const replaceEventToForm = () => replace(eventEditComponent, eventComponent);
-    const replaceFormToEvent = () => replace(eventComponent, eventEditComponent);
-
-    const onEsc = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToEvent();
-        document.removeEventListener(`keydown`, onEsc);
-      }
-    };
-
-    eventComponent.setRollupEventClickHandler(() => {
-      replaceEventToForm();
-      document.addEventListener(`keydown`, onEsc);
-    });
-
-    eventEditComponent.setFormSubmitHandler(() => {
-      replaceFormToEvent();
-    });
-
-    renderElement(eventsListElement, eventComponent, RenderPosition.BEFOREEND);
+    const eventPresenter = new Event(eventsListElement);
+    eventPresenter.init(event);
+    this._eventPresenter[event.id] = eventPresenter;
   }
 
   _renderEvents(dayDate, count, events) {
+    renderElement(this._tripEventsMainContainerElement, this._tripDaysListComponent, RenderPosition.BEFOREEND); // оставить это здесь?
     const tripDayItemComponent = new TripDayItem(dayDate, count);
     renderElement(this._tripDaysListComponent, tripDayItemComponent, RenderPosition.BEFOREEND);
 
@@ -103,7 +87,7 @@ export default class Trip {
     renderElement(tripDayItemComponent, tripEventsListComponent, RenderPosition.BEFOREEND);
 
     events.forEach((event) => {
-      this._renderEvent(tripEventsListComponent.getElement(), event);
+      this._renderEvent(tripEventsListComponent, event);
     });
   }
 

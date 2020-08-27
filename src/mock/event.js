@@ -1,4 +1,5 @@
 import {range, random} from '../utils/common';
+import {generateId} from '../utils/event';
 import {EVENT_TYPES, CITIES} from '../const';
 
 const generatEventType = () => {
@@ -129,6 +130,7 @@ export const generateEvent = () => {
   const cost = generateCost() + offersSum;
 
   return {
+    id: generateId(),
     type,
     destination: generateСities(),
     destinationInfo: {
