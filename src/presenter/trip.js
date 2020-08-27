@@ -1,6 +1,7 @@
 import {SORT_TYPE} from '../const';
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice} from '../utils/event';
+import {updateItem} from '../utils/common';
 
 import Sort from '../view/sort';
 import TripDaysList from '../view/trip-days-list';
@@ -25,6 +26,7 @@ export default class Trip {
     this._eventPresenter = {};
 
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
+    this._handleEventChange = this._handleEventChange.bind(this);
   }
 
   init(events) {
@@ -35,6 +37,11 @@ export default class Trip {
       this._renderSort();
     }
     this._renderTrip(this._events);
+  }
+
+  _handleEventChange(event) {
+    this.events = updateItem(event);
+    this._eventPresenter[event.id].init(event);
   }
 
   _sortChangeHandler(event) {
