@@ -2,7 +2,7 @@ import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '.
 import {isEqual, cloneDeep} from '../utils/common';
 import moment from 'moment';
 import Smart from './smart';
-import {generateOffers} from '../mock/event'; // стоит ли использовать тут?
+import {generateOffers, generateDescriptions} from '../mock/event'; // стоит ли использовать тут?
 
 const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -222,6 +222,7 @@ export default class TripEventItemEdit extends Smart {
     this._data = cloneDeep(this._event);
 
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
 
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
     this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
@@ -230,16 +231,20 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _setInnerHandlers() {
-
     const tripTypeRadio = this.getElement().querySelectorAll(`.event__type-input`);
     tripTypeRadio.forEach((element) => {
       element.addEventListener(`change`, this._eventTypeChangeHandler);
     });
+
+    const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
+    destinationSelector.addEventListener(`change`, this._destinationSelectorHandler);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
+
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFavouriteClickHandler(this._callback.favouriteClick);
   }
 
   _eventTypeChangeHandler(evt) {
@@ -259,6 +264,17 @@ export default class TripEventItemEdit extends Smart {
       type: updatedType,
       offers: typeOffers
     });
+  }
+
+  _destinationSelectorHandler(evt) {
+    const selectedCity = evt.target.value; // нужно асайнить?
+    const findIndex = CITIES.indexOf(selectedCity);
+    if (findIndex > -1) {
+      this.updateData({
+        destination: selectedCity,
+        destinationInfo: generateDescriptions().get(selectedCity)
+      });
+    }
   }
 
   updateElement() {
@@ -293,12 +309,12 @@ export default class TripEventItemEdit extends Smart {
 
   _formSubmitClickHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._event); // должны отправить event или data?
+    this._callback.formSubmit(this._data); // должны отправить event или data?
   }
 
   _isFavouriteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.favouriteClick(evt.target.checked); // 3. in handler run callback function
+    this._callback.favouriteClick(evt.target.checked, this._data); // 3. in handler run callback function; should we pass en entire data obj?
   }
 
   setFormSubmitHandler(callback) {

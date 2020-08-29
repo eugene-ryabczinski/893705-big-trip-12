@@ -79,8 +79,8 @@ export default class Event {
     }
   }
 
-  _isFavouriteClick(evt) {
-    let updated = Object.assign({}, this._event, {isFavourite: evt}); // this._event.isFavourite = evt;
+  _isFavouriteClick(evt, data) { // should we pass en entire data obj?
+    let updated = Object.assign({}, data, {isFavourite: evt}); // this._event.isFavourite = evt;
     this._changeData(updated);
   }
 }

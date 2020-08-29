@@ -108,7 +108,7 @@ export const generateOffers = () => {
   return offersMap;
 };
 
-const generateDescriptions = () => {
+export const generateDescriptions = () => {
   const descr = CITIES.map((city) => {
     return {
       [city]: {
