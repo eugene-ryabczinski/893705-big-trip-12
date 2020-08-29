@@ -249,6 +249,10 @@ export default class TripEventItemEdit extends Smart {
 
   _eventTypeChangeHandler(evt) {
     const updatedType = evt.target.value;
+    const findEventTypeIndex = EVENT_TYPES
+      .map((eventType) => eventType.toLowerCase())
+      .indexOf(updatedType);
+
     const AllOffers = generateOffers(); // ?
     const typeOffers = [];
 
@@ -261,9 +265,13 @@ export default class TripEventItemEdit extends Smart {
     }
 
     this.updateData({
-      type: updatedType,
+      type: EVENT_TYPES[findEventTypeIndex],
       offers: typeOffers
     });
+  }
+
+  reset(event) {
+    this.updateData(event)
   }
 
   _destinationSelectorHandler(evt) {
@@ -275,32 +283,6 @@ export default class TripEventItemEdit extends Smart {
         destinationInfo: generateDescriptions().get(selectedCity)
       });
     }
-  }
-
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
-    this.restoreHandlers();
-  }
-
-  updateData(update) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-
-    this.updateElement();
   }
 
   getTemplate() {

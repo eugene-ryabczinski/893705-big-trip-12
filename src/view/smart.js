@@ -9,7 +9,29 @@ export default class Smart extends AbstractView {
     throw new Error(`Abstract method not implemented: restoreHandlers`);
   }
 
-  updateElement() {}
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
 
-  updateData() {}
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null;
+    this.restoreHandlers();
+  }
+
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+
+    this.updateElement();
+  }
 }

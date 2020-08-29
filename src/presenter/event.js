@@ -2,10 +2,17 @@ import {renderElement, RenderPosition, replace, removeCommponent} from '../utils
 import TripEventItem from '../view/trip-event-Item';
 import TripEventItemEdit from '../view/trip-event-item-edit';
 
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`
+};
+
 export default class Event {
-  constructor(tripEventsListContainer, changeData) {
+  constructor(tripEventsListContainer, changeData, changeMode) {
     this._tripEventsListConteiner = tripEventsListContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
+    this._mode = Mode.DEFAULT;
 
     this._tripEventItemComponent = null;
     this._tripEventItemEditComponent = null;
@@ -34,16 +41,22 @@ export default class Event {
       return;
     }
 
-    if (this._tripEventsListConteiner.getElement().contains(prevTripEventItemComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._tripEventItemComponent, prevTripEventItemComponent);
     }
 
-    if (this._tripEventsListConteiner.getElement().contains(prevTripEventItemEditComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       replace(this._tripEventItemEditComponent, prevTripEventItemEditComponent);
     }
 
     removeCommponent(prevTripEventItemComponent);
     removeCommponent(prevTripEventItemEditComponent);
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToEvent();
+    }
   }
 
   destroy() {
@@ -55,11 +68,14 @@ export default class Event {
   _replaceEventToForm() {
     replace(this._tripEventItemEditComponent, this._tripEventItemComponent);
     document.addEventListener(`keydown`, this._handleEcs);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceFormToEvent() {
     replace(this._tripEventItemComponent, this._tripEventItemEditComponent);
     document.removeEventListener(`keydown`, this._handleEcs);
+    this._mode = Mode.DEFAULT;
   }
 
   _handleRollupClick() {
@@ -74,6 +90,7 @@ export default class Event {
   _handleEcs(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
+      this._tripEventItemEditComponent.reset(this._event);
       this._replaceFormToEvent();
       document.removeEventListener(`keydown`, this._handleEcs);
     }
