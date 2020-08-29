@@ -2,7 +2,7 @@ import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '.
 import {isEqual, cloneDeep} from '../utils/common';
 import moment from 'moment';
 import Smart from './smart';
-import {generateOffers, generateDescriptions} from '../mock/event'; // стоит ли использовать тут?
+import {generateOffers, generateDescriptions} from '../mock/event';
 
 const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -272,7 +272,7 @@ export default class TripEventItemEdit extends Smart {
       .map((eventType) => eventType.toLowerCase())
       .indexOf(updatedType);
 
-    const AllOffers = generateOffers(); // ?
+    const AllOffers = generateOffers();
     const typeOffers = [];
 
     const findOfferIndex = Array.from(AllOffers.keys())
@@ -294,7 +294,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _destinationSelectorHandler(evt) {
-    const selectedCity = evt.target.value; // нужно асайнить?
+    const selectedCity = evt.target.value;
     const findIndex = CITIES.indexOf(selectedCity);
     if (findIndex > -1) {
       this.updateData({
@@ -310,12 +310,12 @@ export default class TripEventItemEdit extends Smart {
 
   _formSubmitClickHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._data); // должны отправить event или data?
+    this._callback.formSubmit(this._data);
   }
 
   _isFavouriteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.favouriteClick(evt.target.checked, this._data); // 3. in handler run callback function; should we pass en entire data obj?
+    this._callback.favouriteClick(evt.target.checked, this._data);
   }
 
   setFormSubmitHandler(callback) {
@@ -324,7 +324,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   setFavouriteClickHandler(callback) {
-    this._callback.favouriteClick = callback; // 1. write callback here
-    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._isFavouriteClickHandler); // 2. add handler
+    this._callback.favouriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._isFavouriteClickHandler);
   }
 }
