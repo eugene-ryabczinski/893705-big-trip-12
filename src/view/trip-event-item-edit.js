@@ -1,7 +1,8 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
-import {isEqual} from '../utils/common';
+import {isEqual, cloneDeep} from '../utils/common';
 import moment from 'moment';
-import AbstractView from './abstract-view';
+import Smart from './smart';
+import {generateOffers} from '../mock/event'; // стоит ли использовать тут?
 
 const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -137,7 +138,7 @@ const createDestinationList = () => {
   }).join(` `);
 };
 
-export const createTripEventItemEditTemplate = (event = {}) => {
+export const createTripEventItemEditTemplate = (data = {}) => {
   const {
     type,
     destination,
@@ -147,7 +148,7 @@ export const createTripEventItemEditTemplate = (event = {}) => {
     startDate,
     endDate,
     isFavourite,
-  } = event;
+  } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
   const eventDetailsTemplate = createEventDetailsTemplate(offers, destinationInfo);
@@ -156,7 +157,7 @@ export const createTripEventItemEditTemplate = (event = {}) => {
   const endDateFormated = endDate ? moment(endDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
 
   const placeholder = () => {
-    return EVENT_ACTIVITIES_LIST.includes(type) ? `${type} in` : `${type} to`;
+    return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
   };
 
   const isNewEvent = () => isEqual(event, NEW_EVENT);
@@ -213,22 +214,86 @@ export const createTripEventItemEditTemplate = (event = {}) => {
   );
 };
 
-export default class TripEventItemEdit extends AbstractView {
+export default class TripEventItemEdit extends Smart {
   constructor(event) {
     super();
     this._event = event || NEW_EVENT;
 
+    this._data = cloneDeep(this._event);
+
+    this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
     this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  _setInnerHandlers() {
+
+    const tripTypeRadio = this.getElement().querySelectorAll(`.event__type-input`);
+    tripTypeRadio.forEach((element) => {
+      element.addEventListener(`change`, this._eventTypeChangeHandler);
+    });
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _eventTypeChangeHandler(evt) {
+    const updatedType = evt.target.value;
+    const AllOffers = generateOffers(); // ?
+    const typeOffers = [];
+
+    const findOfferIndex = Array.from(AllOffers.keys())
+      .map((offerType) => offerType.toLowerCase())
+      .indexOf(updatedType);
+
+    if (findOfferIndex > -1) {
+      typeOffers.push(...AllOffers.get(Array.from(AllOffers.keys())[findOfferIndex]));
+    }
+
+    this.updateData({
+      type: updatedType,
+      offers: typeOffers
+    });
+  }
+
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
+    this.restoreHandlers();
+  }
+
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+
+    this.updateElement();
   }
 
   getTemplate() {
-    return createTripEventItemEditTemplate(this._event);
+    return createTripEventItemEditTemplate(this._data);
   }
 
   _formSubmitClickHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._event);
+    this._callback.formSubmit(this._event); // должны отправить event или data?
   }
 
   _isFavouriteClickHandler(evt) {

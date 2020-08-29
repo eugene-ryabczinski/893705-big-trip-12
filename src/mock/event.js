@@ -73,7 +73,7 @@ const generateEndDate = (startDate) => {
   return endDate;
 };
 
-const generateOffers = () => {
+export const generateOffers = () => {
   const offersMap = new Map();
 
   offersMap

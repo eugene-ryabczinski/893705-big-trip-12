@@ -13,7 +13,7 @@ export default class Event {
     this._handleRollupClick = this._handleRollupClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleEcs = this._handleEcs.bind(this);
-    this._isFavouriteClick = this._isFavouriteClick.bind(this)
+    this._isFavouriteClick = this._isFavouriteClick.bind(this);
   }
 
   init(event) {
@@ -27,7 +27,7 @@ export default class Event {
 
     this._tripEventItemComponent.setRollupEventClickHandler(this._handleRollupClick);
     this._tripEventItemEditComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._tripEventItemEditComponent.setFavouriteClickHandler(this._isFavouriteClick)
+    this._tripEventItemEditComponent.setFavouriteClickHandler(this._isFavouriteClick);
 
     if (prevTripEventItemComponent === null || prevTripEventItemEditComponent === null) {
       renderElement(this._tripEventsListConteiner.getElement(), this._tripEventItemComponent, RenderPosition.BEFOREEND);
@@ -78,9 +78,9 @@ export default class Event {
       document.removeEventListener(`keydown`, this._handleEcs);
     }
   }
-  
+
   _isFavouriteClick(evt) {
-    let updated = Object.assign({}, this._event, { isFavourite: evt }); // this._event.isFavourite = evt;
+    let updated = Object.assign({}, this._event, {isFavourite: evt}); // this._event.isFavourite = evt;
     this._changeData(updated);
   }
 }
