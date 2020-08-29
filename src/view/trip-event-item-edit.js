@@ -256,19 +256,13 @@ export default class TripEventItemEdit extends Smart {
 
   _offersSelectorHandler(evt) {
     const offerName = evt.target.value.replace(/_/g, ` `);
-    const updatedOffer = this._data.offers
-      .filter((offer) => {
-        return offer.name.toLowerCase() === offerName;
-      })
-      .map((item) => {
-        return {
-          ...item,
-          isChecked: evt.target.checked
-        };
-      });
+    const findIndex = this._data.offers.map((offer) => offer.name.toLowerCase()).indexOf(offerName);
+    const updatedOffers = cloneDeep(this._data.offers);
+
+    updatedOffers[findIndex].isChecked = evt.target.checked;
 
     this.updateData({
-      offers: updatedOffer
+      offers: updatedOffers
     }, true);
   }
 
