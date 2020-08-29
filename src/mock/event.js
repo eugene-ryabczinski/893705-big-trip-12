@@ -108,6 +108,23 @@ export const generateOffers = () => {
   return offersMap;
 };
 
+const generateDescriptions = () => {
+  const descr = CITIES.map((city) => {
+    return {
+      [city]: {
+        description: generatDestinationDescription(),
+        pictures: generateDestinationPictures()
+      }
+    };
+  });
+
+  const descriptionsMap = new Map(descr.map((item) => {
+    return [Object.keys(item)[0], Object.values(item)[0]];
+  }));
+
+  return descriptionsMap;
+};
+
 export const generateEvent = () => {
   const type = generatEventType();
 
@@ -128,15 +145,13 @@ export const generateEvent = () => {
   }, 0);
 
   const cost = generateCost() + offersSum;
+  const destination = generateСities();
 
   return {
     id: generateId(),
     type,
-    destination: generateСities(),
-    destinationInfo: {
-      description: generatDestinationDescription(),
-      pictures: generateDestinationPictures()
-    },
+    destination,
+    destinationInfo: generateDescriptions().get(destination),
     cost,
     offers,
     startDate,
