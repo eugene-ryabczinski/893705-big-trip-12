@@ -11,7 +11,7 @@ import HeaderTripInfo from './view/header-trip-info';
 
 import Trip from './presenter/trip';
 
-const EVENT_COUNT = 10;
+const EVENT_COUNT = 1;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 const groupedByDay = groupEventsByDay(events);
 const tripInfo = getTripInfo(groupedByDay);

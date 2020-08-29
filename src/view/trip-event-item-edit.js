@@ -22,11 +22,11 @@ const createOffersSelectorTemplate = (offers) => {
 
   const createOffersSelectorList = () => {
     return offers.map(({name, cost, isChecked}) => {
-      const attributeName = name.toLowerCase().replace(/ /g, `_`);
+      const offerName = name.toLowerCase().replace(/ /g, `_`);
       return (
         `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${attributeName}" type="checkbox" name="event-offer-${attributeName}" ${isChecked ? `checked` : ``}>
-          <label class="event__offer-label" for="event-offer-${attributeName}>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerName}" type="checkbox" name="event-offer-${offerName}" ${isChecked ? `checked` : ``} value="${offerName}">
+          <label class="event__offer-label" for="event-offer-${offerName}">
             <span class="event__offer-title">${name}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${cost}</span>
@@ -223,6 +223,7 @@ export default class TripEventItemEdit extends Smart {
 
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
+    this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
 
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
     this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
@@ -238,6 +239,12 @@ export default class TripEventItemEdit extends Smart {
 
     const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
     destinationSelector.addEventListener(`change`, this._destinationSelectorHandler);
+
+    const offersCheckboxes = this.getElement().querySelectorAll(`.event__offer-checkbox`);
+    offersCheckboxes.forEach((element) => {
+
+      element.addEventListener(`change`, this._offersSelectorHandler);
+    });
   }
 
   restoreHandlers() {
@@ -245,6 +252,24 @@ export default class TripEventItemEdit extends Smart {
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavouriteClickHandler(this._callback.favouriteClick);
+  }
+
+  _offersSelectorHandler(evt) {
+    const offerName = evt.target.value.replace(/_/g, ` `);
+    const updatedOffer = this._data.offers
+      .filter((offer) => {
+        return offer.name.toLowerCase() === offerName;
+      })
+      .map((item) => {
+        return {
+          ...item,
+          isChecked: evt.target.checked
+        };
+      });
+
+    this.updateData({
+      offers: updatedOffer
+    }, true);
   }
 
   _eventTypeChangeHandler(evt) {
@@ -271,7 +296,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   reset(event) {
-    this.updateData(event)
+    this.updateData(event);
   }
 
   _destinationSelectorHandler(evt) {

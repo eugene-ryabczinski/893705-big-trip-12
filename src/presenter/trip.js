@@ -44,8 +44,8 @@ export default class Trip {
     Object
       .values(this._eventPresenter)
       .forEach((presenter) => {
-        presenter.resetView()
-      })
+        presenter.resetView();
+      });
   }
 
   _handleEventChange(event) {
