@@ -76,7 +76,7 @@ export default class Trip {
       presenter.destroy();
     });
     this._eventPresenter = {};
-    removeCommponent(this._tripDaysListComponent); // оставить это здесь?
+    removeCommponent(this._tripDaysListComponent);
   }
 
   _renderSort() {
@@ -95,7 +95,7 @@ export default class Trip {
   }
 
   _renderEvents(dayDate, count, events) {
-    renderElement(this._tripEventsMainContainerElement, this._tripDaysListComponent, RenderPosition.BEFOREEND); // оставить это здесь?
+    renderElement(this._tripEventsMainContainerElement, this._tripDaysListComponent, RenderPosition.BEFOREEND);
     const tripDayItemComponent = new TripDayItem(dayDate, count);
     renderElement(this._tripDaysListComponent, tripDayItemComponent, RenderPosition.BEFOREEND);
 
