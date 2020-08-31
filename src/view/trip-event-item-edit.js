@@ -227,6 +227,7 @@ export default class TripEventItemEdit extends Smart {
 
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
     this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -252,6 +253,7 @@ export default class TripEventItemEdit extends Smart {
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavouriteClickHandler(this._callback.favouriteClick);
+    this.setDeleteClickHandle(this._callback.deleteClick);
   }
 
   _offersSelectorHandler(evt) {
@@ -318,6 +320,11 @@ export default class TripEventItemEdit extends Smart {
     this._callback.favouriteClick(evt.target.checked, this._data);
   }
 
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(this._data);
+  }
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitClickHandler);
@@ -326,5 +333,10 @@ export default class TripEventItemEdit extends Smart {
   setFavouriteClickHandler(callback) {
     this._callback.favouriteClick = callback;
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._isFavouriteClickHandler);
+  }
+
+  setDeleteClickHandle(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
   }
 }

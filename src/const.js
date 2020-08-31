@@ -10,3 +10,15 @@ export const SORT_TYPE = {
   TIME: `sort-time`
 };
 
+export const USER_ACTION = {
+  UPDATE_EVENT: `UPDATE_EVENT`,
+  ADD_EVENT: `ADD_EVENT`,
+  DELETE_EVENT: `DELETE_EVENT`
+};
+
+export const UPDATE_TYPE = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+

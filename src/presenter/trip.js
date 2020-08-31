@@ -1,4 +1,4 @@
-import {SORT_TYPE} from '../const';
+import {SORT_TYPE, USER_ACTION, UPDATE_TYPE} from '../const';
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice} from '../utils/event';
 import {updateItem} from '../utils/common';
@@ -29,8 +29,14 @@ export default class Trip {
     this._currentSortType = SORT_TYPE.EVENT;
 
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
-    this._handleEventChange = this._handleEventChange.bind(this);
+    // this._handleEventChange = this._handleEventChange.bind(this);
+
     this._handleModeChange = this._handleModeChange.bind(this);
+
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    this._eventsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -56,9 +62,39 @@ export default class Trip {
       });
   }
 
-  _handleEventChange(event) {
+  _handleViewAction(actionType, updateType, updatedEvent) {
+    // debugger
+    console.log(actionType, updateType, updatedEvent);
+    switch (actionType) {
+      case USER_ACTION.UPDATE_EVENT:
+        this._eventsModel.updateEvents(updateType, updatedEvent);
+        break;
+      case USER_ACTION.ADD_EVENT:
+        this._eventsModel.addEvent(updateType, updatedEvent);
+        break;
+      case USER_ACTION.DELETE_EVENT:
+        this._eventsModel.deleteEvent(updateType, updatedEvent);
+        break;
+    }
+
     // this._events = updateItem(this._events, event);
-    this._eventPresenter[event.id].init(event);
+    // this._eventPresenter[event.id].init(event);
+  }
+
+  _handleModelEvent(updateType, data) {
+    // debugger
+    console.log(updateType, data);
+    switch (updateType) {
+      case UPDATE_TYPE.PATCH:
+        this._eventPresenter[data.id].init(data);
+        break;
+      case UPDATE_TYPE.MINOR:
+        this._clearEventList();
+        this._renderTrip();
+        break;
+      case UPDATE_TYPE.MAJOR:
+        break;
+    }
   }
 
   _sortChangeHandler(event) {
@@ -85,7 +121,8 @@ export default class Trip {
   }
 
   _renderEvent(eventsListElement, event) {
-    const eventPresenter = new Event(eventsListElement, this._handleEventChange, this._handleModeChange);
+    // const eventPresenter = new Event(eventsListElement, this._handleEventChange, this._handleModeChange);
+    const eventPresenter = new Event(eventsListElement, this._handleViewAction, this._handleModeChange);
     eventPresenter.init(event);
     this._eventPresenter[event.id] = eventPresenter;
   }
@@ -110,6 +147,7 @@ export default class Trip {
   }
 
   _renderTrip() {
+    // debugger
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
     const eventsGroupedByDay = groupEventsByDay(events);
 

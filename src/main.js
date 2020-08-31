@@ -11,7 +11,7 @@ import HeaderTripInfo from './view/header-trip-info';
 
 import Trip from './presenter/trip';
 
-import EventsModel from './models/tasks'
+import EventsModel from './models/event';
 
 const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
