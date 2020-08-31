@@ -1,4 +1,5 @@
 import {range, random} from '../utils/common';
+import {generateId} from '../utils/event';
 import {EVENT_TYPES, CITIES} from '../const';
 
 const generatEventType = () => {
@@ -72,7 +73,7 @@ const generateEndDate = (startDate) => {
   return endDate;
 };
 
-const generateOffers = () => {
+export const generateOffers = () => {
   const offersMap = new Map();
 
   offersMap
@@ -107,6 +108,23 @@ const generateOffers = () => {
   return offersMap;
 };
 
+export const generateDescriptions = () => {
+  const descr = CITIES.map((city) => {
+    return {
+      [city]: {
+        description: generatDestinationDescription(),
+        pictures: generateDestinationPictures()
+      }
+    };
+  });
+
+  const descriptionsMap = new Map(descr.map((item) => {
+    return [Object.keys(item)[0], Object.values(item)[0]];
+  }));
+
+  return descriptionsMap;
+};
+
 export const generateEvent = () => {
   const type = generatEventType();
 
@@ -127,14 +145,13 @@ export const generateEvent = () => {
   }, 0);
 
   const cost = generateCost() + offersSum;
+  const destination = generateСities();
 
   return {
+    id: generateId(),
     type,
-    destination: generateСities(),
-    destinationInfo: {
-      description: generatDestinationDescription(),
-      pictures: generateDestinationPictures()
-    },
+    destination,
+    destinationInfo: generateDescriptions().get(destination),
     cost,
     offers,
     startDate,

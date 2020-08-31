@@ -1,7 +1,8 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
-import {isEqual} from '../utils/common';
+import {isEqual, cloneDeep} from '../utils/common';
 import moment from 'moment';
-import AbstractView from './abstract-view';
+import Smart from './smart';
+import {generateOffers, generateDescriptions} from '../mock/event';
 
 const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -11,6 +12,7 @@ const NEW_EVENT = {
   offers: [],
   startDate: null,
   endDate: null,
+  isFavourite: false
 };
 
 const createOffersSelectorTemplate = (offers) => {
@@ -20,11 +22,11 @@ const createOffersSelectorTemplate = (offers) => {
 
   const createOffersSelectorList = () => {
     return offers.map(({name, cost, isChecked}) => {
-      const attributeName = name.toLowerCase().replace(/ /g, `_`);
+      const offerName = name.toLowerCase().replace(/ /g, `_`);
       return (
         `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${attributeName}" type="checkbox" name="event-offer-${attributeName}" ${isChecked ? `checked` : ``}>
-          <label class="event__offer-label" for="event-offer-${attributeName}>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerName}" type="checkbox" name="event-offer-${offerName}" ${isChecked ? `checked` : ``} value="${offerName}">
+          <label class="event__offer-label" for="event-offer-${offerName}">
             <span class="event__offer-title">${name}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${cost}</span>
@@ -136,7 +138,7 @@ const createDestinationList = () => {
   }).join(` `);
 };
 
-export const createTripEventItemEditTemplate = (event = {}) => {
+export const createTripEventItemEditTemplate = (data = {}) => {
   const {
     type,
     destination,
@@ -145,7 +147,8 @@ export const createTripEventItemEditTemplate = (event = {}) => {
     offers,
     startDate,
     endDate,
-  } = event;
+    isFavourite,
+  } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
   const eventDetailsTemplate = createEventDetailsTemplate(offers, destinationInfo);
@@ -154,7 +157,7 @@ export const createTripEventItemEditTemplate = (event = {}) => {
   const endDateFormated = endDate ? moment(endDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
 
   const placeholder = () => {
-    return EVENT_ACTIVITIES_LIST.includes(type) ? `${type} in` : `${type} to`;
+    return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
   };
 
   const isNewEvent = () => isEqual(event, NEW_EVENT);
@@ -194,6 +197,14 @@ export const createTripEventItemEditTemplate = (event = {}) => {
         </label>
         <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${cost}">
       </div>
+      
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
+      <label class="event__favorite-btn ${isNewEvent() ? `visually-hidden` : ``}" for="event-favorite-1">
+        <span class="visually-hidden">Add to favorite</span>
+        <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+          <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+        </svg>
+      </label>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       ${isNewEvent() ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`} 
@@ -203,25 +214,117 @@ export const createTripEventItemEditTemplate = (event = {}) => {
   );
 };
 
-export default class TripEventItemEdit extends AbstractView {
+export default class TripEventItemEdit extends Smart {
   constructor(event) {
     super();
     this._event = event || NEW_EVENT;
 
+    this._data = cloneDeep(this._event);
+
+    this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
+    this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
+
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
+    this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  _setInnerHandlers() {
+    const tripTypeRadio = this.getElement().querySelectorAll(`.event__type-input`);
+    tripTypeRadio.forEach((element) => {
+      element.addEventListener(`change`, this._eventTypeChangeHandler);
+    });
+
+    const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
+    destinationSelector.addEventListener(`change`, this._destinationSelectorHandler);
+
+    const offersCheckboxes = this.getElement().querySelectorAll(`.event__offer-checkbox`);
+    offersCheckboxes.forEach((element) => {
+
+      element.addEventListener(`change`, this._offersSelectorHandler);
+    });
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFavouriteClickHandler(this._callback.favouriteClick);
+  }
+
+  _offersSelectorHandler(evt) {
+    const offerName = evt.target.value.replace(/_/g, ` `);
+    const findIndex = this._data.offers.map((offer) => offer.name.toLowerCase()).indexOf(offerName);
+    const updatedOffers = cloneDeep(this._data.offers);
+
+    updatedOffers[findIndex].isChecked = evt.target.checked;
+
+    this.updateData({
+      offers: updatedOffers
+    }, true);
+  }
+
+  _eventTypeChangeHandler(evt) {
+    const updatedType = evt.target.value;
+    const findEventTypeIndex = EVENT_TYPES
+      .map((eventType) => eventType.toLowerCase())
+      .indexOf(updatedType);
+
+    const AllOffers = generateOffers();
+    const typeOffers = [];
+
+    const findOfferIndex = Array.from(AllOffers.keys())
+      .map((offerType) => offerType.toLowerCase())
+      .indexOf(updatedType);
+
+    if (findOfferIndex > -1) {
+      typeOffers.push(...AllOffers.get(Array.from(AllOffers.keys())[findOfferIndex]));
+    }
+
+    this.updateData({
+      type: EVENT_TYPES[findEventTypeIndex],
+      offers: typeOffers
+    });
+  }
+
+  reset(event) {
+    this.updateData(event);
+  }
+
+  _destinationSelectorHandler(evt) {
+    const selectedCity = evt.target.value;
+    const findIndex = CITIES.indexOf(selectedCity);
+    if (findIndex > -1) {
+      this.updateData({
+        destination: selectedCity,
+        destinationInfo: generateDescriptions().get(selectedCity)
+      });
+    }
   }
 
   getTemplate() {
-    return createTripEventItemEditTemplate(this._event);
+    return createTripEventItemEditTemplate(this._data);
   }
 
   _formSubmitClickHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._data);
+  }
+
+  _isFavouriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favouriteClick(evt.target.checked, this._data);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitClickHandler);
+  }
+
+  setFavouriteClickHandler(callback) {
+    this._callback.favouriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._isFavouriteClickHandler);
   }
 }

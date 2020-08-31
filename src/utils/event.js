@@ -42,3 +42,7 @@ export const sortByDuration = (dayA, dayB) => {
 export const sortByPrice = (dayA, dayB) => {
   return dayB.cost - dayA.cost;
 };
+
+export const generateId = () => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
