@@ -42,4 +42,4 @@ renderElement(tripControsMakrsElementsArray[1], new Filter(), RenderPosition.AFT
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
 
-new Trip(tripEventsContainerElement, eventsModel).init(events);
+new Trip(tripEventsContainerElement, eventsModel).init();

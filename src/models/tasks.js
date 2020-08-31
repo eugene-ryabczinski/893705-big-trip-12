@@ -2,7 +2,7 @@ import Observer from '../utils/observer';
 
 export default class EventsModel extends Observer {
   constructor() {
-    super()
+    super();
     this._events = [];
   }
 

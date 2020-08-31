@@ -26,24 +26,26 @@ export default class Trip {
     this._noEventsComponent = new NoEvents();
 
     this._eventPresenter = {};
+    this._currentSortType = SORT_TYPE.EVENT;
 
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
   }
 
-  init(events) {
-    this._events = events.slice();
-    this._eventsGroupedByDay = groupEventsByDay(this._events);
-
-    if (this._events) {
-      this._renderSort();
-    }
-    this._renderTrip(this._events);
+  init() {
+    this._renderTrip();
   }
 
   _getEvents() {
-    return  this._eventsModel.getEvents();
+    switch (this._currentSortType) {
+      case SORT_TYPE.EVENT:
+        return this._eventsModel.getEvents();
+      case SORT_TYPE.TIME:
+        return this._eventsModel.getEvents().slice().sort(sortByDuration);
+      case SORT_TYPE.PRICE:
+        return this._eventsModel.getEvents().slice().sort(sortByPrice);
+    }
   }
 
   _handleModeChange() {
@@ -55,26 +57,14 @@ export default class Trip {
   }
 
   _handleEventChange(event) {
-    this._events = updateItem(this._events, event);
+    // this._events = updateItem(this._events, event);
     this._eventPresenter[event.id].init(event);
   }
 
   _sortChangeHandler(event) {
+    this._currentSortType = event;
     this._clearEventList();
-
-    switch (event) {
-      case SORT_TYPE.EVENT:
-        this._renderEventsByDay(this._eventsGroupedByDay);
-        break;
-      case SORT_TYPE.TIME:
-        this._events.sort(sortByDuration);
-        this._renderEvents(null, 0, this._events);
-        break;
-      case SORT_TYPE.PRICE:
-        this._events.sort(sortByPrice);
-        this._renderEvents(null, 0, this._events);
-        break;
-    }
+    this._renderTrip();
   }
 
   _clearEventList() {
@@ -119,11 +109,26 @@ export default class Trip {
     });
   }
 
-  _renderTrip(events) {
+  _renderTrip() {
+    const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
+    const eventsGroupedByDay = groupEventsByDay(events);
+
     if (events.length === 0) {
       this._renderNoEvents();
-    } else {
-      this._renderEventsByDay(this._eventsGroupedByDay);
+      return;
+    }
+
+    if (events.length > 0) {
+      this._renderSort();
+
+      // два метода рендера - _renderEventsByDay, _renderEvents. используют разный source (сгруппированный по дням, обычнй массив)
+      // сделаеть проверку на _currentSortType чтобы в сорт хендлере можно было перевызывать _renderTrip
+      if (this._currentSortType === SORT_TYPE.EVENT) {
+        this._renderEventsByDay(eventsGroupedByDay);
+        return;
+      }
+
+      this._renderEvents(null, 0, events); // базовый рендер точек маршрута, когда нет группировок по дням.
     }
   }
 }
