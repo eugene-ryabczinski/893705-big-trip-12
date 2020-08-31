@@ -13,8 +13,10 @@ import NoEvents from '../view/no-events';
 import Event from '../presenter/event';
 
 export default class Trip {
-  constructor(tripEventsMainContainerElement) {
+  constructor(tripEventsMainContainerElement, eventsModel) {
     this._tripEventsMainContainerElement = tripEventsMainContainerElement;
+
+    this._eventsModel = eventsModel;
 
     this._sortComponent = new Sort();
     this._tripDaysListComponent = new TripDaysList();
@@ -38,6 +40,10 @@ export default class Trip {
       this._renderSort();
     }
     this._renderTrip(this._events);
+  }
+
+  _getEvents() {
+    return  this._eventsModel.getEvents();
   }
 
   _handleModeChange() {
