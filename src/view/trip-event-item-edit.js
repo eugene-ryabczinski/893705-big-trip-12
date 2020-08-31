@@ -220,6 +220,7 @@ export default class TripEventItemEdit extends Smart {
     this._event = event || NEW_EVENT;
 
     this._data = cloneDeep(this._event);
+    // this._cost = this._data.cost; // вспомогательная переменная, чтобы не обновлять данные напрямую, а реализовать обновленеи по кнопке save?
 
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
@@ -227,6 +228,7 @@ export default class TripEventItemEdit extends Smart {
 
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
     this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
@@ -241,9 +243,11 @@ export default class TripEventItemEdit extends Smart {
     const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
     destinationSelector.addEventListener(`change`, this._destinationSelectorHandler);
 
+    const priceInput = this.getElement().querySelector(`.event__input--price`);
+    priceInput.addEventListener(`input`, this._priceInputHandler);
+
     const offersCheckboxes = this.getElement().querySelectorAll(`.event__offer-checkbox`);
     offersCheckboxes.forEach((element) => {
-
       element.addEventListener(`change`, this._offersSelectorHandler);
     });
   }
@@ -304,6 +308,11 @@ export default class TripEventItemEdit extends Smart {
         destinationInfo: generateDescriptions().get(selectedCity)
       });
     }
+  }
+
+  _priceInputHandler(evt) {
+    // пока не нравится идея писать сразу в дату
+    this._data.cost = evt.target.value;
   }
 
   getTemplate() {

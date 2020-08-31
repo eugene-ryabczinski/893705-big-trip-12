@@ -86,13 +86,19 @@ export default class Event {
   }
 
   _handleFormSubmit(tripEvent) {
+    let updateType = UPDATE_TYPE.PATCH;
+
+    if (this._isCostChanged(tripEvent.cost)) {
+      updateType = UPDATE_TYPE.MINOR;
+    }
+
     this._replaceFormToEvent();
     this._changeData(
       USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.PATCH,
+      updateType,
       tripEvent
     );
-    }
+  }
 
   _handleEventDeleteClick(tripEvent) {
     this._changeData(
@@ -101,6 +107,16 @@ export default class Event {
       tripEvent
     );
   }
+
+  _isCostChanged(cost) { // если цена поменялась – делай ререндер все ивентов т.е. может быть активна сортировка по цене? возможно есть способ сравнения получше
+    if (this._event.cost !== cost) {
+      return true;
+    }
+    return false;
+  }
+
+  // _checkPriceValidity(cost) { // стоит добавить простую валидацию?
+  // }
 
   _handleEcs(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {

@@ -1,6 +1,6 @@
-import {groupBy, range, isEqual, random, cloneDeep} from 'lodash';
+import {groupBy, range, isEqual, random, cloneDeep, isNumber} from 'lodash';
 
-export {groupBy, range, isEqual, random, cloneDeep};
+export {groupBy, range, isEqual, random, cloneDeep, isNumber};
 
 export const updateItem = (source, updatedItem) => {
   const index = source.findIndex((item) => item.id === updatedItem.id);
