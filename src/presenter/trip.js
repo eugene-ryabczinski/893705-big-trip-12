@@ -1,4 +1,4 @@
-import {SORT_TYPE, USER_ACTION, UPDATE_TYPE} from '../const';
+import {SORT_TYPE, USER_ACTION, UPDATE_TYPE, FILTER_TYPE} from '../const';
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice, filter} from '../utils/event';
 import {updateItem} from '../utils/common';
@@ -11,6 +11,7 @@ import TripEventItem from '../view/trip-event-Item';
 import TripEventItemEdit from '../view/trip-event-item-edit';
 import NoEvents from '../view/no-events';
 import Event from '../presenter/event';
+import EventNew from '../presenter/eventNew';
 
 export default class TripPresenter {
   constructor(tripEventsMainContainerElement, eventsModel, filterModel) {
@@ -39,14 +40,20 @@ export default class TripPresenter {
 
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._test);
-    this._filterModel.addObserver(this._test2);
-    this._filterModel.addObserver(this._test3);
-    this._eventsModel.addObserver(this._test88);
+
+    this._newEventPresenter = new EventNew(this._tripDaysListComponent, this._handleViewAction);
+    this.a = 10;
   }
 
   init() {
     this._renderTrip();
+  }
+  
+  addNewEvent() {
+    this._currentSortType = SORT_TYPE.EVENT; // reset
+    this._filterModel.setFilter(UPDATE_TYPE.MINOR, FILTER_TYPE.EVERYTHING); // reset
+    this._newEventPresenter.init();
+    // this.
   }
 
   _getEvents() { // почему вся логика в getTasks?
@@ -90,7 +97,8 @@ export default class TripPresenter {
     // this._eventPresenter[event.id].init(event);
   }
 
-  _handleModelEvent(updateType, data) { //check what this for. relate with _handleViewAction? сабскрайб на изменение модели => перерисовываем ивент или весь лист
+  // сабскрайб на изменение модели => перерисовываем ивент или весь лист
+  _handleModelEvent(updateType, data) { //check what this for. relate with _handleViewAction?
     switch (updateType) {
       case UPDATE_TYPE.PATCH: // обновить только одну точку маршрута
         this._eventPresenter[data.id].init(data);

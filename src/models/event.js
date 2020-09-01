@@ -27,8 +27,8 @@ export default class EventsModel extends Observer {
     }
   }
 
-  addEvent(update, updateType) {
-    this._tasks = [
+  addEvent(updateType, update) {
+    this._events = [
       update,
       ...this._events
     ];

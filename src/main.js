@@ -46,6 +46,17 @@ renderElement(tripControsMakrsElementsArray[0], new SiteMenu(), RenderPosition.A
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
 
-new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel).init();
+const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel);
+tripPresenter.init();
+
 new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
+
+
+const newTaskButton = document.querySelector(`.trip-main__event-add-btn`);
+
+newTaskButton.addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.addNewEvent();
+})
+
 
