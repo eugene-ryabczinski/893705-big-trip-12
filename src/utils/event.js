@@ -1,4 +1,5 @@
 import {groupBy} from '../utils/common';
+import {FILTER_TYPE} from '../const';
 import moment from 'moment';
 
 export const groupEventsByDay = (events) => {
@@ -45,4 +46,24 @@ export const sortByPrice = (dayA, dayB) => {
 
 export const generateId = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+
+export const filter = {
+  [FILTER_TYPE.EVERYTHING]: (events) => {
+    return events;
+  },
+  [FILTER_TYPE.PAST]: (events) => {
+    return events.filter((event) => {
+      const currentDay = new moment();
+      const eventEndDate = moment(event.endDate);
+      return eventEndDate < currentDay;
+    });
+  },
+  [FILTER_TYPE.FUTERE]: (events) => {
+    return events.filter((event) => {
+      const currentDay = new moment();
+      const eventStartDate = moment(event.startDate);
+      return eventStartDate > currentDay;
+    });
+  }
 };

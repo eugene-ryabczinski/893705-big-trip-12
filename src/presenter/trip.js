@@ -1,6 +1,6 @@
 import {SORT_TYPE, USER_ACTION, UPDATE_TYPE} from '../const';
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
-import {groupEventsByDay, sortByDuration, sortByPrice} from '../utils/event';
+import {groupEventsByDay, sortByDuration, sortByPrice, filter} from '../utils/event';
 import {updateItem} from '../utils/common';
 
 import Sort from '../view/sort';
@@ -12,11 +12,12 @@ import TripEventItemEdit from '../view/trip-event-item-edit';
 import NoEvents from '../view/no-events';
 import Event from '../presenter/event';
 
-export default class Trip {
-  constructor(tripEventsMainContainerElement, eventsModel) {
+export default class TripPresenter {
+  constructor(tripEventsMainContainerElement, eventsModel, filterModel) {
     this._tripEventsMainContainerElement = tripEventsMainContainerElement;
 
     this._eventsModel = eventsModel;
+    this._filterModel = filterModel;
 
     this._sortComponent = new Sort();
     this._tripDaysListComponent = new TripDaysList();
@@ -37,20 +38,29 @@ export default class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._test);
+    this._filterModel.addObserver(this._test2);
+    this._filterModel.addObserver(this._test3);
+    this._eventsModel.addObserver(this._test88);
   }
 
   init() {
     this._renderTrip();
   }
 
-  _getEvents() {
+  _getEvents() { // почему вся логика в getTasks?
+    const filterType = this._filterModel.getFilter();
+    const events = this._eventsModel.getEvents();
+    const filteredEvents = filter[filterType](events);
+
     switch (this._currentSortType) {
       case SORT_TYPE.EVENT:
-        return this._eventsModel.getEvents();
+        return filteredEvents;
       case SORT_TYPE.TIME:
-        return this._eventsModel.getEvents().slice().sort(sortByDuration);
+        return filteredEvents.sort(sortByDuration);
       case SORT_TYPE.PRICE:
-        return this._eventsModel.getEvents().slice().sort(sortByPrice);
+        return filteredEvents.sort(sortByPrice);
     }
   }
 
@@ -62,9 +72,8 @@ export default class Trip {
       });
   }
 
-  _handleViewAction(actionType, updateType, updatedEvent) {
-    // debugger
-    console.log(actionType, updateType, updatedEvent);
+  _handleViewAction(actionType, updateType, updatedEvent) { //check what this for. relate with _handleModelEvent?
+    // console.log(actionType, updateType, updatedEvent);
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
         this._eventsModel.updateEvents(updateType, updatedEvent);
@@ -81,14 +90,12 @@ export default class Trip {
     // this._eventPresenter[event.id].init(event);
   }
 
-  _handleModelEvent(updateType, data) {
-    // debugger
-    console.log(updateType, data);
+  _handleModelEvent(updateType, data) { //check what this for. relate with _handleViewAction? сабскрайб на изменение модели => перерисовываем ивент или весь лист
     switch (updateType) {
-      case UPDATE_TYPE.PATCH:
+      case UPDATE_TYPE.PATCH: // обновить только одну точку маршрута
         this._eventPresenter[data.id].init(data);
         break;
-      case UPDATE_TYPE.MINOR:
+      case UPDATE_TYPE.MINOR: // перерисовать весь список
         this._clearEventList();
         this._renderTrip();
         break;
@@ -147,7 +154,6 @@ export default class Trip {
   }
 
   _renderTrip() {
-    // debugger
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
     const eventsGroupedByDay = groupEventsByDay(events);
 
