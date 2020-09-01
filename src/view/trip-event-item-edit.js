@@ -1,8 +1,10 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
 import {isEqual, cloneDeep} from '../utils/common';
+import {isDateRangeValud} from '../utils/event';
 import moment from 'moment';
 import Smart from './smart';
 import {generateOffers, generateDescriptions} from '../mock/event';
+import flatpickr from "flatpickr";
 
 const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -98,7 +100,6 @@ const createEventDetailsTemplate = (offers = [], destinationInfo = null) => {
 };
 
 const createEventSelectorTemplate = (type) => {
-
   const createElementListTemplate = (event) => {
     return (
       `<div class="event__type-item">
@@ -159,7 +160,7 @@ export const createTripEventItemEditTemplate = (data = {}) => {
   const placeholder = () => {
     return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
   };
-
+  
   const isNewEvent = () => isEqual(event, NEW_EVENT);
 
   return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -216,11 +217,23 @@ export const createTripEventItemEditTemplate = (data = {}) => {
 
 export default class TripEventItemEdit extends Smart {
   constructor(event) {
+    // debugger
     super();
     this._event = event || NEW_EVENT;
 
     this._data = cloneDeep(this._event);
     // this._cost = this._data.cost; // вспомогательная переменная, чтобы не обновлять данные напрямую, а реализовать обновленеи по кнопке save?
+
+    this._datepickerStart = null;
+    this._datepickerEnd = null;
+    
+    // вспомогательные переменные для валидации. другое решение?
+    // как реализовать валидацию из класса?
+    // сейчас при обновлении данных по дате шаблон заново не рисуется и следовательно из шаблона не вызывается ф-ия валидации дат isDateRangeValud. 
+    // нужно делать disabled у кнопки save если значения не валидны
+    this._startDate = this._event.startDate; 
+    this._endDate = this._event.endDate;
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`); // иметь возможноть из класса сетить атрибуть disabled если дата invalid
 
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
@@ -230,8 +243,75 @@ export default class TripEventItemEdit extends Smart {
     this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
+    this._startDateInputhandler = this._startDateInputhandler.bind(this);
+    this._endDateInputhandler = this._endDateInputhandler.bind(this);
 
     this._setInnerHandlers();
+    this._validateDateRange();
+  }
+
+  _startDateInputhandler([date]) { // на каждом инпуте напрямую обновляем данные?
+    this._startDate = date;
+
+    this._validateDateRange();
+
+    this.updateData({
+      startDate: this._startDate,
+    },true);
+  }
+
+  _endDateInputhandler([date]) {
+    this._endDate = date;
+
+    this._validateDateRange();
+
+    this.updateData({
+      endDate: this._endDate,
+    },true);
+  }
+
+  _validateDateRange() {
+    const start = moment(this._startDate); // метод без параметров. обращаемся напрямую к датам?
+    const end = moment(this._endDate);
+
+    if (start.isAfter(end)) {
+      this._saveButton.setAttribute("disabled", "disabled");
+      return false
+    }
+    this._saveButton.removeAttribute("disabled", "disabled");
+  }
+
+  _setDatePicker() {
+    if (this._datepickerStart) {
+      this._datepickerStart.destroy();
+      this._datepickerStart = null;
+    }
+
+    if(this._data.startDate && this._data.endDate) {
+
+      const config = {
+        dateFormat: `d/m/y H:i`,
+        enableTime: true,
+      }
+
+      this._datepickerStart = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          ...config,
+          defaultDate: this._data.startDate,
+          onChange: this._startDateInputhandler
+        }
+      );
+
+      this._datepickerEnd = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          ...config,
+          defaultDate: this._data.endDate,
+          onChange: this._endDateInputhandler
+        }
+      )
+    }
   }
 
   _setInnerHandlers() {
@@ -250,6 +330,8 @@ export default class TripEventItemEdit extends Smart {
     offersCheckboxes.forEach((element) => {
       element.addEventListener(`change`, this._offersSelectorHandler);
     });
+
+    this._setDatePicker();
   }
 
   restoreHandlers() {
