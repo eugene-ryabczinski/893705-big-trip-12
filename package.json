@@ -20,6 +20,7 @@
     "node": "10"
   },
   "dependencies": {
+    "flatpickr": "4.6.6",
     "lodash": "4.17.19",
     "moment": "2.27.0"
   }

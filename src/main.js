@@ -1,4 +1,6 @@
 
+import "../node_modules/flatpickr/dist/themes/material_blue.css";
+
 import {generateEvent} from './mock/event';
 import {getTripInfo} from './mock/trip';
 
