@@ -316,7 +316,6 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _validateForm() {
-    debugger
     this._saveButton = this.getElement().querySelector(`.event__save-btn`);
     if (!this._isValidPriceInput() || !this._isValidDateRange() || !this._isValidDestination()) {
       this._saveButton.setAttribute("disabled", "disabled");
