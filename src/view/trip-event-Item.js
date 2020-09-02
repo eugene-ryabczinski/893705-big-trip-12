@@ -36,10 +36,12 @@ export const createTripEventItemTemplate = (event) => {
     if (offersToRender.length === 0) {
       return (`<li class="event__offer"></li>`);
     } else {
-      return offersToRender.map(({name, _cost = cost}) => {
+      return offersToRender.map((item) => {
+        const offerCost = item.cost;
+        const offerName = item.name;
         return (
           `<li class="event__offer">
-            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${_cost}</span>
+            <span class="event__offer-title">${offerName}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${offerCost}</span>
           </li>`
         );
       }).join(``);

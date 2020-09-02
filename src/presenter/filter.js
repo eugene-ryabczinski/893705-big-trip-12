@@ -11,7 +11,7 @@ export default class FilterPresenter {
 
     this._filterComponent = null;
 
-    this._handleModelEvent = this._handleModelEvent.bind(this); // зачем?
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
 
     this._filterModel.addObserver(this._handleModelEvent);
@@ -23,6 +23,8 @@ export default class FilterPresenter {
 
     renderElement(this._filterContainer, this._filterComponent, RenderPosition.AFTEREND);
   }
+
+  _handleModelEvent() {}
 
   _handleFilterTypeChange(filterType) {
     this._filterModel.setFilter(UPDATE_TYPE.MINOR, filterType);
