@@ -1,7 +1,6 @@
 import {SORT_TYPE, USER_ACTION, UPDATE_TYPE, FILTER_TYPE} from '../const';
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice, filter} from '../utils/event';
-import {updateItem} from '../utils/common';
 
 import Sort from '../view/sort';
 import TripDaysList from '../view/trip-days-list';
@@ -31,7 +30,6 @@ export default class TripPresenter {
     this._currentSortType = SORT_TYPE.EVENT;
 
     this._sortChangeHandler = this._sortChangeHandler.bind(this);
-    // this._handleEventChange = this._handleEventChange.bind(this);
 
     this._handleModeChange = this._handleModeChange.bind(this);
 
@@ -41,13 +39,13 @@ export default class TripPresenter {
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._eventsModel); //передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
+    this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange, this._eventsModel); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
   }
 
   init() {
     this._renderTrip();
   }
-  
+
   addNewEvent() {
     this._currentSortType = SORT_TYPE.EVENT; // reset
     this._filterModel.setFilter(UPDATE_TYPE.MINOR, FILTER_TYPE.EVERYTHING); // reset
@@ -57,10 +55,12 @@ export default class TripPresenter {
       this._noEventsComponent = null;
     }
 
-    this._newEventPresenter.init();
+    const newEventPresenter = this._newEventPresenter;
+    newEventPresenter.init();
+    this._eventPresenter[`0`] = newEventPresenter;
   }
 
-  _getEvents() { // почему вся логика в getTasks?
+  _getEvents() { // вся логика в getTasks
     const filterType = this._filterModel.getFilter();
     const events = this._eventsModel.getEvents();
     const filteredEvents = filter[filterType](events);
@@ -73,6 +73,7 @@ export default class TripPresenter {
       case SORT_TYPE.PRICE:
         return filteredEvents.sort(sortByPrice);
     }
+    return filteredEvents; // error  Method '_getEvents' expected a return value lnter
   }
 
   _handleModeChange() {
@@ -83,7 +84,7 @@ export default class TripPresenter {
       });
   }
 
-  _handleViewAction(actionType, updateType, updatedEvent) { //check what this for. relate with _handleModelEvent?
+  _handleViewAction(actionType, updateType, updatedEvent) {
     // console.log(actionType, updateType, updatedEvent);
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
@@ -96,13 +97,10 @@ export default class TripPresenter {
         this._eventsModel.deleteEvent(updateType, updatedEvent);
         break;
     }
-
-    // this._events = updateItem(this._events, event);
-    // this._eventPresenter[event.id].init(event);
   }
 
   // сабскрайб на изменение модели => перерисовываем ивент или весь лист
-  _handleModelEvent(updateType, data) { //check what this for. relate with _handleViewAction?
+  _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UPDATE_TYPE.PATCH: // обновить только одну точку маршрута
         this._eventPresenter[data.id].init(data);
@@ -140,7 +138,6 @@ export default class TripPresenter {
   }
 
   _renderEvent(eventsListElement, event) {
-    // const eventPresenter = new Event(eventsListElement, this._handleEventChange, this._handleModeChange);
     const eventPresenter = new Event(eventsListElement, this._handleViewAction, this._handleModeChange);
     eventPresenter.init(event);
     this._eventPresenter[event.id] = eventPresenter;
@@ -165,18 +162,27 @@ export default class TripPresenter {
     });
   }
 
-  _renderTrip() {
+  _renderTrip() { // todo: рефакторинг условий
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
     const eventsGroupedByDay = groupEventsByDay(events);
 
-    if (events.length === 0 && !this._noEventsComponent) { // и нет активной формы создания точки маршрута
+    if (this._eventsModel.getEvents().length === 0 && !this._noEventsComponent) { // и нет активной формы создания точки маршрута? сривнивать с моделью т.е. ивентов может не быть после сортировки
       this._noEventsComponent = new NoEvents();
       this._renderNoEvents();
       removeCommponent(this._sortComponent);
       return;
     }
 
+    if (events.length === 0) {
+      removeCommponent(this._sortComponent);
+    }
+
     if (events.length > 0) {
+      if (this._noEventsComponent) {
+        removeCommponent(this._noEventsComponent);
+        this._noEventsComponent = null;
+      }
+
       this._renderSort();
 
       // два метода рендера - _renderEventsByDay, _renderEvents. используют разный source (сгруппированный по дням, обычнй массив)

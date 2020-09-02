@@ -1,8 +1,6 @@
 import Filter from "../view/filter";
-import {renderElement, RenderPosition, replace, removeCommponent} from '../utils/render';
-import TripEventItem from '../view/trip-event-Item';
-import TripEventItemEdit from '../view/trip-event-item-edit';
-import {SORT_TYPE, USER_ACTION, UPDATE_TYPE} from '../const';
+import {renderElement, RenderPosition} from '../utils/render';
+import {UPDATE_TYPE} from '../const';
 
 export default class FilterPresenter {
   constructor(filterContainer, filterModel, eventsModel) {
@@ -26,15 +24,7 @@ export default class FilterPresenter {
     renderElement(this._filterContainer, this._filterComponent, RenderPosition.AFTEREND);
   }
 
-  _handleModelEvent() {
-    // this.init();
-  }
-
   _handleFilterTypeChange(filterType) {
     this._filterModel.setFilter(UPDATE_TYPE.MINOR, filterType);
-  }
-
-  _getFilters() {
-    //
   }
 }

@@ -1,19 +1,14 @@
-import {renderElement, RenderPosition, replace, removeCommponent} from '../utils/render';
-import TripEventItem from '../view/trip-event-Item';
+import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {NEW_EVENT} from '../view/trip-event-item-edit';
 import TripEventItemEdit from '../view/trip-event-item-edit';
 import {USER_ACTION, UPDATE_TYPE} from '../const';
-import {generateId} from '../utils/event'
-
-const Mode = {
-  DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
-};
+import {generateId} from '../utils/event';
 
 export default class EventNew {
-  constructor(tripEventsMainContainerElement, changeData, eventsModel) {
+  constructor(tripEventsMainContainerElement, changeData, changeMode, eventsModel) {
     this._tripEventsMainContainerElement = tripEventsMainContainerElement;
     this._changeData = changeData;
+    this._changeMode = changeMode;
     this._eventsModel = eventsModel;
 
     this._tripEventItemEditComponent = null;
@@ -33,107 +28,58 @@ export default class EventNew {
     this._tripEventItemEditComponent.setDeleteClickHandle(this._handleEventDeleteClick);
     this._tripEventItemEditComponent.setFavouriteClickHandler(this._isFavouriteClick);
 
-    // if (prevTripEventItemComponent === null || prevTripEventItemEditComponent === null) {
+    if (this._eventsModel.getEvents().length > 0) {
+      const tripDaysList = this._tripEventsMainContainerElement.querySelector(`.trip-days`);
+      renderElement(tripDaysList, this._tripEventItemEditComponent, RenderPosition.BEFOREBEGIN);
+    } else {
+      renderElement(this._tripEventsMainContainerElement, this._tripEventItemEditComponent, RenderPosition.BEFOREEND);
+    }
 
-      document.addEventListener(`keydown`, this._handleEcs);
-
-      if (this._eventsModel.getEvents().length > 0) {
-        const tripDaysList = this._tripEventsMainContainerElement.querySelector(`.trip-days`);
-        renderElement(tripDaysList, this._tripEventItemEditComponent, RenderPosition.BEFOREBEGIN);
-      } else {
-        renderElement(this._tripEventsMainContainerElement, this._tripEventItemEditComponent, RenderPosition.BEFOREEND);
-      }
-      // return;
-    // }
-
-    // if (this._mode === Mode.DEFAULT) {
-    //   replace(this._tripEventItemComponent, prevTripEventItemComponent);
-    // }
-
-    // if (this._mode === Mode.EDITING) {
-    //   replace(this._tripEventItemEditComponent, prevTripEventItemEditComponent);
-    // }
-
-    // removeCommponent(prevTripEventItemComponent);
-    // removeCommponent(prevTripEventItemEditComponent);
+    document.addEventListener(`keydown`, this._handleEcs);
   }
 
-  // resetView() {
-  //   if (this._mode !== Mode.DEFAULT) {
-  //     this._replaceFormToEvent();
-  //   }
-  // }
-
-  destroy() {
+  resetView() {
     removeCommponent(this._tripEventItemEditComponent);
-    // removeCommponent(this._tripEventsMainContainerElement); // remove container?
     document.removeEventListener(`keydown`, this._handleEcs);
   }
 
-  // _replaceEventToForm() {
-  //   replace(this._tripEventItemEditComponent, this._tripEventItemComponent);
-  //   document.addEventListener(`keydown`, this._handleEcs);
-  //   this._changeMode();
-  //   this._mode = Mode.EDITING;
-  // }
-
-  // _replaceFormToEvent() {
-  //   replace(this._tripEventItemComponent, this._tripEventItemEditComponent);
-  //   document.removeEventListener(`keydown`, this._handleEcs);
-  //   this._mode = Mode.DEFAULT;
-  // }
-
+  destroy() {
+    this._changeMode();
+  }
 
   _handleFormSubmit(tripEvent) {
-    debugger
     let updateType = UPDATE_TYPE.MINOR;
 
-    // this._replaceFormToEvent();
     this._changeData(
-      USER_ACTION.ADD_EVENT,
-      updateType,
-      Object.assign({id: generateId()}, tripEvent)
-      // tripEvent
+        USER_ACTION.ADD_EVENT,
+        updateType,
+        Object.assign({id: generateId()}, tripEvent)
     );
     this.destroy();
   }
-
-  _handleEventDeleteClick(tripEvent) { // change to cancel
-    this.destroy();
-    // this._changeData(
-    //   USER_ACTION.DELETE_EVENT,
-    //   UPDATE_TYPE.MINOR,
-    //   tripEvent
-    // );
-  }
-
-
-
 
   _handleEventDeleteClick(tripEvent) {
-    this._changeData(
-      USER_ACTION.DELETE_EVENT,
-      UPDATE_TYPE.MINOR,
-      tripEvent
-    );
+    tripEvent = null;
+    this.destroy();
+    this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, tripEvent); // вызвать апдейт листа без значения
   }
 
   _handleEcs(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
       this._tripEventItemEditComponent.reset(this._event);
-      // this._replaceFormToEvent();
       document.removeEventListener(`keydown`, this._handleEcs);
       this.destroy();
+      this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, null); // вызвать апдейт листа без значения
     }
   }
 
   _isFavouriteClick(evt, data) {
     let updated = Object.assign({}, data, {isFavourite: evt});
     this._changeData(
-      USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.PATCH,
-      updated
+        USER_ACTION.UPDATE_EVENT,
+        UPDATE_TYPE.PATCH,
+        updated
     );
   }
 }

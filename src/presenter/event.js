@@ -81,17 +81,12 @@ export default class Event {
     this._mode = Mode.DEFAULT;
   }
 
-
-
   _isCostChanged(cost) { // если цена поменялась – делай ререндер всех ивентов т.е. может быть активна сортировка по цене? возможно есть способ сравнения получше
     if (this._event.cost !== cost) {
       return true;
     }
     return false;
   }
-
-  // _checkPriceValidity(cost) { // стоит добавить простую валидацию?
-  // }
 
   _handleRollupClick() {
     this._replaceEventToForm();
@@ -106,17 +101,17 @@ export default class Event {
 
     this._replaceFormToEvent();
     this._changeData(
-      USER_ACTION.UPDATE_EVENT,
-      updateType,
-      tripEvent
+        USER_ACTION.UPDATE_EVENT,
+        updateType,
+        tripEvent
     );
   }
 
   _handleEventDeleteClick(tripEvent) {
     this._changeData(
-      USER_ACTION.DELETE_EVENT,
-      UPDATE_TYPE.MINOR,
-      tripEvent
+        USER_ACTION.DELETE_EVENT,
+        UPDATE_TYPE.MINOR,
+        tripEvent
     );
   }
 
@@ -132,9 +127,9 @@ export default class Event {
   _isFavouriteClick(evt, data) {
     let updated = Object.assign({}, data, {isFavourite: evt});
     this._changeData(
-      USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.PATCH,
-      updated
+        USER_ACTION.UPDATE_EVENT,
+        UPDATE_TYPE.PATCH,
+        updated
     );
   }
 }

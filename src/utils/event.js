@@ -54,14 +54,14 @@ export const filter = {
   },
   [FILTER_TYPE.PAST]: (events) => {
     return events.filter((event) => {
-      const currentDay = new moment();
+      const currentDay = moment();
       const eventEndDate = moment(event.endDate);
       return eventEndDate < currentDay;
     });
   },
   [FILTER_TYPE.FUTERE]: (events) => {
     return events.filter((event) => {
-      const currentDay = new moment();
+      const currentDay = moment();
       const eventStartDate = moment(event.startDate);
       return eventStartDate > currentDay;
     });
