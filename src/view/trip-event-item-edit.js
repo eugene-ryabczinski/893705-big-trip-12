@@ -6,7 +6,7 @@ import Smart from './smart';
 import {generateOffers, generateDescriptions} from '../mock/event';
 import flatpickr from "flatpickr";
 
-const NEW_EVENT = {
+export const NEW_EVENT = {
   type: EVENT_TYPES[0],
   destination: ``,
   destinationInfo: null,
@@ -160,8 +160,8 @@ export const createTripEventItemEditTemplate = (data = {}) => {
   const placeholder = () => {
     return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
   };
-  
-  const isNewEvent = () => isEqual(event, NEW_EVENT);
+
+  const isNewEvent = () => isEqual(data, NEW_EVENT);
 
   return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -217,12 +217,10 @@ export const createTripEventItemEditTemplate = (data = {}) => {
 
 export default class TripEventItemEdit extends Smart {
   constructor(event) {
-    // debugger
     super();
     this._event = event || NEW_EVENT;
 
     this._data = cloneDeep(this._event);
-    // this._cost = this._data.cost; // вспомогательная переменная, чтобы не обновлять данные напрямую, а реализовать обновленеи по кнопке save?
 
     this._datepickerStart = null;
     this._datepickerEnd = null;
@@ -231,54 +229,29 @@ export default class TripEventItemEdit extends Smart {
     // как реализовать валидацию из класса?
     // сейчас при обновлении данных по дате шаблон заново не рисуется и следовательно из шаблона не вызывается ф-ия валидации дат isDateRangeValud. 
     // нужно делать disabled у кнопки save если значения не валидны
-    this._startDate = this._event.startDate; 
-    this._endDate = this._event.endDate;
+
+    this._startDate = this._event.startDate || new Date(); 
+    this._endDate = this._event.endDate || new Date();
+
+    // this._cost = this._data.cost; // вспомогательная переменная, чтобы не обновлять данные напрямую, а реализовать обновленеи по кнопке save?
+    this._cost = this._event.cost;
+
     this._saveButton = this.getElement().querySelector(`.event__save-btn`); // иметь возможноть из класса сетить атрибуть disabled если дата invalid
 
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
-    this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
-
-    this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
+    this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
     this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
-    this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._startDateInputhandler = this._startDateInputhandler.bind(this);
     this._endDateInputhandler = this._endDateInputhandler.bind(this);
+    
+    this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
-    this._validateDateRange();
-  }
 
-  _startDateInputhandler([date]) { // на каждом инпуте напрямую обновляем данные?
-    this._startDate = date;
-
-    this._validateDateRange();
-
-    this.updateData({
-      startDate: this._startDate,
-    },true);
-  }
-
-  _endDateInputhandler([date]) {
-    this._endDate = date;
-
-    this._validateDateRange();
-
-    this.updateData({
-      endDate: this._endDate,
-    },true);
-  }
-
-  _validateDateRange() {
-    const start = moment(this._startDate); // метод без параметров. обращаемся напрямую к датам?
-    const end = moment(this._endDate);
-
-    if (start.isAfter(end)) {
-      this._saveButton.setAttribute("disabled", "disabled");
-      return false
-    }
-    this._saveButton.removeAttribute("disabled", "disabled");
+    this._validateForm();
   }
 
   _setDatePicker() {
@@ -286,9 +259,7 @@ export default class TripEventItemEdit extends Smart {
       this._datepickerStart.destroy();
       this._datepickerStart = null;
     }
-
-    if(this._data.startDate && this._data.endDate) {
-
+    
       const config = {
         dateFormat: `d/m/y H:i`,
         enableTime: true,
@@ -298,8 +269,8 @@ export default class TripEventItemEdit extends Smart {
         this.getElement().querySelector(`#event-start-time-1`),
         {
           ...config,
-          defaultDate: this._data.startDate,
-          onChange: this._startDateInputhandler
+          defaultDate: this._data.startDate || new Date(),
+          onChange: this._startDateInputhandler || new Date()
         }
       );
 
@@ -311,7 +282,6 @@ export default class TripEventItemEdit extends Smart {
           onChange: this._endDateInputhandler
         }
       )
-    }
   }
 
   _setInnerHandlers() {
@@ -325,6 +295,9 @@ export default class TripEventItemEdit extends Smart {
 
     const priceInput = this.getElement().querySelector(`.event__input--price`);
     priceInput.addEventListener(`input`, this._priceInputHandler);
+    
+    // разрешить только символы. решение получше? не спасает от copy/paste
+    // priceInput.addEventListener(`keydown`, this._validatePriceInput); 
 
     const offersCheckboxes = this.getElement().querySelectorAll(`.event__offer-checkbox`);
     offersCheckboxes.forEach((element) => {
@@ -340,6 +313,71 @@ export default class TripEventItemEdit extends Smart {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavouriteClickHandler(this._callback.favouriteClick);
     this.setDeleteClickHandle(this._callback.deleteClick);
+  }
+
+  _validateForm() {
+    debugger
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
+    if (!this._isValidPriceInput() || !this._isValidDateRange() || !this._isValidDestination()) {
+      this._saveButton.setAttribute("disabled", "disabled");
+      return
+    }
+    this._saveButton.removeAttribute("disabled", "disabled");
+  }
+
+  _isValidDestination() {
+    const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
+
+    if (destinationSelector.value == '' || !CITIES.map(city => city.toLowerCase()).includes(destinationSelector.value.toLowerCase())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  _isValidDateRange() { // метод без параметров. обращаемся напрямую к датам норм?
+    const start = moment(this._startDate);
+    const end = moment(this._endDate);
+
+    if ((start.isSame(end))|| (start.isAfter(end))) {
+      return false
+    }
+    return true
+  }
+
+  _isValidPriceInput() {
+    if (this._data.cost === '') {
+      return false
+    }
+    return true
+  }
+
+  _priceInputHandler(evt) {
+    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ""); // временное решение запрещать ввод не числовых значений через regexp
+    this._cost = evt.currentTarget.value;
+    this._data.cost = this._cost; // пока не нравится идея писать сразу в дату
+
+    this._validateForm();
+  }
+
+  _startDateInputhandler([date]) { // на каждом инпуте напрямую обновляем данные?
+    this._startDate = date;
+
+    this._validateForm();
+
+    this.updateData({
+      startDate: this._startDate,
+    },true);
+  }
+
+  _endDateInputhandler([date]) {
+    this._endDate = date;
+
+    this._validateForm();
+
+    this.updateData({
+      endDate: this._endDate,
+    },true);
   }
 
   _offersSelectorHandler(evt) {
@@ -390,11 +428,7 @@ export default class TripEventItemEdit extends Smart {
         destinationInfo: generateDescriptions().get(selectedCity)
       });
     }
-  }
-
-  _priceInputHandler(evt) {
-    // пока не нравится идея писать сразу в дату
-    this._data.cost = evt.target.value;
+    this._validateForm();
   }
 
   getTemplate() {
@@ -402,6 +436,9 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _formSubmitClickHandler(evt) {
+    this._data.startDate = this._startDate;
+    this._data.endDate = this._endDate;
+    this._cost = this._cost;
     evt.preventDefault();
     this._callback.formSubmit(this._data);
   }

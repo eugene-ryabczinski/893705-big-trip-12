@@ -25,7 +25,7 @@ export default class TripPresenter {
     this._tripEventsListComponent = new TripEventsList();
     this._tripEventItemComponent = new TripEventItem();
     this._tripEventItemEditComponent = new TripEventItemEdit();
-    this._noEventsComponent = new NoEvents();
+    this._noEventsComponent = null; // запретить рендерить компонент несколько раз в renderTrip
 
     this._eventPresenter = {};
     this._currentSortType = SORT_TYPE.EVENT;
@@ -41,8 +41,7 @@ export default class TripPresenter {
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._newEventPresenter = new EventNew(this._tripDaysListComponent, this._handleViewAction);
-    this.a = 10;
+    this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._eventsModel); //передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
   }
 
   init() {
@@ -52,8 +51,13 @@ export default class TripPresenter {
   addNewEvent() {
     this._currentSortType = SORT_TYPE.EVENT; // reset
     this._filterModel.setFilter(UPDATE_TYPE.MINOR, FILTER_TYPE.EVERYTHING); // reset
+
+    if (this._noEventsComponent) {
+      removeCommponent(this._noEventsComponent);
+      this._noEventsComponent = null;
+    }
+
     this._newEventPresenter.init();
-    // this.
   }
 
   _getEvents() { // почему вся логика в getTasks?
@@ -132,7 +136,7 @@ export default class TripPresenter {
   }
 
   _renderNoEvents() {
-    renderElement(this._tripEventsMainContainerElement, new NoEvents(), RenderPosition.BEFOREEND);
+    renderElement(this._tripEventsMainContainerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvent(eventsListElement, event) {
@@ -165,8 +169,10 @@ export default class TripPresenter {
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
     const eventsGroupedByDay = groupEventsByDay(events);
 
-    if (events.length === 0) {
+    if (events.length === 0 && !this._noEventsComponent) { // и нет активной формы создания точки маршрута
+      this._noEventsComponent = new NoEvents();
       this._renderNoEvents();
+      removeCommponent(this._sortComponent);
       return;
     }
 

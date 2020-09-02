@@ -3,6 +3,7 @@ import AbstractView from './abstract-view';
 
 export const createTripEventItemTemplate = (event) => {
   const {type, destination, startDate, endDate, offers = [], cost} = event;
+  debugger
 
   const formatDate = (date) => {
     const momentDate = moment(date);
@@ -36,10 +37,10 @@ export const createTripEventItemTemplate = (event) => {
     if (offersToRender.length === 0) {
       return (`<li class="event__offer"></li>`);
     } else {
-      return offersToRender.map(({name, offetCost = cost}) => {
+      return offersToRender.map(({name, cost}) => {
         return (
           `<li class="event__offer">
-            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${offetCost}</span>
+            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${cost}</span>
           </li>`
         );
       }).join(``);

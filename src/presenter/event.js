@@ -81,6 +81,18 @@ export default class Event {
     this._mode = Mode.DEFAULT;
   }
 
+
+
+  _isCostChanged(cost) { // если цена поменялась – делай ререндер всех ивентов т.е. может быть активна сортировка по цене? возможно есть способ сравнения получше
+    if (this._event.cost !== cost) {
+      return true;
+    }
+    return false;
+  }
+
+  // _checkPriceValidity(cost) { // стоит добавить простую валидацию?
+  // }
+
   _handleRollupClick() {
     this._replaceEventToForm();
   }
@@ -107,16 +119,6 @@ export default class Event {
       tripEvent
     );
   }
-
-  _isCostChanged(cost) { // если цена поменялась – делай ререндер все ивентов т.е. может быть активна сортировка по цене? возможно есть способ сравнения получше
-    if (this._event.cost !== cost) {
-      return true;
-    }
-    return false;
-  }
-
-  // _checkPriceValidity(cost) { // стоит добавить простую валидацию?
-  // }
 
   _handleEcs(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
