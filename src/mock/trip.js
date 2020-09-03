@@ -16,7 +16,21 @@ export const getTripInfo = (events) => {
     const route = Object.values(events).map((eventsByDay) => {
       return eventsByDay[0].destination;
     });
-    return route.slice(0, -1).join(` &mdash; `) + ` &mdash; ` + route.slice(-1);
+
+    let result;
+
+    switch (route.length) { // решение получше?
+      case 1:
+        result = route[0];
+        break;
+      case 0:
+        result = ``;
+        break;
+      default:
+        result = route.slice(0, -1).join(` &mdash; `) + ` &mdash; ` + route.slice(-1);
+    }
+
+    return result;
   };
 
   const getTotalCost = () => {

@@ -16,7 +16,7 @@ import TripInfoPresenter from './presenter/trip-info';
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
 
-const EVENT_COUNT = 10;
+const EVENT_COUNT = 3;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 const eventsModel = new EventsModel();
