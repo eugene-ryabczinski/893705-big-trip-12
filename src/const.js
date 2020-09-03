@@ -28,3 +28,9 @@ export const UPDATE_TYPE = {
   MAJOR: `MAJOR`
 };
 
+export const MODE = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`,
+  CREATE: `CREATE`
+};
+

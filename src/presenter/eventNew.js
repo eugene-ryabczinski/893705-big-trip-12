@@ -1,7 +1,7 @@
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {NEW_EVENT} from '../view/trip-event-item-edit';
 import TripEventItemEdit from '../view/trip-event-item-edit';
-import {USER_ACTION, UPDATE_TYPE} from '../const';
+import {USER_ACTION, UPDATE_TYPE, MODE} from '../const';
 import {generateId} from '../utils/event';
 
 export default class EventNew {
@@ -22,11 +22,13 @@ export default class EventNew {
   init() {
     this._event = NEW_EVENT;// создаём пустой ивент?
 
-    this._tripEventItemEditComponent = new TripEventItemEdit(this._event);
+    this._tripEventItemEditComponent = new TripEventItemEdit(this._event, MODE.CREATE);
 
     this._tripEventItemEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._tripEventItemEditComponent.setDeleteClickHandle(this._handleEventDeleteClick);
     this._tripEventItemEditComponent.setFavouriteClickHandler(this._isFavouriteClick);
+
+    this._tripEventItemEditComponent.getElement().classList.add(`create-event`);
 
     if (this._eventsModel.getEvents().length > 0) {
       const tripDaysList = this._tripEventsMainContainerElement.querySelector(`.trip-days`);

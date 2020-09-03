@@ -7,7 +7,6 @@ import TripDaysList from '../view/trip-days-list';
 import TripDayItem from '../view/trip-day-item';
 import TripEventsList from '../view/trip-events-list';
 import TripEventItem from '../view/trip-event-Item';
-import TripEventItemEdit from '../view/trip-event-item-edit';
 import NoEvents from '../view/no-events';
 import Event from '../presenter/event';
 import EventNew from '../presenter/eventNew';
@@ -23,7 +22,6 @@ export default class TripPresenter {
     this._tripDaysListComponent = new TripDaysList();
     this._tripEventsListComponent = new TripEventsList();
     this._tripEventItemComponent = new TripEventItem();
-    this._tripEventItemEditComponent = new TripEventItemEdit();
     this._noEventsComponent = null; // запретить рендерить компонент несколько раз в renderTrip
 
     this._eventPresenter = {};

@@ -1,19 +1,14 @@
 import {renderElement, RenderPosition, replace, removeCommponent} from '../utils/render';
 import TripEventItem from '../view/trip-event-Item';
 import TripEventItemEdit from '../view/trip-event-item-edit';
-import {USER_ACTION, UPDATE_TYPE} from '../const';
-
-const Mode = {
-  DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
-};
+import {USER_ACTION, UPDATE_TYPE, MODE} from '../const';
 
 export default class Event {
   constructor(tripEventsListContainer, changeData, changeMode) {
     this._tripEventsListConteiner = tripEventsListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._mode = Mode.DEFAULT;
+    this._mode = MODE.DEFAULT;
 
     this._tripEventItemComponent = null;
     this._tripEventItemEditComponent = null;
@@ -44,11 +39,11 @@ export default class Event {
       return;
     }
 
-    if (this._mode === Mode.DEFAULT) {
+    if (this._mode === MODE.DEFAULT) {
       replace(this._tripEventItemComponent, prevTripEventItemComponent);
     }
 
-    if (this._mode === Mode.EDITING) {
+    if (this._mode === MODE.EDITING) {
       replace(this._tripEventItemEditComponent, prevTripEventItemEditComponent);
     }
 
@@ -57,7 +52,7 @@ export default class Event {
   }
 
   resetView() {
-    if (this._mode !== Mode.DEFAULT) {
+    if (this._mode !== MODE.DEFAULT) {
       this._replaceFormToEvent();
     }
   }
@@ -72,13 +67,13 @@ export default class Event {
     replace(this._tripEventItemEditComponent, this._tripEventItemComponent);
     document.addEventListener(`keydown`, this._handleEcs);
     this._changeMode();
-    this._mode = Mode.EDITING;
+    this._mode = MODE.EDITING;
   }
 
   _replaceFormToEvent() {
     replace(this._tripEventItemComponent, this._tripEventItemEditComponent);
     document.removeEventListener(`keydown`, this._handleEcs);
-    this._mode = Mode.DEFAULT;
+    this._mode = MODE.DEFAULT;
   }
 
   _isCostChanged(cost) { // если цена поменялась – делай ререндер всех ивентов т.е. может быть активна сортировка по цене? возможно есть способ сравнения получше

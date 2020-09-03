@@ -1,9 +1,10 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
-import {isEqual, cloneDeep} from '../utils/common';
+import {cloneDeep} from '../utils/common';
 import moment from 'moment';
 import Smart from './smart';
 import {generateOffers, generateDescriptions} from '../mock/event';
 import flatpickr from "flatpickr";
+import {MODE} from '../const';
 
 export const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -138,7 +139,7 @@ const createDestinationList = () => {
   }).join(` `);
 };
 
-export const createTripEventItemEditTemplate = (data = {}) => {
+export const createTripEventItemEditTemplate = (data = {}, mode) => {
   const {
     type,
     destination,
@@ -160,7 +161,7 @@ export const createTripEventItemEditTemplate = (data = {}) => {
     return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
   };
 
-  const isNewEvent = () => isEqual(data, NEW_EVENT);
+  // const isNewEvent = () => isEqual(data, NEW_EVENT); замена на MODE?
 
   return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -199,7 +200,7 @@ export const createTripEventItemEditTemplate = (data = {}) => {
       </div>
       
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
-      <label class="event__favorite-btn ${isNewEvent() ? `visually-hidden` : ``}" for="event-favorite-1">
+      <label class="event__favorite-btn ${mode === MODE.CREATE ? `visually-hidden` : ``}" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -207,7 +208,7 @@ export const createTripEventItemEditTemplate = (data = {}) => {
       </label>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      ${isNewEvent() ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`} 
+      ${mode === MODE.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`} 
     </header>
     ${eventDetailsTemplate}
   </form>`
@@ -215,9 +216,10 @@ export const createTripEventItemEditTemplate = (data = {}) => {
 };
 
 export default class TripEventItemEdit extends Smart {
-  constructor(event) {
+  constructor(event, mode) {
     super();
     this._event = event || NEW_EVENT;
+    this._mode = mode || MODE.EDITING; // по умолчанию edit
 
     this._data = cloneDeep(this._event);
 
@@ -430,7 +432,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   getTemplate() {
-    return createTripEventItemEditTemplate(this._data);
+    return createTripEventItemEditTemplate(this._data, this._mode);
   }
 
   _formSubmitClickHandler(evt) {
