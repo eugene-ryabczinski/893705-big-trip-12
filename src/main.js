@@ -8,10 +8,10 @@ import {groupEventsByDay} from './utils/event';
 import {renderElement, RenderPosition} from './utils/render';
 
 import SiteMenu from './view/site-menu';
-import HeaderTripInfo from './view/header-trip-info';
 
 import TripPresenter from './presenter/trip';
-import FilterPresenter from './presenter/filter'
+import FilterPresenter from './presenter/filter';
+import TripInfoPresenter from './presenter/trip-info';
 
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
@@ -24,18 +24,13 @@ eventsModel.setEvents(events);
 
 const filtersModel = new FiltersModel();
 
-const groupedByDay = groupEventsByDay(events);
-const tripInfo = getTripInfo(groupedByDay);
-
-
 const siteHeaderElement = document.querySelector(`.page-header`);
 const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`);
 const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 
 
-if (events.length !== 0) {
-  renderElement(headerTripContainerElement, new HeaderTripInfo(tripInfo), RenderPosition.AFTERBEGIN);
-}
+const tripInfoPresenter = new TripInfoPresenter(headerTripContainerElement, eventsModel);
+tripInfoPresenter.init(events);
 
 const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
 const tripControsMakrsElementsArray = [...tripControsMakrsElements];
@@ -49,7 +44,6 @@ const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel,
 tripPresenter.init();
 
 new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
-
 
 const newTaskButton = document.querySelector(`.trip-main__event-add-btn`);
 
