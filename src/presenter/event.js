@@ -60,7 +60,7 @@ export default class Event {
   destroy() {
     removeCommponent(this._tripEventItemComponent);
     removeCommponent(this._tripEventItemEditComponent);
-    removeCommponent(this._tripEventsListConteiner); // remove container
+    removeCommponent(this._tripEventsListConteiner);
   }
 
   _replaceEventToForm() {
@@ -128,4 +128,3 @@ export default class Event {
     );
   }
 }
-

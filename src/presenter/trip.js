@@ -22,7 +22,7 @@ export default class TripPresenter {
     this._tripDaysListComponent = new TripDaysList();
     this._tripEventsListComponent = new TripEventsList();
     this._tripEventItemComponent = new TripEventItem();
-    this._noEventsComponent = null; // запретить рендерить компонент несколько раз в renderTrip
+    this._noEventsComponent = null; // запретить рендерить _noEventsComponent компонент несколько раз в renderTrip
 
     this._eventPresenter = {};
     this._currentSortType = SORT_TYPE.EVENT;
@@ -71,7 +71,7 @@ export default class TripPresenter {
       case SORT_TYPE.PRICE:
         return filteredEvents.sort(sortByPrice);
     }
-    return filteredEvents; // error  Method '_getEvents' expected a return value lnter
+    return filteredEvents; // error  Method '_getEvents' expected a return value linter
   }
 
   _handleModeChange() {
@@ -83,7 +83,6 @@ export default class TripPresenter {
   }
 
   _handleViewAction(actionType, updateType, updatedEvent) {
-    // console.log(actionType, updateType, updatedEvent);
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
         this._eventsModel.updateEvents(updateType, updatedEvent);
@@ -164,7 +163,7 @@ export default class TripPresenter {
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
     const eventsGroupedByDay = groupEventsByDay(events);
 
-    if (this._eventsModel.getEvents().length === 0 && !this._noEventsComponent) { // и нет активной формы создания точки маршрута? сривнивать с моделью т.е. ивентов может не быть после сортировки
+    if (this._eventsModel.getEvents().length === 0 && !this._noEventsComponent) {
       this._noEventsComponent = new NoEvents();
       this._renderNoEvents();
       removeCommponent(this._sortComponent);
@@ -184,7 +183,6 @@ export default class TripPresenter {
       this._renderSort();
 
       // два метода рендера - _renderEventsByDay, _renderEvents. используют разный source (сгруппированный по дням, обычнй массив)
-      // сделаеть проверку на _currentSortType чтобы в сорт хендлере можно было перевызывать _renderTrip
       if (this._currentSortType === SORT_TYPE.EVENT) {
         this._renderEventsByDay(eventsGroupedByDay);
         return;

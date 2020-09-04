@@ -2,9 +2,6 @@
 import "../node_modules/flatpickr/dist/themes/material_blue.css";
 
 import {generateEvent} from './mock/event';
-import {getTripInfo} from './mock/trip';
-
-import {groupEventsByDay} from './utils/event';
 import {renderElement, RenderPosition} from './utils/render';
 
 import SiteMenu from './view/site-menu';
@@ -16,7 +13,7 @@ import TripInfoPresenter from './presenter/trip-info';
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 const eventsModel = new EventsModel();
@@ -51,5 +48,3 @@ newTaskButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
   tripPresenter.addNewEvent();
 })
-
-

@@ -161,8 +161,6 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
     return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
   };
 
-  // const isNewEvent = () => isEqual(data, NEW_EVENT); замена на MODE?
-
   return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
       <div class="event__type-wrapper">
@@ -226,18 +224,12 @@ export default class TripEventItemEdit extends Smart {
     this._datepickerStart = null;
     this._datepickerEnd = null;
 
-    // вспомогательные переменные для валидации. другое решение?
-    // как реализовать валидацию из класса?
-    // сейчас при обновлении данных по дате шаблон заново не рисуется и следовательно из шаблона не вызывается ф-ия валидации дат isDateRangeValud.
-    // нужно делать disabled у кнопки save если значения не валидны
-
     this._startDate = this._event.startDate || new Date();
     this._endDate = this._event.endDate || new Date();
 
-    // this._cost = this._data.cost; // вспомогательная переменная, чтобы не обновлять данные напрямую, а реализовать обновленеи по кнопке save?
     this._cost = this._event.cost;
 
-    this._saveButton = this.getElement().querySelector(`.event__save-btn`); // иметь возможноть из класса сетить атрибуть disabled если дата invalid
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
 
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
@@ -297,9 +289,6 @@ export default class TripEventItemEdit extends Smart {
     const priceInput = this.getElement().querySelector(`.event__input--price`);
     priceInput.addEventListener(`input`, this._priceInputHandler);
 
-    // разрешить только символы. решение получше? не спасает от copy/paste
-    // priceInput.addEventListener(`keydown`, this._validatePriceInput);
-
     const offersCheckboxes = this.getElement().querySelectorAll(`.event__offer-checkbox`);
     offersCheckboxes.forEach((element) => {
       element.addEventListener(`change`, this._offersSelectorHandler);
@@ -335,7 +324,7 @@ export default class TripEventItemEdit extends Smart {
     return true;
   }
 
-  _isValidDateRange() { // метод без параметров. обращаемся напрямую к датам норм?
+  _isValidDateRange() { 
     const start = moment(this._startDate);
     const end = moment(this._endDate);
 
@@ -355,12 +344,12 @@ export default class TripEventItemEdit extends Smart {
   _priceInputHandler(evt) {
     evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``); // временное решение запрещать ввод не числовых значений через regexp
     this._cost = evt.currentTarget.value;
-    this._data.cost = this._cost; // пока не нравится идея писать сразу в дату
+    this._data.cost = this._cost; 
 
     this._validateForm();
   }
 
-  _startDateInputhandler([date]) { // на каждом инпуте напрямую обновляем данные?
+  _startDateInputhandler([date]) { 
     this._startDate = date;
 
     this._validateForm();

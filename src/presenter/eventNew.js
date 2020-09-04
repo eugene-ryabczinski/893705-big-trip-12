@@ -20,7 +20,7 @@ export default class EventNew {
   }
 
   init() {
-    this._event = NEW_EVENT;// создаём пустой ивент?
+    this._event = NEW_EVENT;
 
     this._tripEventItemEditComponent = new TripEventItemEdit(this._event, MODE.CREATE);
 
@@ -63,7 +63,7 @@ export default class EventNew {
   _handleEventDeleteClick(tripEvent) {
     tripEvent = null;
     this.destroy();
-    this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, tripEvent); // вызвать апдейт листа без значения
+    this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, tripEvent);
   }
 
   _handleEcs(evt) {

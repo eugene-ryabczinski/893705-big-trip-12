@@ -1,7 +1,7 @@
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import HeaderTripInfo from '../view/header-trip-info';
 import {groupEventsByDay} from '../utils/event';
-import {getTripInfo} from '../mock/trip';
+import {getTripInfo} from '../utils/event';
 
 export default class TripInfoPresenter {
   constructor(headerContainer, eventsModel) {
@@ -23,8 +23,8 @@ export default class TripInfoPresenter {
 
   _handleModelChange() {
     removeCommponent(this._headerTripInfo);
-    this._events = groupEventsByDay(this._eventsModel.getEvents());
-    this._tripInfo = getTripInfo(this._events);
+    const groupEvents = groupEventsByDay(this._eventsModel.getEvents());
+    this._tripInfo = getTripInfo(groupEvents);
     this._renderTripInfo();
   }
 

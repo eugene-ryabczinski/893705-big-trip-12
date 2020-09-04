@@ -48,6 +48,42 @@ export const generateId = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
+export const getTripInfo = (events) => {
+  const getDuration = () => {
+    const days = Object.keys(events);
+
+    const start = moment(days[0]).format(`MMM DD`);
+    const end = moment(days[days.length - 1]).format(`DD`);
+
+    const result = `${start} – ${end}`;
+
+    return result.toUpperCase();
+  };
+
+  const getRoutePoints = () => {
+    const route = Object.values(events).map((eventsByDay) => {
+      return eventsByDay[0].destination;
+    });
+    return route
+  };
+
+  const getTotalCost = () => {
+    const totalCost = Object.values(events).reduce((total, amount) => {
+      const totalCostyDay = amount.reduce((totalByDay, amountByDay) => {
+        return totalByDay + amountByDay.cost;
+      }, 0);
+      return total + totalCostyDay;
+    }, 0);
+    return totalCost;
+  };
+
+  return {
+    route: getRoutePoints(),
+    duration: getDuration(),
+    cost: getTotalCost()
+  };
+};
+
 export const filter = {
   [FILTER_TYPE.EVERYTHING]: (events) => {
     return events;

@@ -930,7 +930,3 @@ main {
 
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }
-
-.create-event .event__favorite-btn {
-  display: none;
-}
