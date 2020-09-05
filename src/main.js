@@ -1,8 +1,8 @@
-
 import "../node_modules/flatpickr/dist/themes/material_blue.css";
 
 import {generateEvent} from './mock/event';
 import {renderElement, RenderPosition} from './utils/render';
+import { MENU } from './const';
 
 import SiteMenu from './view/site-menu';
 
@@ -32,7 +32,9 @@ tripInfoPresenter.init(events);
 const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
 const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 
-renderElement(tripControsMakrsElementsArray[0], new SiteMenu(), RenderPosition.AFTEREND);
+const siteMenu =  new SiteMenu();
+renderElement(tripControsMakrsElementsArray[0], siteMenu, RenderPosition.AFTEREND);
+
 
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
@@ -44,7 +46,27 @@ new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel)
 
 const newTaskButton = document.querySelector(`.trip-main__event-add-btn`);
 
+
+const handleSiteMenuClick = (menuItem) => {
+  siteMenu.setActiveMenu(menuItem);
+  switch (menuItem) {
+    case MENU.STATISTIC:
+      tripPresenter.destroy();
+      break;
+    case MENU.TABLE:
+      tripPresenter.init();
+      break;
+  }
+};
+
+siteMenu.setMenuClickHandler(handleSiteMenuClick);
+
+const handleNewEventFormClose = (evt) => {
+  newTaskButton.removeAttribute(`disabled`);
+}
+
 newTaskButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
-  tripPresenter.addNewEvent();
+  tripPresenter.addNewEvent(handleNewEventFormClose);
+  newTaskButton.setAttribute(`disabled`, `disabled`);
 })

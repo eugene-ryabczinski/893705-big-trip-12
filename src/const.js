@@ -22,6 +22,11 @@ export const USER_ACTION = {
   DELETE_EVENT: `DELETE_EVENT`
 };
 
+export const MENU = {
+  TABLE: `TABLE`,
+  STATISTIC: `STATISTIC`,
+};
+
 export const UPDATE_TYPE = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,

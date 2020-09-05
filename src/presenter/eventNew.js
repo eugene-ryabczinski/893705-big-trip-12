@@ -19,7 +19,8 @@ export default class EventNew {
     this._isFavouriteClick = this._isFavouriteClick.bind(this);
   }
 
-  init() {
+  init(onCloseCallback) {
+    this._onCloseFormCallback = onCloseCallback;
     this._event = NEW_EVENT;
 
     this._tripEventItemEditComponent = new TripEventItemEdit(this._event, MODE.CREATE);
@@ -47,6 +48,7 @@ export default class EventNew {
 
   destroy() {
     this._changeMode();
+    this._onCloseFormCallback();
   }
 
   _handleFormSubmit(tripEvent) {
@@ -60,7 +62,7 @@ export default class EventNew {
     this.destroy();
   }
 
-  _handleEventDeleteClick(tripEvent) {
+  _handleEventDeleteClick(tripEvent) { //?
     tripEvent = null;
     this.destroy();
     this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, tripEvent);

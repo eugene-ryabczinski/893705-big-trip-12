@@ -34,17 +34,24 @@ export default class TripPresenter {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._eventsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange, this._eventsModel); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
   }
 
   init() {
     this._renderTrip();
+    this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
   }
 
-  addNewEvent() {
+  destroy() {
+    removeCommponent(this._sortComponent);
+    this._clearEventList();
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  addNewEvent(onCloseCallback) {
     this._currentSortType = SORT_TYPE.EVENT; // reset
     this._filterModel.setFilter(UPDATE_TYPE.MINOR, FILTER_TYPE.EVERYTHING); // reset
 
@@ -54,7 +61,7 @@ export default class TripPresenter {
     }
 
     const newEventPresenter = this._newEventPresenter;
-    newEventPresenter.init();
+    newEventPresenter.init(onCloseCallback);
     this._eventPresenter[`0`] = newEventPresenter;
   }
 
