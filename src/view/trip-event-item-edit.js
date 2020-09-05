@@ -324,7 +324,7 @@ export default class TripEventItemEdit extends Smart {
     return true;
   }
 
-  _isValidDateRange() { 
+  _isValidDateRange() {
     const start = moment(this._startDate);
     const end = moment(this._endDate);
 
@@ -344,12 +344,12 @@ export default class TripEventItemEdit extends Smart {
   _priceInputHandler(evt) {
     evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``); // временное решение запрещать ввод не числовых значений через regexp
     this._cost = evt.currentTarget.value;
-    this._data.cost = this._cost; 
+    this._data.cost = this._cost;
 
     this._validateForm();
   }
 
-  _startDateInputhandler([date]) { 
+  _startDateInputhandler([date]) {
     this._startDate = date;
 
     this._validateForm();

@@ -64,7 +64,7 @@ export const getTripInfo = (events) => {
     const route = Object.values(events).map((eventsByDay) => {
       return eventsByDay[0].destination;
     });
-    return route
+    return route;
   };
 
   const getTotalCost = () => {
