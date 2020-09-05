@@ -5,6 +5,7 @@ import {renderElement, RenderPosition} from './utils/render';
 import { MENU } from './const';
 
 import SiteMenu from './view/site-menu';
+import Stats from './view/stats';
 
 import TripPresenter from './presenter/trip';
 import FilterPresenter from './presenter/filter';
@@ -13,7 +14,7 @@ import TripInfoPresenter from './presenter/trip-info';
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
 
-const EVENT_COUNT = 10;
+const EVENT_COUNT = 0;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 const eventsModel = new EventsModel();
@@ -35,6 +36,7 @@ const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 const siteMenu =  new SiteMenu();
 renderElement(tripControsMakrsElementsArray[0], siteMenu, RenderPosition.AFTEREND);
 
+const stats = new Stats();
 
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
@@ -52,6 +54,7 @@ const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MENU.STATISTIC:
       tripPresenter.destroy();
+      renderElement(tripEventsContainerElement, stats ,RenderPosition.AFTEREND);
       break;
     case MENU.TABLE:
       tripPresenter.init();
