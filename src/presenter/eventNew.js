@@ -62,7 +62,7 @@ export default class EventNew {
     this.destroy();
   }
 
-  _handleEventDeleteClick(tripEvent) { //?
+  _handleEventDeleteClick(tripEvent) { // нейминг
     tripEvent = null;
     this.destroy();
     this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, tripEvent);
