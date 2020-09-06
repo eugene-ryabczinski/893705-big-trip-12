@@ -13,7 +13,6 @@ import TripInfoPresenter from './presenter/trip-info';
 
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
-import { remove } from "lodash";
 
 const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
@@ -53,6 +52,10 @@ const handleSiteMenuClick = (menuItem) => {
   siteMenu.setActiveMenu(menuItem);
   switch (menuItem) {
     case MENU.STATISTIC:
+      if (statsComponent !== null) {  // сбросить компонент. fix некорректную калькуляцию высоты графиков при ререндере. 
+        removeCommponent(statsComponent);
+        statsComponent = null;
+      } 
       statsComponent = new Stats(eventsModel.getEvents());
       renderElement(tripEventsContainerElement, statsComponent, RenderPosition.BEFOREEND);
       statsComponent.init();

@@ -5,9 +5,7 @@ import {EVENT_TRANSFER_LIST} from '../const';
 import moment from 'moment';
 const BAR_HEIGHT = 55;
 
-const renderMoneyChart = (events) => {
-  const moneyCtx = document.querySelector(`.statistics__chart--money`);
-
+const renderMoneyChart = (moneyCtx, events) => {
   const costMap = events
   .reduce((prev, cur) => {
     let cost = 0;
@@ -45,13 +43,13 @@ const renderMoneyChart = (events) => {
     type: `horizontalBar`,
     data: {
       labels: Array.from(costSortedMap.keys()).map((type) => type.toUpperCase()),
-      // labels: costSortedMap.keys().map((type) => type.toUpperCase()),
       datasets: [{
-        // data: Object.values(costMap),
         data: Array.from(costSortedMap.values()),
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        anchor: `start`,
+        barThickness: 44,
+        minBarLength: 50
       }]
     },
     options: {
@@ -84,7 +82,6 @@ const renderMoneyChart = (events) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -95,7 +92,6 @@ const renderMoneyChart = (events) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 50
         }],
       },
       legend: {
@@ -109,9 +105,7 @@ const renderMoneyChart = (events) => {
   return moneyChart;
 };
 
-const renderTransportChart = (events) => {
-  const transportCtx = document.querySelector(`.statistics__chart--transport`);
-
+const renderTransportChart = (transportCtx, events) => {
   const transportMap = events
     .map((event) => event.type)
     .filter((type) => EVENT_TRANSFER_LIST.includes(type))
@@ -144,14 +138,14 @@ const renderTransportChart = (events) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      // labels: Object.keys(transportMap).map((type) => type.toUpperCase()),
       labels: Array.from(transportSortedMap.keys()).map((type) => type.toUpperCase()),
       datasets: [{
-        // data: Object.values(transportMap),
         data: Array.from(transportSortedMap.values()),
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        anchor: `start`,
+        barThickness: 44,
+        minBarLength: 50
       }]
     },
     options: {
@@ -184,7 +178,6 @@ const renderTransportChart = (events) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -195,7 +188,6 @@ const renderTransportChart = (events) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 50
         }],
       },
       legend: {
@@ -210,9 +202,7 @@ const renderTransportChart = (events) => {
   return transportChart;
 };
 
-const renderTimeSpentChart = (events) => {
-  const timeSpentCtx = document.querySelector(`.statistics__chart--time`);
-
+const renderTimeSpentChart = (timeSpentCtx, events) => {
   const getDuration = (start, end) => {
     const momentStart = moment(start);
     const momentEnd = moment(end);
@@ -269,14 +259,14 @@ const renderTimeSpentChart = (events) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      // labels: Object.keys(durationMap).map((type) => type.toUpperCase()),
       labels: Array.from(durationSortedMap.keys()).map((type) => type.toUpperCase()),
       datasets: [{
         data: Array.from(durationSortedMap.values()),
-        // data: Object.values(durationMap),
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        anchor: `start`,
+        barThickness: 44,
+        minBarLength: 50
       }]
     },
     options: {
@@ -309,7 +299,6 @@ const renderTimeSpentChart = (events) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -320,7 +309,6 @@ const renderTimeSpentChart = (events) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 50
         }],
       },
       legend: {
@@ -357,11 +345,15 @@ export default class Stats extends Smart {
   constructor(events) {
     super();
 
+    this._evets = events;
+
     this._moneyChart = null;
     this._transportChart = null;
     this._timeSpentChart = null;
 
-    this._evets = events;
+    this._moneyCtx = null;
+    this._transportCtx = null;
+    this._timeSpentCtx = null;
   }
 
   init() {
@@ -373,15 +365,19 @@ export default class Stats extends Smart {
   }
 
   removeElement() {
-    super.removeElement();
     this._moneyChart = null;
     this._transportChart = null;
     this._timeSpentChart = null;
+    super.removeElement();
   }
 
   _setCharts() {
-    this._transportChart = renderTransportChart(this._evets);
-    this._moneyChart = renderMoneyChart(this._evets);
-    this._timeSpentChart = renderTimeSpentChart(this._evets);
+    this._moneyCtx = document.querySelector(`.statistics__chart--money`);
+    this._transportCtx = document.querySelector(`.statistics__chart--transport`);
+    this._timeSpentCtx = document.querySelector(`.statistics__chart--time`);
+
+    this._transportChart = renderTransportChart(this._moneyCtx, this._evets);
+    this._moneyChart = renderMoneyChart(this._transportCtx, this._evets);
+    this._timeSpentChart = renderTimeSpentChart(this._timeSpentCtx, this._evets);
   }
 }
