@@ -39,7 +39,7 @@ export default class SiteMenu extends AbstractView {
       item.classList.remove(`trip-tabs__btn--active`);
       return item;
     }).map((item) => {
-      if (item.dataset === selected) {
+      if (item.dataset.value === selected) {
         item.classList.add(`trip-tabs__btn--active`);
       }
     });

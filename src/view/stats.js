@@ -372,6 +372,13 @@ export default class Stats extends Smart {
     return createStatsTemplate();
   }
 
+  removeElement() {
+    super.removeElement();
+    this._moneyChart = null;
+    this._transportChart = null;
+    this._timeSpentChart = null;
+  }
+
   _setCharts() {
     this._transportChart = renderTransportChart(this._evets);
     this._moneyChart = renderMoneyChart(this._evets);

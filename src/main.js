@@ -1,7 +1,7 @@
 import "../node_modules/flatpickr/dist/themes/material_blue.css";
 
 import {generateEvent} from './mock/event';
-import {renderElement, RenderPosition} from './utils/render';
+import {renderElement, RenderPosition, removeCommponent} from './utils/render';
 import { MENU } from './const';
 
 import SiteMenu from './view/site-menu';
@@ -13,6 +13,7 @@ import TripInfoPresenter from './presenter/trip-info';
 
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
+import { remove } from "lodash";
 
 const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
@@ -40,30 +41,29 @@ const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
 
 const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel);
-// tripPresenter.init();
+tripPresenter.init();
 
 new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
 
 const newTaskButton = document.querySelector(`.trip-main__event-add-btn`);
 
+let statsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
   siteMenu.setActiveMenu(menuItem);
   switch (menuItem) {
     case MENU.STATISTIC:
-
-      // tripPresenter.destroy();
-      const stats = new Stats(eventsModel.getEvents());
-      renderElement(tripEventsContainerElement, stats, RenderPosition.BEFOREEND);
-      // debugger
-      stats.init();
+      statsComponent = new Stats(eventsModel.getEvents());
+      renderElement(tripEventsContainerElement, statsComponent, RenderPosition.BEFOREEND);
+      statsComponent.init();
+      tripPresenter.destroy();
       break;
     case MENU.TABLE:
-      // tripPresenter.init();
+      tripPresenter.init();
+      removeCommponent(statsComponent);
       break;
   }
 };
-
 
 siteMenu.setMenuClickHandler(handleSiteMenuClick);
 

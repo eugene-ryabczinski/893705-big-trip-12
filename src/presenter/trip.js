@@ -46,7 +46,9 @@ export default class TripPresenter {
 
   destroy() {
     removeCommponent(this._sortComponent);
-    removeCommponent(this._noEventsComponent);
+    if (this._noEventsComponent) {
+      removeCommponent(this._noEventsComponent);
+    }
     this._clearEventList();
     this._eventsModel.removeObserver(this._handleModelEvent);
     this._filterModel.removeObserver(this._handleModelEvent);
