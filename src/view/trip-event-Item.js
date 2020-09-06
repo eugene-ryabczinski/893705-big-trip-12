@@ -23,6 +23,7 @@ export const createTripEventItemTemplate = (event) => {
 
     for (let part of dateParts) { // поискать другое решенеи?
       if (duration[part]() !== 0) {
+        debugger
         resultString = resultString.concat(`${duration[part]()}${(part.substring(0, 1)).toUpperCase()} `);
       }
     }

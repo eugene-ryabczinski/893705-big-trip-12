@@ -14,7 +14,7 @@ import TripInfoPresenter from './presenter/trip-info';
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
 
-const EVENT_COUNT = 0;
+const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 const eventsModel = new EventsModel();
@@ -36,13 +36,11 @@ const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 const siteMenu =  new SiteMenu();
 renderElement(tripControsMakrsElementsArray[0], siteMenu, RenderPosition.AFTEREND);
 
-const stats = new Stats();
-
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
 
 const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel);
-tripPresenter.init();
+// tripPresenter.init();
 
 new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
 
@@ -53,14 +51,19 @@ const handleSiteMenuClick = (menuItem) => {
   siteMenu.setActiveMenu(menuItem);
   switch (menuItem) {
     case MENU.STATISTIC:
-      tripPresenter.destroy();
-      renderElement(tripEventsContainerElement, stats ,RenderPosition.AFTEREND);
+
+      // tripPresenter.destroy();
+      const stats = new Stats(eventsModel.getEvents());
+      renderElement(tripEventsContainerElement, stats, RenderPosition.BEFOREEND);
+      // debugger
+      stats.init();
       break;
     case MENU.TABLE:
-      tripPresenter.init();
+      // tripPresenter.init();
       break;
   }
 };
+
 
 siteMenu.setMenuClickHandler(handleSiteMenuClick);
 
