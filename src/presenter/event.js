@@ -1,24 +1,21 @@
 import {renderElement, RenderPosition, replace, removeCommponent} from '../utils/render';
 import TripEventItem from '../view/trip-event-Item';
 import TripEventItemEdit from '../view/trip-event-item-edit';
-
-const Mode = {
-  DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
-};
+import {USER_ACTION, UPDATE_TYPE, MODE} from '../const';
 
 export default class Event {
   constructor(tripEventsListContainer, changeData, changeMode) {
     this._tripEventsListConteiner = tripEventsListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._mode = Mode.DEFAULT;
+    this._mode = MODE.DEFAULT;
 
     this._tripEventItemComponent = null;
     this._tripEventItemEditComponent = null;
 
     this._handleRollupClick = this._handleRollupClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleEventDeleteClick = this._handleEventDeleteClick.bind(this);
     this._handleEcs = this._handleEcs.bind(this);
     this._isFavouriteClick = this._isFavouriteClick.bind(this);
   }
@@ -34,6 +31,7 @@ export default class Event {
 
     this._tripEventItemComponent.setRollupEventClickHandler(this._handleRollupClick);
     this._tripEventItemEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._tripEventItemEditComponent.setDeleteClickHandle(this._handleEventDeleteClick);
     this._tripEventItemEditComponent.setFavouriteClickHandler(this._isFavouriteClick);
 
     if (prevTripEventItemComponent === null || prevTripEventItemEditComponent === null) {
@@ -41,11 +39,11 @@ export default class Event {
       return;
     }
 
-    if (this._mode === Mode.DEFAULT) {
+    if (this._mode === MODE.DEFAULT) {
       replace(this._tripEventItemComponent, prevTripEventItemComponent);
     }
 
-    if (this._mode === Mode.EDITING) {
+    if (this._mode === MODE.EDITING) {
       replace(this._tripEventItemEditComponent, prevTripEventItemEditComponent);
     }
 
@@ -54,7 +52,7 @@ export default class Event {
   }
 
   resetView() {
-    if (this._mode !== Mode.DEFAULT) {
+    if (this._mode !== MODE.DEFAULT) {
       this._replaceFormToEvent();
     }
   }
@@ -62,20 +60,27 @@ export default class Event {
   destroy() {
     removeCommponent(this._tripEventItemComponent);
     removeCommponent(this._tripEventItemEditComponent);
-    removeCommponent(this._tripEventsListConteiner); // remove container
+    removeCommponent(this._tripEventsListConteiner);
   }
 
   _replaceEventToForm() {
     replace(this._tripEventItemEditComponent, this._tripEventItemComponent);
     document.addEventListener(`keydown`, this._handleEcs);
     this._changeMode();
-    this._mode = Mode.EDITING;
+    this._mode = MODE.EDITING;
   }
 
   _replaceFormToEvent() {
     replace(this._tripEventItemComponent, this._tripEventItemEditComponent);
     document.removeEventListener(`keydown`, this._handleEcs);
-    this._mode = Mode.DEFAULT;
+    this._mode = MODE.DEFAULT;
+  }
+
+  _isCostChanged(cost) { // если цена поменялась – делай ререндер всех ивентов т.е. может быть активна сортировка по цене? возможно есть способ сравнения получше
+    if (this._event.cost !== cost) {
+      return true;
+    }
+    return false;
   }
 
   _handleRollupClick() {
@@ -83,8 +88,26 @@ export default class Event {
   }
 
   _handleFormSubmit(tripEvent) {
+    let updateType = UPDATE_TYPE.PATCH;
+
+    if (this._isCostChanged(tripEvent.cost)) {
+      updateType = UPDATE_TYPE.MINOR;
+    }
+
     this._replaceFormToEvent();
-    this._changeData(tripEvent);
+    this._changeData(
+        USER_ACTION.UPDATE_EVENT,
+        updateType,
+        tripEvent
+    );
+  }
+
+  _handleEventDeleteClick(tripEvent) {
+    this._changeData(
+        USER_ACTION.DELETE_EVENT,
+        UPDATE_TYPE.MINOR,
+        tripEvent
+    );
   }
 
   _handleEcs(evt) {
@@ -98,7 +121,10 @@ export default class Event {
 
   _isFavouriteClick(evt, data) {
     let updated = Object.assign({}, data, {isFavourite: evt});
-    this._changeData(updated);
+    this._changeData(
+        USER_ACTION.UPDATE_EVENT,
+        UPDATE_TYPE.PATCH,
+        updated
+    );
   }
 }
-

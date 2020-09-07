@@ -2,7 +2,7 @@ import moment from 'moment';
 import AbstractView from './abstract-view';
 
 export const createTripEventItemTemplate = (event) => {
-  const {type, destination, endDate, startDate, offers = [], cost} = event;
+  const {type, destination, startDate, endDate, offers = [], cost} = event;
 
   const formatDate = (date) => {
     const momentDate = moment(date);
@@ -21,7 +21,7 @@ export const createTripEventItemTemplate = (event) => {
 
     let resultString = ``;
 
-    for (let part of dateParts) {
+    for (let part of dateParts) { // поискать другое решенеи?
       if (duration[part]() !== 0) {
         resultString = resultString.concat(`${duration[part]()}${(part.substring(0, 1)).toUpperCase()} `);
       }
@@ -36,10 +36,12 @@ export const createTripEventItemTemplate = (event) => {
     if (offersToRender.length === 0) {
       return (`<li class="event__offer"></li>`);
     } else {
-      return offersToRender.map(({name, offetCost = cost}) => {
+      return offersToRender.map((item) => {
+        const offerCost = item.cost;
+        const offerName = item.name;
         return (
           `<li class="event__offer">
-            <span class="event__offer-title">${name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${offetCost}</span>
+            <span class="event__offer-title">${offerName}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${offerCost}</span>
           </li>`
         );
       }).join(``);

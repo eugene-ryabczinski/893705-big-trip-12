@@ -10,3 +10,27 @@ export const SORT_TYPE = {
   TIME: `sort-time`
 };
 
+export const FILTER_TYPE = {
+  EVERYTHING: `everything`,
+  FUTERE: `future`,
+  PAST: `past`
+};
+
+export const USER_ACTION = {
+  UPDATE_EVENT: `UPDATE_EVENT`,
+  ADD_EVENT: `ADD_EVENT`,
+  DELETE_EVENT: `DELETE_EVENT`
+};
+
+export const UPDATE_TYPE = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+export const MODE = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`,
+  CREATE: `CREATE`
+};
+

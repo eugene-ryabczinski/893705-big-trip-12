@@ -1,10 +1,12 @@
 import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
-import {isEqual, cloneDeep} from '../utils/common';
+import {cloneDeep} from '../utils/common';
 import moment from 'moment';
 import Smart from './smart';
 import {generateOffers, generateDescriptions} from '../mock/event';
+import flatpickr from "flatpickr";
+import {MODE} from '../const';
 
-const NEW_EVENT = {
+export const NEW_EVENT = {
   type: EVENT_TYPES[0],
   destination: ``,
   destinationInfo: null,
@@ -98,7 +100,6 @@ const createEventDetailsTemplate = (offers = [], destinationInfo = null) => {
 };
 
 const createEventSelectorTemplate = (type) => {
-
   const createElementListTemplate = (event) => {
     return (
       `<div class="event__type-item">
@@ -138,7 +139,7 @@ const createDestinationList = () => {
   }).join(` `);
 };
 
-export const createTripEventItemEditTemplate = (data = {}) => {
+export const createTripEventItemEditTemplate = (data = {}, mode) => {
   const {
     type,
     destination,
@@ -159,8 +160,6 @@ export const createTripEventItemEditTemplate = (data = {}) => {
   const placeholder = () => {
     return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
   };
-
-  const isNewEvent = () => isEqual(event, NEW_EVENT);
 
   return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -199,7 +198,7 @@ export const createTripEventItemEditTemplate = (data = {}) => {
       </div>
       
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
-      <label class="event__favorite-btn ${isNewEvent() ? `visually-hidden` : ``}" for="event-favorite-1">
+      <label class="event__favorite-btn ${mode === MODE.CREATE ? `visually-hidden` : ``}" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -207,7 +206,7 @@ export const createTripEventItemEditTemplate = (data = {}) => {
       </label>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      ${isNewEvent() ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`} 
+      ${mode === MODE.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`} 
     </header>
     ${eventDetailsTemplate}
   </form>`
@@ -215,20 +214,67 @@ export const createTripEventItemEditTemplate = (data = {}) => {
 };
 
 export default class TripEventItemEdit extends Smart {
-  constructor(event) {
+  constructor(event, mode) {
     super();
     this._event = event || NEW_EVENT;
+    this._mode = mode || MODE.EDITING; // по умолчанию edit
 
     this._data = cloneDeep(this._event);
 
+    this._datepickerStart = null;
+    this._datepickerEnd = null;
+
+    this._startDate = this._event.startDate || new Date();
+    this._endDate = this._event.endDate || new Date();
+
+    this._cost = this._event.cost;
+
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
+
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
-    this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
+    this._destinationSelectorHandler = this._destinationSelectorHandler.bind(this);
+    this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._startDateInputhandler = this._startDateInputhandler.bind(this);
+    this._endDateInputhandler = this._endDateInputhandler.bind(this);
 
     this._formSubmitClickHandler = this._formSubmitClickHandler.bind(this);
-    this._isFavouriteClickHandler = this._isFavouriteClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
+
+    this._validateForm();
+  }
+
+  _setDatePicker() {
+    if (this._datepickerStart) {
+      this._datepickerStart.destroy();
+      this._datepickerStart = null;
+    }
+
+    const config = {
+      dateFormat: `d/m/y H:i`,
+      enableTime: true,
+    };
+
+    this._datepickerStart = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          ...config,
+          defaultDate: this._data.startDate || new Date(),
+          onChange: this._startDateInputhandler || new Date()
+        }
+    );
+
+    this._datepickerEnd = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          ...config,
+          defaultDate: this._data.endDate,
+          onChange: this._endDateInputhandler
+        }
+    );
   }
 
   _setInnerHandlers() {
@@ -240,11 +286,15 @@ export default class TripEventItemEdit extends Smart {
     const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
     destinationSelector.addEventListener(`change`, this._destinationSelectorHandler);
 
+    const priceInput = this.getElement().querySelector(`.event__input--price`);
+    priceInput.addEventListener(`input`, this._priceInputHandler);
+
     const offersCheckboxes = this.getElement().querySelectorAll(`.event__offer-checkbox`);
     offersCheckboxes.forEach((element) => {
-
       element.addEventListener(`change`, this._offersSelectorHandler);
     });
+
+    this._setDatePicker();
   }
 
   restoreHandlers() {
@@ -252,6 +302,71 @@ export default class TripEventItemEdit extends Smart {
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavouriteClickHandler(this._callback.favouriteClick);
+    this.setDeleteClickHandle(this._callback.deleteClick);
+  }
+
+  _validateForm() {
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
+    if (!this._isValidPriceInput() || !this._isValidDateRange() || !this._isValidDestination()) {
+      this._saveButton.setAttribute(`disabled`, `disabled`);
+      return;
+    }
+    this._saveButton.removeAttribute(`disabled`, `disabled`);
+  }
+
+  _isValidDestination() {
+    const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
+
+    if (destinationSelector.value === `` || !CITIES.map((city) => city.toLowerCase()).includes(destinationSelector.value.toLowerCase())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  _isValidDateRange() {
+    const start = moment(this._startDate);
+    const end = moment(this._endDate);
+
+    if ((start.isSame(end)) || (start.isAfter(end))) {
+      return false;
+    }
+    return true;
+  }
+
+  _isValidPriceInput() {
+    if (this._data.cost === ``) {
+      return false;
+    }
+    return true;
+  }
+
+  _priceInputHandler(evt) {
+    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``); // временное решение запрещать ввод не числовых значений через regexp
+    this._cost = evt.currentTarget.value;
+    this._data.cost = this._cost;
+
+    this._validateForm();
+  }
+
+  _startDateInputhandler([date]) {
+    this._startDate = date;
+
+    this._validateForm();
+
+    this.updateData({
+      startDate: this._startDate,
+    }, true);
+  }
+
+  _endDateInputhandler([date]) {
+    this._endDate = date;
+
+    this._validateForm();
+
+    this.updateData({
+      endDate: this._endDate,
+    }, true);
   }
 
   _offersSelectorHandler(evt) {
@@ -302,13 +417,17 @@ export default class TripEventItemEdit extends Smart {
         destinationInfo: generateDescriptions().get(selectedCity)
       });
     }
+    this._validateForm();
   }
 
   getTemplate() {
-    return createTripEventItemEditTemplate(this._data);
+    return createTripEventItemEditTemplate(this._data, this._mode);
   }
 
   _formSubmitClickHandler(evt) {
+    this._data.startDate = this._startDate;
+    this._data.endDate = this._endDate;
+    this._cost = this._cost;
     evt.preventDefault();
     this._callback.formSubmit(this._data);
   }
@@ -316,6 +435,11 @@ export default class TripEventItemEdit extends Smart {
   _isFavouriteClickHandler(evt) {
     evt.preventDefault();
     this._callback.favouriteClick(evt.target.checked, this._data);
+  }
+
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(this._data);
   }
 
   setFormSubmitHandler(callback) {
@@ -326,5 +450,14 @@ export default class TripEventItemEdit extends Smart {
   setFavouriteClickHandler(callback) {
     this._callback.favouriteClick = callback;
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._isFavouriteClickHandler);
+  }
+
+  setDeleteClickHandle(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
+  }
+
+  setCancelClickHandler(callback) {
+    this._callback.cancelClick = callback;
   }
 }

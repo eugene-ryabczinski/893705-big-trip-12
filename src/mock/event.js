@@ -56,6 +56,7 @@ const generateCost = (start = 20, end = 600, step = 25) => {
 
 const generateStartDate = () => {
   const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 5);
   const minutes = [...Array(13).keys()].map((k) => k * 5);
 
   startDate.setDate(startDate.getDate() + random(1, 7));
