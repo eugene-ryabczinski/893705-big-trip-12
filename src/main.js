@@ -1,15 +1,11 @@
 import "../node_modules/flatpickr/dist/themes/material_blue.css";
 
 import {generateEvent} from './mock/event';
-import {renderElement, RenderPosition, removeCommponent} from './utils/render';
-import { MENU } from './const';
-
-import SiteMenu from './view/site-menu';
-import Stats from './view/stats';
 
 import TripPresenter from './presenter/trip';
 import FilterPresenter from './presenter/filter';
 import TripInfoPresenter from './presenter/trip-info';
+import MenuPresenter from './presenter/menu';
 
 import EventsModel from './models/event';
 import FiltersModel from './models/filters';
@@ -26,53 +22,24 @@ const siteHeaderElement = document.querySelector(`.page-header`);
 const headerTripContainerElement = siteHeaderElement.querySelector(`.trip-main`);
 const headerTripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 
-
 const tripInfoPresenter = new TripInfoPresenter(headerTripContainerElement, eventsModel);
 tripInfoPresenter.init(events);
 
 const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`);
 const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 
-const siteMenu =  new SiteMenu();
-renderElement(tripControsMakrsElementsArray[0], siteMenu, RenderPosition.AFTEREND);
-
 const mainContentContainerElemant = document.querySelector(`.page-main`);
 const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
 
 const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel);
-tripPresenter.init();
+const menuPresenter = new MenuPresenter(tripControsMakrsElementsArray[0], tripEventsContainerElement, tripPresenter, eventsModel);
+const filterPresenter = new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel);
 
-new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
+menuPresenter.init();
+tripPresenter.init();
+filterPresenter.init();
 
 const newTaskButton = document.querySelector(`.trip-main__event-add-btn`);
-
-let statsComponent = null;
-
-const handleSiteMenuClick = (menuItem) => {
-  siteMenu.setActiveMenu(menuItem);
-  switch (menuItem) {
-    case MENU.STATISTIC:
-      if (statsComponent !== null) {  // сбросить компонент. fix некорректную калькуляцию высоты графиков при ререндере. 
-        removeCommponent(statsComponent);
-        statsComponent = null;
-      } 
-      statsComponent = new Stats(eventsModel.getEvents());
-      renderElement(tripEventsContainerElement, statsComponent, RenderPosition.BEFOREEND);
-      statsComponent.init();
-      tripPresenter.destroy();
-      break;
-    case MENU.TABLE:
-      tripPresenter.init();
-      removeCommponent(statsComponent);
-      break;
-  }
-};
-
-siteMenu.setMenuClickHandler(handleSiteMenuClick);
-
-const handleNewEventFormClose = (evt) => {
-  newTaskButton.removeAttribute(`disabled`);
-}
 
 newTaskButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
