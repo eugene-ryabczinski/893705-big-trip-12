@@ -23,17 +23,17 @@ const renderMoneyChart = (moneyCtx, events) => {
   .sort((a, b) => {
     return costMap[b[0]] - costMap[a[0]];
   })
-  .map((a) => {
-    const key = a[0];
-    const value = a[1];
+  .map((transport) => {
+    const key = transport[0];
+    const value = transport[1];
     return {
       [key]: value
     };
   });
 
-  const costSortedMap = new Map(costMapSortedDescArray.map((item) => {
-    const key = Object.keys(item)[0];
-    const value = Object.values(item)[0];
+  const costSortedMap = new Map(costMapSortedDescArray.map((transport) => {
+    const key = Object.keys(transport)[0];
+    const value = Object.values(transport)[0];
     return [key, value];
   }));
 
@@ -119,17 +119,17 @@ const renderTransportChart = (transportCtx, events) => {
   .sort((a, b) => {
     return transportMap[b[0]] - transportMap[a[0]];
   })
-  .map((a) => {
-    const key = a[0];
-    const value = a[1];
+  .map((transport) => {
+    const key = transport[0];
+    const value = transport[1];
     return {
       [key]: value
     };
   });
 
-  const transportSortedMap = new Map(transportMapSortedDescArray.map((item) => {
-    const key = Object.keys(item)[0];
-    const value = Object.values(item)[0];
+  const transportSortedMap = new Map(transportMapSortedDescArray.map((transport) => {
+    const key = Object.keys(transport)[0];
+    const value = Object.values(transport)[0];
     return [key, value];
   }));
 
@@ -240,17 +240,17 @@ const renderTimeSpentChart = (timeSpentCtx, events) => {
   .sort((a, b) => {
     return durationMap[b[0]] - durationMap[a[0]];
   })
-  .map((a) => {
-    const key = a[0];
-    const value = a[1];
+  .map((eventDuration) => {
+    const key = eventDuration[0];
+    const value = eventDuration[1];
     return {
       [key]: value
     };
   });
 
-  const durationSortedMap = new Map(durationMapSortedDescArray.map((item) => {
-    const key = Object.keys(item)[0];
-    const value = Object.values(item)[0];
+  const durationSortedMap = new Map(durationMapSortedDescArray.map((eventDuration) => {
+    const key = Object.keys(eventDuration)[0];
+    const value = Object.values(eventDuration)[0];
     return [key, value];
   }));
 
