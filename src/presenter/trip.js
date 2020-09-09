@@ -8,8 +8,10 @@ import TripDayItem from '../view/trip-day-item';
 import TripEventsList from '../view/trip-events-list';
 import TripEventItem from '../view/trip-event-Item';
 import NoEvents from '../view/no-events';
+import Loading from '../view/loading';
 import Event from '../presenter/event';
 import EventNew from '../presenter/eventNew';
+import { remove } from 'lodash';
 
 export default class TripPresenter {
   constructor(tripEventsMainContainerElement, eventsModel, filterModel) {
@@ -18,11 +20,14 @@ export default class TripPresenter {
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
 
+    this._isLoading = true;
+
     this._sortComponent = new Sort();
     this._tripDaysListComponent = new TripDaysList();
     this._tripEventsListComponent = new TripEventsList();
     this._tripEventItemComponent = new TripEventItem();
     this._noEventsComponent = null; // запретить рендерить _noEventsComponent компонент несколько раз в renderTrip
+    this._loadingComponent = new Loading();
 
     this._eventPresenter = {};
     this._currentSortType = SORT_TYPE.EVENT;
@@ -118,6 +123,11 @@ export default class TripPresenter {
         break;
       case UPDATE_TYPE.MAJOR:
         break;
+      case UPDATE_TYPE.INIT:
+        this._isLoading = false;
+        removeCommponent(this._loadingComponent);
+        this._renderTrip();
+        break;
     }
   }
 
@@ -133,6 +143,7 @@ export default class TripPresenter {
     });
     this._eventPresenter = {};
     removeCommponent(this._tripDaysListComponent);
+    removeCommponent(this._loadingComponent);
   }
 
   _renderSort() {
@@ -142,6 +153,10 @@ export default class TripPresenter {
 
   _renderNoEvents() {
     renderElement(this._tripEventsMainContainerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
+  }
+
+  _renderLoading() {
+    renderElement(this._tripEventsMainContainerElement, this._loadingComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvent(eventsListElement, event) {
@@ -170,6 +185,11 @@ export default class TripPresenter {
   }
 
   _renderTrip() { // todo: рефакторинг условий
+    if (this._isLoading) {
+      this._renderLoading();
+      return
+    }
+
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
     const eventsGroupedByDay = groupEventsByDay(events);
 

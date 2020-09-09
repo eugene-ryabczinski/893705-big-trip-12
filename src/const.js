@@ -30,7 +30,8 @@ export const MENU = {
 export const UPDATE_TYPE = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const MODE = {

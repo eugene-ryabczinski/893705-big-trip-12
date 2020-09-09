@@ -23,6 +23,7 @@ const createOffersSelectorTemplate = (offers) => {
   }
 
   const createOffersSelectorList = () => {
+    // debugger
     return offers.map(({name, cost, isChecked}) => {
       const offerName = name.toLowerCase().replace(/ /g, `_`);
       return (
