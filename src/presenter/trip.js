@@ -48,14 +48,11 @@ export default class TripPresenter {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-<<<<<<< HEAD
-    this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange, this._eventsModel); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
-=======
+
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
     this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
->>>>>>> implement update, delete, add
   }
 
   init() {
@@ -89,12 +86,8 @@ export default class TripPresenter {
     const destinations = this._destinationsModel.getDestinations();
 
     const newEventPresenter = this._newEventPresenter;
-<<<<<<< HEAD
-    newEventPresenter.init(onCloseCallback);
-=======
     newEventPresenter.init(events, offers, destinations);
     // this._tripEventItemEditComponent = new TripEventItemEdit(event, this._offers, this._destinations);
->>>>>>> implement update, delete, add
     this._eventPresenter[`0`] = newEventPresenter;
   }
 

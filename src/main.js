@@ -46,7 +46,7 @@ const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.t
 const tripInfoPresenter = new TripInfoPresenter(headerTripContainerElement, eventsModel);
 const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel, destinationsModel, offersModel, api);
 
-renderElement(tripControsMakrsElementsArray[0], new SiteMenu(), RenderPosition.AFTEREND);
+// renderElement(tripControsMakrsElementsArray[0], new SiteMenu(), RenderPosition.AFTEREND);
 
 tripInfoPresenter.init(events);
 tripPresenter.init();
