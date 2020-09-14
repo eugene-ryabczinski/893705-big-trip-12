@@ -86,7 +86,7 @@ export default class TripPresenter {
     const destinations = this._destinationsModel.getDestinations();
 
     const newEventPresenter = this._newEventPresenter;
-    newEventPresenter.init(events, offers, destinations);
+    newEventPresenter.init(events, offers, destinations, onCloseCallback);
     // this._tripEventItemEditComponent = new TripEventItemEdit(event, this._offers, this._destinations);
     this._eventPresenter[`0`] = newEventPresenter;
   }

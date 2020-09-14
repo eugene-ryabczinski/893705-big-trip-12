@@ -19,7 +19,7 @@ export default class EventNew {
     this._isFavouriteClick = this._isFavouriteClick.bind(this);
   }
 
-  init(events, offers, destinations) { //как убедиться что все данные готовы?
+  init(events, offers, destinations, onCloseCallback) { //как убедиться что все данные готовы?
     this._event = NEW_EVENT;
 
     this._tripEventItemEditComponent = new TripEventItemEdit(

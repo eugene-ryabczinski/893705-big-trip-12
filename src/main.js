@@ -45,17 +45,37 @@ const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.t
 // presenters
 const tripInfoPresenter = new TripInfoPresenter(headerTripContainerElement, eventsModel);
 const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel, destinationsModel, offersModel, api);
+const menuPresenter = new MenuPresenter(tripControsMakrsElementsArray[0], tripEventsContainerElement, tripPresenter, eventsModel);
 
 // renderElement(tripControsMakrsElementsArray[0], new SiteMenu(), RenderPosition.AFTEREND);
 
 tripInfoPresenter.init(events);
+// tripPresenter.init();
+// new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
+
+
+
+
+const filterPresenter = new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel);
+
+menuPresenter.init();
 tripPresenter.init();
-new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
+filterPresenter.init();
+
+
 
 newTaskButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
-  tripPresenter.addNewEvent();
+  tripPresenter.addNewEvent(handleNewEventFormClose);
+  newTaskButton.setAttribute(`disabled`, `disabled`);
 })
+
+
+
+const handleNewEventFormClose = (evt) => {
+  newTaskButton.removeAttribute(`disabled`);
+}
+
 
   Promise.all([
     api.getPoints(),
