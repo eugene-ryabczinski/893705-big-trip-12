@@ -11,7 +11,6 @@ import NoEvents from '../view/no-events';
 import Loading from '../view/loading';
 import Event from '../presenter/event';
 import EventNew from '../presenter/eventNew';
-import { remove } from 'lodash';
 
 export default class TripPresenter {
   constructor(tripEventsMainContainerElement, eventsModel, filterModel, destinationsModel, offersModel, api) {
@@ -21,12 +20,6 @@ export default class TripPresenter {
     this._filterModel = filterModel;
     this._destinationsModel = destinationsModel;
     this._offersModel = offersModel;
-
-    this._offers = [];
-    this._destinations = [];
-    // console.log(this._eventsModel.getEvents());
-    // console.log(this._destinationsModel.getDestinations());
-    // console.log(this._offersModel.getOffers());
     this._api = api;
 
     this._isLoading = true;
@@ -87,7 +80,7 @@ export default class TripPresenter {
 
     const newEventPresenter = this._newEventPresenter;
     newEventPresenter.init(events, offers, destinations, onCloseCallback);
-    // this._tripEventItemEditComponent = new TripEventItemEdit(event, this._offers, this._destinations);
+
     this._eventPresenter[`0`] = newEventPresenter;
   }
 
@@ -108,6 +101,7 @@ export default class TripPresenter {
   }
 
   _handleModeChange() {
+    debugger
     Object
       .values(this._eventPresenter)
       .forEach((presenter) => {
@@ -118,7 +112,6 @@ export default class TripPresenter {
   _handleViewAction(actionType, updateType, updatedEvent) {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
-
         this._api.updatePoint(updatedEvent).then((response) => {
           this._eventsModel.updateEvents(updateType, response);
         });
@@ -127,13 +120,11 @@ export default class TripPresenter {
         this._api.addPoint(updatedEvent).then((response) => {
           this._eventsModel.addEvent(updateType, response);
         });
-        // this._eventsModel.addEvent(updateType, updatedEvent);
         break;
       case USER_ACTION.DELETE_EVENT:
         this._api.deletePoint(updatedEvent).then(() => {
           this._eventsModel.deleteEvent(updateType, updatedEvent);
         });
-        // this._eventsModel.deleteEvent(updateType, updatedEvent);
         break;
     }
   }
@@ -214,7 +205,7 @@ export default class TripPresenter {
   _renderTrip() { // todo: рефакторинг условий
     if (this._isLoading) {
       this._renderLoading();
-      return
+      return;
     }
 
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events

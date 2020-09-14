@@ -20,11 +20,11 @@ export default class OffersModel extends Observer {
         {},
         offer,
         {
-          offers: offer.offers.map((offer) => {
+          offers: offer.offers.map((off) => {
             return {
-              cost: offer.price,
-              name: offer.title
-            }
+              cost: off.price,
+              name: off.title
+            };
           })
         }
     );

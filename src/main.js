@@ -20,10 +20,8 @@ const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
-const EVENT_COUNT = 1;
-const events = new Array(EVENT_COUNT).fill().map(generateEvent);
-// console.log(events);
 
+// models
 const eventsModel = new EventsModel();
 const filtersModel = new FiltersModel();
 const destinationsModel = new DestinationsModel();
@@ -46,21 +44,19 @@ const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.t
 const tripInfoPresenter = new TripInfoPresenter(headerTripContainerElement, eventsModel);
 const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel, filtersModel, destinationsModel, offersModel, api);
 const menuPresenter = new MenuPresenter(tripControsMakrsElementsArray[0], tripEventsContainerElement, tripPresenter, eventsModel);
-
-// renderElement(tripControsMakrsElementsArray[0], new SiteMenu(), RenderPosition.AFTEREND);
-
-tripInfoPresenter.init(events);
-// tripPresenter.init();
-// new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel).init();
-
-
-
-
 const filterPresenter = new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel);
 
+
+tripInfoPresenter.init();
 menuPresenter.init();
 tripPresenter.init();
 filterPresenter.init();
+
+
+const handleNewEventFormClose = (evt) => {
+  debugger
+  newTaskButton.removeAttribute(`disabled`);
+}
 
 
 
@@ -69,13 +65,6 @@ newTaskButton.addEventListener(`click`, (evt) => {
   tripPresenter.addNewEvent(handleNewEventFormClose);
   newTaskButton.setAttribute(`disabled`, `disabled`);
 })
-
-
-
-const handleNewEventFormClose = (evt) => {
-  newTaskButton.removeAttribute(`disabled`);
-}
-
 
   Promise.all([
     api.getPoints(),

@@ -1,8 +1,7 @@
-import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
+import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST} from '../const';
 import {cloneDeep} from '../utils/common';
 import moment from 'moment';
 import Smart from './smart';
-import {generateOffers, generateDescriptions} from '../mock/event';
 import flatpickr from "flatpickr";
 import {MODE} from '../const';
 
@@ -17,7 +16,7 @@ export const NEW_EVENT = {
   isFavorite: false
 };
 
-const createOffersSelectorTemplate = (offers, offersCollection) => {
+const createOffersSelectorTemplate = (offers) => {
   if (offers.length === 0) {
     return ``;
   }
@@ -52,14 +51,10 @@ const createOffersSelectorTemplate = (offers, offersCollection) => {
 
 const createDescriptionTemplate = (destinationInfo) => {
   if (destinationInfo === null) {
-    return
+    return;
   }
 
   const {description, pictures} = destinationInfo;
-
-  // if (description === null && pictures.length === 0) {
-  //   return ``;
-  // }
 
   const createPhotosListtemplate = () => {
     return pictures.map((picture) => {
@@ -87,12 +82,12 @@ const createDescriptionTemplate = (destinationInfo) => {
   );
 };
 
-const createEventDetailsTemplate = (offers = [], offersCollection, destinationInfo = null) => {
+const createEventDetailsTemplate = (offers = [], destinationInfo = null) => {
   if (offers.length === 0 && destinationInfo === null) {
     return ``;
   }
 
-  const offersSelectorTemplate = createOffersSelectorTemplate(offers, offersCollection);
+  const offersSelectorTemplate = createOffersSelectorTemplate(offers);
   const descriptionTemplate = createDescriptionTemplate(destinationInfo);
 
   return (
@@ -143,7 +138,7 @@ const createDestinationList = (destinations) => {
   }).join(` `);
 };
 
-export const createTripEventItemEditTemplate = (data = {}, offersCollection, destinations, mode) => {
+export const createTripEventItemEditTemplate = (data = {}, destinations, mode) => {
   const {
     type,
     destination,
@@ -156,7 +151,7 @@ export const createTripEventItemEditTemplate = (data = {}, offersCollection, des
   } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
-  const eventDetailsTemplate = createEventDetailsTemplate(offers, offersCollection, destinationInfo);
+  const eventDetailsTemplate = createEventDetailsTemplate(offers, destinationInfo);
   const destinationList = createDestinationList(destinations);
   const startDateFormated = startDate ? moment(startDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
   const endDateFormated = endDate ? moment(endDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);

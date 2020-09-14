@@ -4,7 +4,6 @@ export default class EventsModel extends Observer {
   constructor() {
     super();
     this._events = [];
-    EventsModel.adaptToClient = EventsModel.adaptToClient.bind(this)
   }
 
   setEvents(updateType, events) {
@@ -70,7 +69,7 @@ export default class EventsModel extends Observer {
               cost: offer.price,
               name: offer.title,
               isChecked: offer.is_checked
-            }
+            };
           })
         }
     );
@@ -85,6 +84,7 @@ export default class EventsModel extends Observer {
   }
 
   static adaptToServer(event) {
+    debugger
     const adaptedEvent = Object.assign(
         {},
         event,
@@ -104,40 +104,15 @@ export default class EventsModel extends Observer {
           })
         }
 
-
-//         base_price: 500
-// date_from: "2020-09-06T03:48:18.148Z"
-// date_to: "2020-09-06T16:04:04.492Z"
-// destination: {name: "Hiroshima",…}
-// description: "Hiroshima, is a beautiful city, with crowded streets, middle-eastern paradise, with an embankment of a mighty river as a centre of attraction, full of of cozy canteens where you can try the best coffee in the Middle East."
-// name: "Hiroshima"
-// pictures: [{src: "http://picsum.photos/300/200?r=0.02539663140091597",…},…]
-// id: "1"
-// is_favorite: false
-// offers: [{title: "Choose meal", price: 130}, {title: "Upgrade to business class", price: 150},…]
-// 0: {title: "Choose meal", price: 130}
-// 1: {title: "Upgrade to business class", price: 150}
-// 2: {title: "Business lounge", price: 40}
-// type: "ship"
-
-        
-        
-        // isFavorite: event.is_favorite,
-        // cost: event.base_price,
-        // destination: event.destination.name,
-        // destinationInfo: {...event.destination},
-        // offers: event.offers.map((offer) => {
-
     );
+
     adaptedEvent.destination.name = event.destination;
 
-    // Ненужные ключи мы удаляем
     delete adaptedEvent.startDate;
     delete adaptedEvent.endDate;
     delete adaptedEvent.isFavorite;
     delete adaptedEvent.cost;
     delete adaptedEvent.destinationInfo;
-    
 
     return adaptedEvent;
   }

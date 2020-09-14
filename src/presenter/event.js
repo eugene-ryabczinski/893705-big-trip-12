@@ -57,6 +57,7 @@ export default class Event {
   }
 
   resetView() {
+    debugger
     if (this._mode !== MODE.DEFAULT) {
       this._replaceFormToEvent();
     }

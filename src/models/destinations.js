@@ -3,7 +3,7 @@ import Observer from '../utils/observer';
 export default class DestinationsModel extends Observer {
   constructor() {
     super();
-    this._destinations = null
+    this._destinations = null;
   }
 
   setDestinations(updateType, destinations) {
