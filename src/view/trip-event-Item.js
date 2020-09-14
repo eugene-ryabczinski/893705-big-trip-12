@@ -1,5 +1,6 @@
 import moment from 'moment';
 import AbstractView from './abstract-view';
+import {EVENT_TYPES, EVENT_TRANSFER_LIST, EVENT_ACTIVITIES_LIST, CITIES} from '../const';
 
 export const createTripEventItemTemplate = (event) => {
   const {type, destination, startDate, endDate, offers = [], cost} = event;
@@ -47,9 +48,18 @@ export const createTripEventItemTemplate = (event) => {
       }).join(``);
     }
   };
-  const selectedOffersToRender = offers.slice(0, 3);
+  
+  const selectedOffersToRender = offers.filter((offer) => offer.isChecked).slice(0, 3);
 
   const selectedOffersTemplate = createSelectedOffersTemplate(selectedOffersToRender);
+
+  const getEventTitle = () => {
+    if (EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type.toLowerCase())) {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} in ${destination}`;
+    } else {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} to ${destination}`;
+    }
+  }
 
   return (
     `<li class="trip-events__item">
@@ -57,7 +67,7 @@ export const createTripEventItemTemplate = (event) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} to ${destination}</h3>
+        <h3 class="event__title">${getEventTitle()}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -86,7 +96,7 @@ export const createTripEventItemTemplate = (event) => {
 };
 
 export default class TripEventItem extends AbstractView {
-  constructor(event) {
+  constructor(event, offers, destinations) {
     super();
     this._event = event;
 

@@ -1,8 +1,11 @@
 import EventsModel from "./models/event.js";
+import OffersModel from "./models/offers";
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -20,18 +23,56 @@ export default class Api {
     return this._load({url: `points`})
       .then(Api.toJSON)
       .then((points) => {
+        // debugger
+        // console.log(points)
         return points.map(point => EventsModel.adaptToClient(point))
       })
   }
 
-  updatePoint(task) {
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then(Api.toJSON)
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+      .then(Api.toJSON)
+      .then((offers) => {
+        return offers.map(offer => OffersModel.adaptToClient(offer))
+      })
+  }
+
+  updatePoint(point) {
     return this._load({
-      url: `points/${task.id}`,
+      url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(task),
+      body: JSON.stringify(EventsModel.adaptToServer(point)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((point) => {
+        return EventsModel.adaptToClient(point);
+      })
+  }
+
+  addPoint(point) {
+    return this._load({
+      url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(EventsModel.adaptToServer(point)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON)
+      .then((point) => {
+        return EventsModel.adaptToClient(point);
+      })
+  }
+
+  deletePoint(point) {
+    return this._load({
+      url: `points/${point.id}`,
+      method: Method.DELETE
+    });
   }
 
   _load({

@@ -8,10 +8,8 @@ export default class EventsModel extends Observer {
   }
 
   setEvents(updateType, events) {
-    // debugger
     this._events = events.slice();
     this._notify(updateType);
-    console.log(this._events)
   }
 
   getEvents() {
@@ -57,7 +55,6 @@ export default class EventsModel extends Observer {
 
 
   static adaptToClient(event) {
-    // debugger
     const adaptedEvent = Object.assign(
         {},
         event,
@@ -70,8 +67,9 @@ export default class EventsModel extends Observer {
           destinationInfo: {...event.destination},
           offers: event.offers.map((offer) => {
             return {
-              price: offer.price,
-              name: offer.title
+              cost: offer.price,
+              name: offer.title,
+              isChecked: offer.is_checked
             }
           })
         }
@@ -86,24 +84,61 @@ export default class EventsModel extends Observer {
     return adaptedEvent;
   }
 
-  static adaptToServer(task) {
-    const adaptedTask = Object.assign(
+  static adaptToServer(event) {
+    const adaptedEvent = Object.assign(
         {},
-        task,
+        event,
         {
-          "due_date": task.dueDate instanceof Date ? task.dueDate.toISOString() : null, // На сервере дата хранится в ISO формате
-          "is_archived": task.isArchive,
-          "is_favorite": task.isFavorite,
-          "repeating_days": task.repeating
+          type: event.type.toLowerCase(),
+          base_price: Number(event.cost),
+          date_from: event.endDate instanceof Date ? event.startDate.toISOString() : null,
+          date_to: event.startDate instanceof Date ? event.endDate.toISOString() : null,
+          is_favorite: event.isFavorite,
+          destination: {...event.destinationInfo},
+          offers: event.offers.map((offer) => {
+            return {
+              price: Number(offer.cost),
+              title: offer.name,
+              is_checked: offer.isChecked
+            }
+          })
         }
+
+
+//         base_price: 500
+// date_from: "2020-09-06T03:48:18.148Z"
+// date_to: "2020-09-06T16:04:04.492Z"
+// destination: {name: "Hiroshima",…}
+// description: "Hiroshima, is a beautiful city, with crowded streets, middle-eastern paradise, with an embankment of a mighty river as a centre of attraction, full of of cozy canteens where you can try the best coffee in the Middle East."
+// name: "Hiroshima"
+// pictures: [{src: "http://picsum.photos/300/200?r=0.02539663140091597",…},…]
+// id: "1"
+// is_favorite: false
+// offers: [{title: "Choose meal", price: 130}, {title: "Upgrade to business class", price: 150},…]
+// 0: {title: "Choose meal", price: 130}
+// 1: {title: "Upgrade to business class", price: 150}
+// 2: {title: "Business lounge", price: 40}
+// type: "ship"
+
+        
+        
+        // isFavorite: event.is_favorite,
+        // cost: event.base_price,
+        // destination: event.destination.name,
+        // destinationInfo: {...event.destination},
+        // offers: event.offers.map((offer) => {
+
     );
+    adaptedEvent.destination.name = event.destination;
 
     // Ненужные ключи мы удаляем
-    delete adaptedTask.dueDate;
-    delete adaptedTask.isArchive;
-    delete adaptedTask.isFavorite;
-    delete adaptedTask.repeating;
+    delete adaptedEvent.startDate;
+    delete adaptedEvent.endDate;
+    delete adaptedEvent.isFavorite;
+    delete adaptedEvent.cost;
+    delete adaptedEvent.destinationInfo;
+    
 
-    return adaptedTask;
+    return adaptedEvent;
   }
 }

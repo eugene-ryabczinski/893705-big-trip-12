@@ -9,7 +9,7 @@ export default class EventNew {
     this._tripEventsMainContainerElement = tripEventsMainContainerElement;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._eventsModel = eventsModel;
+    // this._eventsModel = eventsModel;
 
     this._tripEventItemEditComponent = null;
 
@@ -19,11 +19,13 @@ export default class EventNew {
     this._isFavouriteClick = this._isFavouriteClick.bind(this);
   }
 
-  init(onCloseCallback) {
-    this._onCloseFormCallback = onCloseCallback;
+  init(events, offers, destinations) { //как убедиться что все данные готовы?
     this._event = NEW_EVENT;
 
-    this._tripEventItemEditComponent = new TripEventItemEdit(this._event, MODE.CREATE);
+    this._tripEventItemEditComponent = new TripEventItemEdit(
+      this._event, offers, destinations, MODE.CREATE
+      // this._event, MODE.CREATE
+      );
 
     this._tripEventItemEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._tripEventItemEditComponent.setDeleteClickHandle(this._handleEventDeleteClick);
@@ -31,7 +33,8 @@ export default class EventNew {
 
     this._tripEventItemEditComponent.getElement().classList.add(`create-event`);
 
-    if (this._eventsModel.getEvents().length > 0) {
+    // if (this._eventsModel.getEvents().length > 0) {
+    if (events.length > 0) {
       const tripDaysList = this._tripEventsMainContainerElement.querySelector(`.trip-days`);
       renderElement(tripDaysList, this._tripEventItemEditComponent, RenderPosition.BEFOREBEGIN);
     } else {
@@ -57,7 +60,8 @@ export default class EventNew {
     this._changeData(
         USER_ACTION.ADD_EVENT,
         updateType,
-        Object.assign({id: generateId()}, tripEvent)
+        tripEvent
+        // Object.assign({id: generateId()}, tripEvent)
     );
     this.destroy();
   }
@@ -65,7 +69,7 @@ export default class EventNew {
   _handleEventDeleteClick(tripEvent) { // нейминг
     tripEvent = null;
     this.destroy();
-    this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, tripEvent);
+    // this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, tripEvent);
   }
 
   _handleEcs(evt) {

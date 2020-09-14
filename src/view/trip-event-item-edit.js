@@ -14,25 +14,24 @@ export const NEW_EVENT = {
   offers: [],
   startDate: null,
   endDate: null,
-  isFavourite: false
+  isFavorite: false
 };
 
-const createOffersSelectorTemplate = (offers) => {
+const createOffersSelectorTemplate = (offers, offersCollection) => {
   if (offers.length === 0) {
     return ``;
   }
 
   const createOffersSelectorList = () => {
-    // debugger
-    return offers.map(({name, cost, isChecked}) => {
-      const offerName = name.toLowerCase().replace(/ /g, `_`);
+    return offers.map((offer) => {
+      const offerName = offer.name.toLowerCase().replace(/ /g, `_`);
       return (
         `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerName}" type="checkbox" name="event-offer-${offerName}" ${isChecked ? `checked` : ``} value="${offerName}">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerName}" type="checkbox" name="event-offer-${offerName}" ${offer.isChecked ? `checked` : ``} value="${offerName}">
           <label class="event__offer-label" for="event-offer-${offerName}">
-            <span class="event__offer-title">${name}</span>
+            <span class="event__offer-title">${offer.name}</span>
             &plus;
-            &euro;&nbsp;<span class="event__offer-price">${cost}</span>
+            &euro;&nbsp;<span class="event__offer-price">${offer.cost}</span>
           </label>
         </div>`
       );
@@ -52,16 +51,20 @@ const createOffersSelectorTemplate = (offers) => {
 };
 
 const createDescriptionTemplate = (destinationInfo) => {
+  if (destinationInfo === null) {
+    return
+  }
+
   const {description, pictures} = destinationInfo;
 
-  if (description === null && pictures.length === 0) {
-    return ``;
-  }
+  // if (description === null && pictures.length === 0) {
+  //   return ``;
+  // }
 
   const createPhotosListtemplate = () => {
     return pictures.map((picture) => {
       return (
-        `<img class="event__photo" src="${picture}" alt="Event photo">`
+        `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`
       );
     }).join(` `);
   };
@@ -84,18 +87,18 @@ const createDescriptionTemplate = (destinationInfo) => {
   );
 };
 
-const createEventDetailsTemplate = (offers = [], destinationInfo = null) => {
+const createEventDetailsTemplate = (offers = [], offersCollection, destinationInfo = null) => {
   if (offers.length === 0 && destinationInfo === null) {
     return ``;
   }
 
-  const offersSelectorTemplate = createOffersSelectorTemplate(offers);
+  const offersSelectorTemplate = createOffersSelectorTemplate(offers, offersCollection);
   const descriptionTemplate = createDescriptionTemplate(destinationInfo);
 
   return (
     `<section class="event__details">
-      ${offersSelectorTemplate}
-      ${descriptionTemplate}
+      ${offersSelectorTemplate ? offersSelectorTemplate : ``}
+      ${descriptionTemplate ? descriptionTemplate : ``}
     </section>`
   );
 };
@@ -132,15 +135,15 @@ const createEventSelectorTemplate = (type) => {
   </div>`);
 };
 
-const createDestinationList = () => {
-  return CITIES.map((city) => {
+const createDestinationList = (destinations) => {
+  return destinations.map((destination) => {
     return (`
-      <option value="${city}"></option>
+      <option value="${destination.name}"></option>
     `);
   }).join(` `);
 };
 
-export const createTripEventItemEditTemplate = (data = {}, mode) => {
+export const createTripEventItemEditTemplate = (data = {}, offersCollection, destinations, mode) => {
   const {
     type,
     destination,
@@ -153,13 +156,17 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
   } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
-  const eventDetailsTemplate = createEventDetailsTemplate(offers, destinationInfo);
-  const destinationList = createDestinationList();
+  const eventDetailsTemplate = createEventDetailsTemplate(offers, offersCollection, destinationInfo);
+  const destinationList = createDestinationList(destinations);
   const startDateFormated = startDate ? moment(startDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
   const endDateFormated = endDate ? moment(endDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
 
-  const placeholder = () => {
-    return EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
+  const placeholder = () => {    
+    if (EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type.toLowerCase())) {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} in`;
+    } else {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} to`;
+    }
   };
 
   return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -215,9 +222,13 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
 };
 
 export default class TripEventItemEdit extends Smart {
-  constructor(event, mode) {
+  constructor(event, offers, destinations, mode) {
     super();
     this._event = event || NEW_EVENT;
+    this._offers = offers;
+    this._destinations = destinations;
+    this._cities = this._destinations.map(destination => destination.name);
+
     this._mode = mode || MODE.EDITING; // по умолчанию edit
 
     this._data = cloneDeep(this._event);
@@ -318,7 +329,7 @@ export default class TripEventItemEdit extends Smart {
   _isValidDestination() {
     const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
 
-    if (destinationSelector.value === `` || !CITIES.map((city) => city.toLowerCase()).includes(destinationSelector.value.toLowerCase())) {
+    if (destinationSelector.value === `` || !this._cities.map((city) => city.toLowerCase()).includes(destinationSelector.value.toLowerCase())) {
       return false;
     }
 
@@ -344,7 +355,7 @@ export default class TripEventItemEdit extends Smart {
 
   _priceInputHandler(evt) {
     evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``); // временное решение запрещать ввод не числовых значений через regexp
-    this._cost = evt.currentTarget.value;
+    this._cost = Number(evt.currentTarget.value);
     this._data.cost = this._cost;
 
     this._validateForm();
@@ -388,21 +399,26 @@ export default class TripEventItemEdit extends Smart {
       .map((eventType) => eventType.toLowerCase())
       .indexOf(updatedType);
 
-    const AllOffers = generateOffers();
-    const typeOffers = [];
+    const typeOffers = this._offers
+      .filter((offerType) => offerType.type.toLowerCase() === updatedType.toLowerCase());
 
-    const findOfferIndex = Array.from(AllOffers.keys())
-      .map((offerType) => offerType.toLowerCase())
-      .indexOf(updatedType);
 
-    if (findOfferIndex > -1) {
-      typeOffers.push(...AllOffers.get(Array.from(AllOffers.keys())[findOfferIndex]));
-    }
+    // const AllOffers = generateOffers();
+    // const typeOffers = [];
+
+    // const findOfferIndex = Array.from(AllOffers.keys())
+    //   .map((offerType) => offerType.toLowerCase())
+    //   .indexOf(updatedType);
+
+    // if (findOfferIndex > -1) {
+    //   typeOffers.push(...AllOffers.get(Array.from(AllOffers.keys())[findOfferIndex]));
+    // }
 
     this.updateData({
       type: EVENT_TYPES[findEventTypeIndex],
-      offers: typeOffers
+      offers: typeOffers[0].offers
     });
+    this._validateForm();
   }
 
   reset(event) {
@@ -411,18 +427,18 @@ export default class TripEventItemEdit extends Smart {
 
   _destinationSelectorHandler(evt) {
     const selectedCity = evt.target.value;
-    const findIndex = CITIES.indexOf(selectedCity);
+    const findIndex = this._cities.indexOf(selectedCity);
     if (findIndex > -1) {
       this.updateData({
         destination: selectedCity,
-        destinationInfo: generateDescriptions().get(selectedCity)
+        destinationInfo: this._destinations[findIndex]
       });
     }
     this._validateForm();
   }
 
   getTemplate() {
-    return createTripEventItemEditTemplate(this._data, this._mode);
+    return createTripEventItemEditTemplate(this._data, this._offers, this._destinations, this._mode);
   }
 
   _formSubmitClickHandler(evt) {

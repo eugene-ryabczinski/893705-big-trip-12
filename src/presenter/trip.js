@@ -14,11 +14,20 @@ import EventNew from '../presenter/eventNew';
 import { remove } from 'lodash';
 
 export default class TripPresenter {
-  constructor(tripEventsMainContainerElement, eventsModel, filterModel) {
+  constructor(tripEventsMainContainerElement, eventsModel, filterModel, destinationsModel, offersModel, api) {
     this._tripEventsMainContainerElement = tripEventsMainContainerElement;
 
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
+
+    this._offers = [];
+    this._destinations = [];
+    // console.log(this._eventsModel.getEvents());
+    // console.log(this._destinationsModel.getDestinations());
+    // console.log(this._offersModel.getOffers());
+    this._api = api;
 
     this._isLoading = true;
 
@@ -39,7 +48,14 @@ export default class TripPresenter {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
+<<<<<<< HEAD
     this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange, this._eventsModel); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
+=======
+    this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
+    this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
+>>>>>>> implement update, delete, add
   }
 
   init() {
@@ -68,8 +84,17 @@ export default class TripPresenter {
       this._noEventsComponent = null;
     }
 
+    const events = this._eventsModel.getEvents();
+    const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
+
     const newEventPresenter = this._newEventPresenter;
+<<<<<<< HEAD
     newEventPresenter.init(onCloseCallback);
+=======
+    newEventPresenter.init(events, offers, destinations);
+    // this._tripEventItemEditComponent = new TripEventItemEdit(event, this._offers, this._destinations);
+>>>>>>> implement update, delete, add
     this._eventPresenter[`0`] = newEventPresenter;
   }
 
@@ -100,13 +125,22 @@ export default class TripPresenter {
   _handleViewAction(actionType, updateType, updatedEvent) {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
-        this._eventsModel.updateEvents(updateType, updatedEvent);
+
+        this._api.updatePoint(updatedEvent).then((response) => {
+          this._eventsModel.updateEvents(updateType, response);
+        });
         break;
       case USER_ACTION.ADD_EVENT:
-        this._eventsModel.addEvent(updateType, updatedEvent);
+        this._api.addPoint(updatedEvent).then((response) => {
+          this._eventsModel.addEvent(updateType, response);
+        });
+        // this._eventsModel.addEvent(updateType, updatedEvent);
         break;
       case USER_ACTION.DELETE_EVENT:
-        this._eventsModel.deleteEvent(updateType, updatedEvent);
+        this._api.deletePoint(updatedEvent).then(() => {
+          this._eventsModel.deleteEvent(updateType, updatedEvent);
+        });
+        // this._eventsModel.deleteEvent(updateType, updatedEvent);
         break;
     }
   }
@@ -115,7 +149,7 @@ export default class TripPresenter {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UPDATE_TYPE.PATCH: // обновить только одну точку маршрута
-        this._eventPresenter[data.id].init(data);
+        this._eventPresenter[data.id].init(data, this._offersModel.getOffers(), this._destinationsModel.getDestinations()); // обращаемся к локальным переменным? нужно к модели?
         break;
       case UPDATE_TYPE.MINOR: // перерисовать весь список
         this._clearEventList();
@@ -159,13 +193,13 @@ export default class TripPresenter {
     renderElement(this._tripEventsMainContainerElement, this._loadingComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderEvent(eventsListElement, event) {
-    const eventPresenter = new Event(eventsListElement, this._handleViewAction, this._handleModeChange);
-    eventPresenter.init(event);
+  _renderEvent(eventsListElement, event, offers, destinations) {
+    const eventPresenter = new Event(eventsListElement, this._handleViewAction, this._handleModeChange, this._offersModel, this._destinationsModel);
+    eventPresenter.init(event, offers, destinations);
     this._eventPresenter[event.id] = eventPresenter;
   }
 
-  _renderEvents(dayDate, count, events) {
+  _renderEvents(dayDate, count, events, offers, destinations) {
     renderElement(this._tripEventsMainContainerElement, this._tripDaysListComponent, RenderPosition.BEFOREEND);
     const tripDayItemComponent = new TripDayItem(dayDate, count);
     renderElement(this._tripDaysListComponent, tripDayItemComponent, RenderPosition.BEFOREEND);
@@ -174,13 +208,13 @@ export default class TripPresenter {
     renderElement(tripDayItemComponent, tripEventsListComponent, RenderPosition.BEFOREEND);
 
     events.forEach((event) => {
-      this._renderEvent(tripEventsListComponent, event);
+      this._renderEvent(tripEventsListComponent, event, offers, destinations);
     });
   }
 
-  _renderEventsByDay(eventsGroupedByDay) {
+  _renderEventsByDay(eventsGroupedByDay, offers, destinations) {
     Object.entries(eventsGroupedByDay).forEach(([day, events], index) => {
-      this._renderEvents(day, index + 1, events);
+      this._renderEvents(day, index + 1, events, offers, destinations);
     });
   }
 
@@ -192,6 +226,8 @@ export default class TripPresenter {
 
     const events = this._getEvents(); // завязываемся на модель. в _getEvents получаем отсортированные events
     const eventsGroupedByDay = groupEventsByDay(events);
+    const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
 
     if (this._eventsModel.getEvents().length === 0 && !this._noEventsComponent) {
       this._noEventsComponent = new NoEvents();
@@ -214,11 +250,11 @@ export default class TripPresenter {
 
       // два метода рендера - _renderEventsByDay, _renderEvents. используют разный source (сгруппированный по дням, обычнй массив)
       if (this._currentSortType === SORT_TYPE.EVENT) {
-        this._renderEventsByDay(eventsGroupedByDay);
+        this._renderEventsByDay(eventsGroupedByDay, offers, destinations);
         return;
       }
 
-      this._renderEvents(null, 0, events); // базовый рендер точек маршрута, когда нет группировок по дням.
+      this._renderEvents(null, 0, events, offers, destinations); // базовый рендер точек маршрута, когда нет группировок по дням.
     }
   }
 }
