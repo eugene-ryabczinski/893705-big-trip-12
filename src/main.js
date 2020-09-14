@@ -57,14 +57,6 @@ newTaskButton.addEventListener(`click`, (evt) => {
   tripPresenter.addNewEvent();
 })
 
-// api.getPoints()
-//   .then((points) => {
-//     eventsModel.setEvents(UPDATE_TYPE.INIT, points);
-//   })
-//   .catch(() => {
-//     eventsModel.setEvents(UPDATE_TYPE.INIT, []);
-//   });
-
   Promise.all([
     api.getPoints(),
     api.getDestinations(),
@@ -78,23 +70,3 @@ newTaskButton.addEventListener(`click`, (evt) => {
     destinationsModel.setDestinations(UPDATE_TYPE.INIT, destinations);
     eventsModel.setEvents(UPDATE_TYPE.INIT, points);
   })
-
-// api.getDestinations()
-//   .then((destinations) => {
-//     destinationsModel.setDestinations(UPDATE_TYPE.INIT, destinations);
-//     console.log(destinationsModel.getDestinations());
-//   })
-//   .catch(() => {
-//     eventsModel.setDestinations(UPDATE_TYPE.INIT, []);
-//   });
-
-// api.getOffers()
-//   .then((offers) => {
-//     offersModel.setOffers(UPDATE_TYPE.INIT, offers);
-//     console.log(
-//       offersModel.getOffers()
-//     )
-//   })
-//   .catch(() => {
-//     eventsModel.setOffers(UPDATE_TYPE.INIT, []);
-//   });
