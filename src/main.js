@@ -54,7 +54,6 @@ filterPresenter.init();
 
 
 const handleNewEventFormClose = (evt) => {
-  debugger
   newTaskButton.removeAttribute(`disabled`);
 }
 
@@ -75,7 +74,8 @@ newTaskButton.addEventListener(`click`, (evt) => {
     const points = response[0];
     const destinations = response[1];
     const offers = response[2];
-    offersModel.setOffers(UPDATE_TYPE.INIT, offers);
-    destinationsModel.setDestinations(UPDATE_TYPE.INIT, destinations);
+    offersModel.setOffers(null, offers);
+    destinationsModel.setDestinations(null, destinations);
     eventsModel.setEvents(UPDATE_TYPE.INIT, points);
+    console.log(points)
   })

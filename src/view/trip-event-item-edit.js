@@ -397,18 +397,6 @@ export default class TripEventItemEdit extends Smart {
     const typeOffers = this._offers
       .filter((offerType) => offerType.type.toLowerCase() === updatedType.toLowerCase());
 
-
-    // const AllOffers = generateOffers();
-    // const typeOffers = [];
-
-    // const findOfferIndex = Array.from(AllOffers.keys())
-    //   .map((offerType) => offerType.toLowerCase())
-    //   .indexOf(updatedType);
-
-    // if (findOfferIndex > -1) {
-    //   typeOffers.push(...AllOffers.get(Array.from(AllOffers.keys())[findOfferIndex]));
-    // }
-
     this.updateData({
       type: EVENT_TYPES[findEventTypeIndex],
       offers: typeOffers[0].offers
@@ -433,7 +421,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   getTemplate() {
-    return createTripEventItemEditTemplate(this._data, this._offers, this._destinations, this._mode);
+    return createTripEventItemEditTemplate(this._data, this._destinations, this._mode);
   }
 
   _formSubmitClickHandler(evt) {

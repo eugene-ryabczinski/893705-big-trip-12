@@ -43,6 +43,7 @@ export default class EventNew {
   resetView() {
     removeCommponent(this._tripEventItemEditComponent);
     document.removeEventListener(`keydown`, this._handleEcs);
+    this._onCloseFormCallback(); // refactor closing logic
   }
 
   destroy() {

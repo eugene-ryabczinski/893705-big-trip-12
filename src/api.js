@@ -23,8 +23,6 @@ export default class Api {
     return this._load({url: `points`})
       .then(Api.toJSON)
       .then((points) => {
-        // debugger
-        // console.log(points)
         return points.map(point => EventsModel.adaptToClient(point))
       })
   }

@@ -41,10 +41,6 @@ export default class TripPresenter {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-
-    this._eventsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
   }
 
@@ -81,7 +77,7 @@ export default class TripPresenter {
     const newEventPresenter = this._newEventPresenter;
     newEventPresenter.init(events, offers, destinations, onCloseCallback);
 
-    this._eventPresenter[`0`] = newEventPresenter;
+    this._eventPresenter[`000`] = newEventPresenter;
   }
 
   _getEvents() { // вся логика в getTasks
@@ -101,7 +97,6 @@ export default class TripPresenter {
   }
 
   _handleModeChange() {
-    debugger
     Object
       .values(this._eventPresenter)
       .forEach((presenter) => {

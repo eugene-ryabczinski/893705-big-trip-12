@@ -84,7 +84,6 @@ export default class EventsModel extends Observer {
   }
 
   static adaptToServer(event) {
-    debugger
     const adaptedEvent = Object.assign(
         {},
         event,
