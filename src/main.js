@@ -63,17 +63,17 @@ newTaskButton.addEventListener(`click`, (evt) => {
   newTaskButton.setAttribute(`disabled`, `disabled`);
 })
 
-  Promise.all([
-    api.getPoints(),
-    api.getDestinations(),
-    api.getOffers(),
-  ])
-  .then((response) => {
-    const points = response[0];
-    const destinations = response[1];
-    const offers = response[2];
-    offersModel.setOffers(null, offers);
-    destinationsModel.setDestinations(null, destinations);
-    eventsModel.setEvents(UPDATE_TYPE.INIT, points);
-    console.log(points)
-  })
+Promise.all([
+  api.getPoints(),
+  api.getDestinations(),
+  api.getOffers(),
+])
+.then((response) => {
+  const points = response[0];
+  const destinations = response[1];
+  const offers = response[2];
+  offersModel.setOffers(null, offers);
+  destinationsModel.setDestinations(null, destinations);
+  eventsModel.setEvents(UPDATE_TYPE.INIT, points);
+  console.log(points)
+})
