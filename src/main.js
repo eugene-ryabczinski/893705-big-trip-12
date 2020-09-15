@@ -1,7 +1,5 @@
 import "../node_modules/flatpickr/dist/themes/material_blue.css";
 
-import {generateEvent} from './mock/event';
-
 import TripPresenter from './presenter/trip';
 import FilterPresenter from './presenter/filter';
 import TripInfoPresenter from './presenter/trip-info';

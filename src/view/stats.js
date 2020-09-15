@@ -108,8 +108,8 @@ const renderMoneyChart = (moneyCtx, events) => {
 
 const renderTransportChart = (transportCtx, events) => {
   const transportMap = events
-    .map((event) => event.type)
-    .filter((type) => EVENT_TRANSFER_LIST.includes(type))
+    .map((evt) => evt.type)
+    .filter((type) => EVENT_TRANSFER_LIST.map((transferEvent => transferEvent.toLowerCase())).includes(type.toLowerCase()))
     .reduce((prev, cur) => {
       prev[cur] = (prev[cur] || 0) + 1;
       return prev;
@@ -346,7 +346,7 @@ export default class Stats extends Smart {
   constructor(events) {
     super();
 
-    this._evets = events;
+    this._events = events;
 
     this._moneyChart = null;
     this._transportChart = null;
@@ -377,8 +377,8 @@ export default class Stats extends Smart {
     this._transportCtx = document.querySelector(`.statistics__chart--transport`);
     this._timeSpentCtx = document.querySelector(`.statistics__chart--time`);
 
-    this._transportChart = renderTransportChart(this._moneyCtx, this._evets);
-    this._moneyChart = renderMoneyChart(this._transportCtx, this._evets);
-    this._timeSpentChart = renderTimeSpentChart(this._timeSpentCtx, this._evets);
+    this._transportChart = renderTransportChart(this._transportCtx, this._events);
+    this._moneyChart = renderMoneyChart(this._moneyCtx, this._events);
+    this._timeSpentChart = renderTimeSpentChart(this._timeSpentCtx, this._events);
   }
 }

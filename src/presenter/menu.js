@@ -33,11 +33,10 @@ export default class MenuPresenter {
           removeCommponent(this._statsComponent);
           this._statsComponent = null;
         }
-
         this._statsComponent = new Stats(this._eventsModel.getEvents());
+        this._tripPresenter.destroy();
         renderElement(this._tripEventsContainer, this._statsComponent, RenderPosition.BEFOREEND);
         this._statsComponent.init();
-        this._tripPresenter.destroy();
         break;
       case MENU.TABLE:
         this._tripPresenter.init();
