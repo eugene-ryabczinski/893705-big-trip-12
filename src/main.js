@@ -75,5 +75,4 @@ Promise.all([
   offersModel.setOffers(null, offers);
   destinationsModel.setDestinations(null, destinations);
   eventsModel.setEvents(UPDATE_TYPE.INIT, points);
-  console.log(points)
 })
