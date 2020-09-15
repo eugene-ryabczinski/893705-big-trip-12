@@ -51,20 +51,16 @@ const createOffersSelectorTemplate = (offers) => {
 
 const createDescriptionTemplate = (destinationInfo) => {
   if (destinationInfo === null) {
-    return;
+    return false;
   }
 
   const {description, pictures} = destinationInfo;
 
-  const createPhotosListtemplate = () => {
-    return pictures.map((picture) => {
-      return (
-        `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`
-      );
-    }).join(` `);
+  const createPhotosListTemplate = () => {
+    return pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join(` `);
   };
 
-  const photosList = createPhotosListtemplate(pictures);
+  const photosList = createPhotosListTemplate(pictures);
 
   return (
     `<section class="event__section  event__section--destination">
@@ -156,7 +152,7 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
   const startDateFormated = startDate ? moment(startDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
   const endDateFormated = endDate ? moment(endDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
 
-  const placeholder = () => {    
+  const placeholder = () => {
     if (EVENT_ACTIVITIES_LIST.map((event) => event.toLowerCase()).includes(type.toLowerCase())) {
       return `${type.charAt(0).toUpperCase() + type.slice(1)} in`;
     } else {
@@ -222,7 +218,7 @@ export default class TripEventItemEdit extends Smart {
     this._event = event || NEW_EVENT;
     this._offers = offers;
     this._destinations = destinations;
-    this._cities = this._destinations.map(destination => destination.name);
+    this._cities = this._destinations.map((destination) => destination.name);
 
     this._mode = mode || MODE.EDITING; // по умолчанию edit
 

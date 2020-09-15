@@ -88,18 +88,18 @@ export default class EventsModel extends Observer {
         {},
         event,
         {
-          type: event.type.toLowerCase(),
-          base_price: Number(event.cost),
-          date_from: event.endDate instanceof Date ? event.startDate.toISOString() : null,
-          date_to: event.startDate instanceof Date ? event.endDate.toISOString() : null,
-          is_favorite: event.isFavorite,
-          destination: {...event.destinationInfo},
-          offers: event.offers.map((offer) => {
+          'type': event.type.toLowerCase(),
+          'base_price': Number(event.cost),
+          'date_from': event.endDate instanceof Date ? event.startDate.toISOString() : null,
+          'date_to': event.startDate instanceof Date ? event.endDate.toISOString() : null,
+          'is_favorite': event.isFavorite,
+          'destination': {...event.destinationInfo},
+          'offers': event.offers.map((offer) => {
             return {
-              price: Number(offer.cost),
-              title: offer.name,
-              is_checked: offer.isChecked
-            }
+              'price': Number(offer.cost),
+              'title': offer.name,
+              'is_checked': offer.isChecked
+            };
           })
         }
 
