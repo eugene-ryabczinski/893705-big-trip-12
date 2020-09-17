@@ -40,6 +40,13 @@ export default class EventNew {
     document.addEventListener(`keydown`, this._handleEcs);
   }
 
+  setSaving() {
+    this._tripEventItemEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
   resetView() {
     removeCommponent(this._tripEventItemEditComponent);
     document.removeEventListener(`keydown`, this._handleEcs);
@@ -59,7 +66,7 @@ export default class EventNew {
         updateType,
         tripEvent
     );
-    this.destroy();
+    // this.destroy();
   }
 
   _handleEventCancelClick() {
