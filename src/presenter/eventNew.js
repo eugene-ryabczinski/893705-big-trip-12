@@ -47,6 +47,18 @@ export default class EventNew {
     });
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this._tripEventItemEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._tripEventItemEditComponent.shake(resetFormState);
+  }
+
   resetView() {
     removeCommponent(this._tripEventItemEditComponent);
     document.removeEventListener(`keydown`, this._handleEcs);

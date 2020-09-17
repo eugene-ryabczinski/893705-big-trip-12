@@ -71,6 +71,14 @@ export default class Event {
   }
 
   setViewState(state) {
+    const resetFormState = () => {
+      this._tripEventItemEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
     switch (state) {
       case STATE.SAVING:
         this._tripEventItemEditComponent.updateData({
@@ -83,6 +91,10 @@ export default class Event {
           isDisabled: true,
           isDeleting: true
         });
+        break;
+      case STATE.ABORTING:
+        this._tripEventItemComponent.shake(resetFormState);
+        this._tripEventItemEditComponent.shake(resetFormState);
         break;
     }
   }

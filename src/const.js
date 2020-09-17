@@ -40,6 +40,7 @@ export const MODE = {
 
 export const STATE = {
   SAVING: `SAVING`,
-  DELETING: `DELETING`
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
 }
 
