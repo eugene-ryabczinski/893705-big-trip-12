@@ -72,8 +72,6 @@ export default class EventNew {
       this._tripEventItemEditComponent.reset(this._event);
       document.removeEventListener(`keydown`, this._handleEcs);
       this.destroy();
-      // this._changeData(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MINOR, null);
-      // вызвать апдейт листа без значения
     }
   }
 

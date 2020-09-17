@@ -108,7 +108,7 @@ const renderMoneyChart = (moneyCtx, events) => {
 
 const renderTransportChart = (transportCtx, events) => {
   const transportMap = events
-    .map((evt) => evt.type)
+    .map((event) => event.type)
     .filter((type) => EVENT_TRANSFER_LIST.map(((transferEvent) => transferEvent.toLowerCase())).includes(type.toLowerCase()))
     .reduce((prev, cur) => {
       prev[cur] = (prev[cur] || 0) + 1;
