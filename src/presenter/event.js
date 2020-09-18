@@ -4,7 +4,7 @@ import TripEventItemEdit from '../view/trip-event-item-edit';
 import {USER_ACTION, UPDATE_TYPE, MODE} from '../const';
 
 export default class Event {
-  constructor(tripEventsListContainer, changeData, changeMode) {
+  constructor(tripEventsListContainer, changeData, changeMode, offersModel, destinationsModel) {
     this._tripEventsListConteiner = tripEventsListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
@@ -13,6 +13,9 @@ export default class Event {
     this._tripEventItemComponent = null;
     this._tripEventItemEditComponent = null;
 
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
+
     this._handleRollupClick = this._handleRollupClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleEventDeleteClick = this._handleEventDeleteClick.bind(this);
@@ -20,14 +23,16 @@ export default class Event {
     this._isFavouriteClick = this._isFavouriteClick.bind(this);
   }
 
-  init(event) {
+  init(event, offers, destinations) {
     this._event = event;
+    this._offers = offers;
+    this._destinations = destinations;
 
     const prevTripEventItemComponent = this._tripEventItemComponent;
     const prevTripEventItemEditComponent = this._tripEventItemEditComponent;
 
-    this._tripEventItemComponent = new TripEventItem(event);
-    this._tripEventItemEditComponent = new TripEventItemEdit(event);
+    this._tripEventItemComponent = new TripEventItem(event, this._offers, this._destinations);
+    this._tripEventItemEditComponent = new TripEventItemEdit(event, this._offers, this._destinations);
 
     this._tripEventItemComponent.setRollupEventClickHandler(this._handleRollupClick);
     this._tripEventItemEditComponent.setFormSubmitHandler(this._handleFormSubmit);
