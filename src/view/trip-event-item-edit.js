@@ -225,7 +225,6 @@ export default class TripEventItemEdit extends Smart {
 
     this._mode = mode || MODE.EDITING; // по умолчанию edit
 
-    // this._data = cloneDeep(this._event);
     this._data = TripEventItemEdit.parseEventToData(this._event);
 
     this._datepickerStart = null;
@@ -405,7 +404,6 @@ export default class TripEventItemEdit extends Smart {
   }
 
   reset(event) {
-    // this.updateData(event);
     this.updateData(TripEventItemEdit.parseEventToData(event));
   }
 
@@ -430,7 +428,6 @@ export default class TripEventItemEdit extends Smart {
     this._data.endDate = this._endDate;
     this._cost = this._cost;
     evt.preventDefault();
-    // this._callback.formSubmit(this._data);
     this._callback.formSubmit(TripEventItemEdit.parseDataToEvent(this._data));
   }
 

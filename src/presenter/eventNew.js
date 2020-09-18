@@ -78,7 +78,6 @@ export default class EventNew {
         updateType,
         tripEvent
     );
-    // this.destroy();
   }
 
   _handleEventCancelClick() {

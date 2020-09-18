@@ -49,7 +49,6 @@ export default class Event {
     }
 
     if (this._mode === MODE.EDITING) {
-      // replace(this._tripEventItemEditComponent, prevTripEventItemEditComponent);
       replace(this._tripEventItemComponent, prevTripEventItemEditComponent);
       this._mode = MODE.DEFAULT;
     }
@@ -130,7 +129,6 @@ export default class Event {
       updateType = UPDATE_TYPE.MINOR;
     }
 
-    // this._replaceFormToEvent();
     this._changeData(
         USER_ACTION.UPDATE_EVENT,
         updateType,
