@@ -81,3 +81,14 @@ Promise.all([
   destinationsModel.setDestinations(null, []);
   eventsModel.setEvents(UPDATE_TYPE.INIT, []);
 })
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      // Действие, в случае успешной регистрации ServiceWorker
+      console.log(`ServiceWorker available`); // eslint-disable-line
+    }).catch(() => {
+      // Действие, в случае ошибки при регистрации ServiceWorker
+      console.error(`ServiceWorker isn't available`); // eslint-disable-line
+    });
+});
