@@ -111,7 +111,7 @@ export default class Event {
     this._mode = MODE.DEFAULT;
   }
 
-  _isCostChanged(cost) { // если цена поменялась – делай ререндер всех ивентов т.е. может быть активна сортировка по цене? возможно есть способ сравнения получше
+  _isCostChanged(cost) {
     if (this._event.cost !== cost) {
       return true;
     }

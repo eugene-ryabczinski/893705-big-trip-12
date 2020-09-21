@@ -348,7 +348,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _priceInputHandler(evt) {
-    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``); // временное решение запрещать ввод не числовых значений через regexp
+    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``);
     this._cost = Number(evt.currentTarget.value);
     this._data.cost = this._cost;
 
