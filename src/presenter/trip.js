@@ -1,4 +1,4 @@
-import {SORT_TYPE, USER_ACTION, UPDATE_TYPE, FILTER_TYPE} from '../const';
+import {SORT_TYPE, USER_ACTION, UPDATE_TYPE, FILTER_TYPE, STATE} from '../const';
 import {renderElement, RenderPosition, removeCommponent} from '../utils/render';
 import {groupEventsByDay, sortByDuration, sortByPrice, filter} from '../utils/event';
 
@@ -107,18 +107,33 @@ export default class TripPresenter {
   _handleViewAction(actionType, updateType, updatedEvent) {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
-        this._api.updatePoint(updatedEvent).then((response) => {
-          this._eventsModel.updateEvents(updateType, response);
-        });
+        this._eventPresenter[updatedEvent.id].setViewState(STATE.SAVING);
+        this._api.updatePoint(updatedEvent)
+          .then((response) => {
+            this._eventsModel.updateEvents(updateType, response);
+          })
+          .catch(() => {
+            this._eventPresenter[updatedEvent.id].setViewState(STATE.ABORTING);
+          });
         break;
       case USER_ACTION.ADD_EVENT:
-        this._api.addPoint(updatedEvent).then((response) => {
-          this._eventsModel.addEvent(updateType, response);
-        });
+        this._newEventPresenter.setSaving();
+        this._api.addPoint(updatedEvent)
+          .then((response) => {
+            this._eventsModel.addEvent(updateType, response);
+          })
+          .catch(() => {
+            this._newEventPresenter.setAborting();
+          });
         break;
       case USER_ACTION.DELETE_EVENT:
-        this._api.deletePoint(updatedEvent).then(() => {
+        this._eventPresenter[updatedEvent.id].setViewState(STATE.DELETING);
+        this._api.deletePoint(updatedEvent)
+        .then(() => {
           this._eventsModel.deleteEvent(updateType, updatedEvent);
+        })
+        .catch(() => {
+          this._eventPresenter[updatedEvent.id].setViewState(STATE.ABORTING);
         });
         break;
     }

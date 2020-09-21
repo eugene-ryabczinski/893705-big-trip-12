@@ -144,6 +144,9 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
     startDate,
     endDate,
     isFavourite,
+    isDisabled,
+    isSaving,
+    isDeleting
   } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
@@ -170,7 +173,7 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
         <label class="event__label  event__type-output" for="event-destination-1">
           ${placeholder()}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" ${isDisabled ? `disabled` : ``}>
         <datalist id="destination-list-1">
           ${destinationList}
         </datalist>
@@ -180,12 +183,12 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
         <label class="visually-hidden" for="event-start-time-1">
           From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateFormated}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateFormated}" ${isDisabled ? `disabled` : ``}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">
           To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateFormated}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateFormated}" ${isDisabled ? `disabled` : ``}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -193,7 +196,7 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${cost}">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${cost}" ${isDisabled ? `disabled` : ``}>
       </div>
       
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
@@ -204,8 +207,8 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
         </svg>
       </label>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      ${mode === MODE.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`} 
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? `disabled` : ``}>${isSaving ? `Saving...` : `Save`}</button>
+      ${mode === MODE.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn" ${isDisabled ? `disabled` : ``}>${isDeleting ? `Deleting...` : `Delete`}</button>`} 
     </header>
     ${eventDetailsTemplate}
   </form>`
@@ -222,7 +225,7 @@ export default class TripEventItemEdit extends Smart {
 
     this._mode = mode || MODE.EDITING; // по умолчанию edit
 
-    this._data = cloneDeep(this._event);
+    this._data = TripEventItemEdit.parseEventToData(this._event);
 
     this._datepickerStart = null;
     this._datepickerEnd = null;
@@ -401,7 +404,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   reset(event) {
-    this.updateData(event);
+    this.updateData(TripEventItemEdit.parseEventToData(event));
   }
 
   _destinationSelectorHandler(evt) {
@@ -425,7 +428,7 @@ export default class TripEventItemEdit extends Smart {
     this._data.endDate = this._endDate;
     this._cost = this._cost;
     evt.preventDefault();
-    this._callback.formSubmit(this._data);
+    this._callback.formSubmit(TripEventItemEdit.parseDataToEvent(this._data));
   }
 
   _isFavouriteClickHandler(evt) {
@@ -441,6 +444,27 @@ export default class TripEventItemEdit extends Smart {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitClickHandler);
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
+  }
+
+  static parseEventToData(event) {
+    return Object.assign(
+        {},
+        event,
+        {
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        });
   }
 
   setFavouriteClickHandler(callback) {

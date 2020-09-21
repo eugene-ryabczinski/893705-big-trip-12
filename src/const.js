@@ -38,3 +38,9 @@ export const MODE = {
   CREATE: `CREATE`
 };
 
+export const STATE = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+}
+

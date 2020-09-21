@@ -1,7 +1,7 @@
 import {renderElement, RenderPosition, replace, removeCommponent} from '../utils/render';
 import TripEventItem from '../view/trip-event-Item';
 import TripEventItemEdit from '../view/trip-event-item-edit';
-import {USER_ACTION, UPDATE_TYPE, MODE} from '../const';
+import {USER_ACTION, UPDATE_TYPE, MODE, STATE} from '../const';
 
 export default class Event {
   constructor(tripEventsListContainer, changeData, changeMode, offersModel, destinationsModel) {
@@ -49,7 +49,8 @@ export default class Event {
     }
 
     if (this._mode === MODE.EDITING) {
-      replace(this._tripEventItemEditComponent, prevTripEventItemEditComponent);
+      replace(this._tripEventItemComponent, prevTripEventItemEditComponent);
+      this._mode = MODE.DEFAULT;
     }
 
     removeCommponent(prevTripEventItemComponent);
@@ -66,6 +67,35 @@ export default class Event {
     removeCommponent(this._tripEventItemComponent);
     removeCommponent(this._tripEventItemEditComponent);
     removeCommponent(this._tripEventsListConteiner);
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._tripEventItemEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case STATE.SAVING:
+        this._tripEventItemEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case STATE.DELETING:
+        this._tripEventItemEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case STATE.ABORTING:
+        this._tripEventItemComponent.shake(resetFormState);
+        this._tripEventItemEditComponent.shake(resetFormState);
+        break;
+    }
   }
 
   _replaceEventToForm() {
@@ -99,7 +129,6 @@ export default class Event {
       updateType = UPDATE_TYPE.MINOR;
     }
 
-    this._replaceFormToEvent();
     this._changeData(
         USER_ACTION.UPDATE_EVENT,
         updateType,

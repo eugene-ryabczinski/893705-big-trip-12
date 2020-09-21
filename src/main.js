@@ -76,3 +76,8 @@ Promise.all([
   destinationsModel.setDestinations(null, destinations);
   eventsModel.setEvents(UPDATE_TYPE.INIT, points);
 })
+.catch(() => {
+  offersModel.setOffers(null, []);
+  destinationsModel.setDestinations(null, []);
+  eventsModel.setEvents(UPDATE_TYPE.INIT, []);
+})
