@@ -277,8 +277,8 @@ export default class TripEventItemEdit extends Smart {
         this.getElement().querySelector(`#event-end-time-1`),
         {
           ...config,
-          defaultDate: this._data.endDate,
-          onChange: this._endDateInputhandler
+          defaultDate: this._data.endDate || new Date(),
+          onChange: this._endDateInputhandler || new Date()
         }
     );
   }
