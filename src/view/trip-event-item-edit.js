@@ -98,7 +98,7 @@ const createEventSelectorTemplate = (type) => {
   const createElementListTemplate = (event) => {
     return (
       `<div class="event__type-item">
-        <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event.toLowerCase() === type ? `checked` : ``}>
+        <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event.toLowerCase() === type.toLowerCase() ? `checked` : ``}>
         <label class="event__type-label  event__type-label--${event.toLowerCase()}" for="event-type-${event.toLowerCase()}">${event}</label>
       </div>
       `
