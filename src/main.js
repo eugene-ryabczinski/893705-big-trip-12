@@ -24,7 +24,7 @@ const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
-const store = new Store(STORE_NAME, window.localStorage);
+const store = new Store(window.localStorage);
 const apiWithProvider = new Provider(api, store);
 // models
 const eventsModel = new EventsModel();
@@ -62,8 +62,6 @@ const handleNewEventFormClose = (evt) => {
   newTaskButton.removeAttribute(`disabled`);
 }
 
-
-
 newTaskButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
   tripPresenter.addNewEvent(handleNewEventFormClose);
@@ -92,10 +90,8 @@ Promise.all([
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
     .then(() => {
-      // Действие, в случае успешной регистрации ServiceWorker
-      console.log(`ServiceWorker available`); // eslint-disable-line
+      console.log(`ServiceWorker available`);
     }).catch(() => {
-      // Действие, в случае ошибки при регистрации ServiceWorker
       console.error(`ServiceWorker isn't available`); // eslint-disable-line
     });
 });

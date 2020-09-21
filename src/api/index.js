@@ -23,21 +23,21 @@ export default class Api {
     return this._load({url: `points`})
       .then(Api.toJSON)
       .then((points) => {
-        return points.map(point => EventsModel.adaptToClient(point))
-      })
+        return points.map((point) => EventsModel.adaptToClient(point));
+      });
   }
 
   getDestinations() {
     return this._load({url: `destinations`})
-      .then(Api.toJSON)
+      .then(Api.toJSON);
   }
 
   getOffers() {
     return this._load({url: `offers`})
       .then(Api.toJSON)
       .then((offers) => {
-        return offers.map(offer => OffersModel.adaptToClient(offer))
-      })
+        return offers.map((offer) => OffersModel.adaptToClient(offer));
+      });
   }
 
   updatePoint(point) {
@@ -48,9 +48,9 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((point) => {
+      .then((point) => { // eslint-disable-line
         return EventsModel.adaptToClient(point);
-      })
+      });
   }
 
   addPoint(point) {
@@ -61,9 +61,9 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((point) => {
+      .then((point) => { // eslint-disable-line
         return EventsModel.adaptToClient(point);
-      })
+      });
   }
 
   deletePoint(point) {
