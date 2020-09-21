@@ -1,32 +1,35 @@
 export default class Store {
   constructor(key, storage) {
     this._storage = storage;
-    this._storeKey = key;
+    // this._storeKey = key;
   }
 
-  getItems() {
-    debugger
+  getItems(entityKey) {
+    // debugger
     try { // зачем обёрнуто в try catch
-      return JSON.parse(this._storage.getItem(this._storeKey)) || {};
+      // return JSON.parse(this._storage.getItem(this._storeKey)) || {};
+      return JSON.parse(this._storage.getItem(entityKey)) || {};
     } catch (err) {
       return {};
     }
   }
 
-  setItems(items) {
-    debugger
+  setItems(entityKey, items) {
+    // what for?
+    // debugger
     this._storage.setItem(
-        this._storeKey,
+        // this._storeKey,
+        entityKey,
         JSON.stringify(items)
     );
   }
 
-  setItem(key, value) {
-    debugger
-    const store = this.getItems();
+  setItem(entityKey, key, value) {
+    // debugger
+    const store = this.getItems(entityKey);
 
     this._storage.setItem(
-        this._storeKey,
+      entityKey,
         JSON.stringify(
             Object.assign({}, store, {
               [key]: value
@@ -35,14 +38,15 @@ export default class Store {
     );
   }
 
-  removeItem(key) {
-    debugger
-    const store = this.getItems();
+  removeItem(entityKey, key) {
+    // debugger
+    const store = this.getItems(entityKey);
 
     delete store[key];
 
     this._storage.setItem(
-        this._storeKey,
+      entityKey,
+        // this._storeKey,
         JSON.stringify(store)
     );
   }

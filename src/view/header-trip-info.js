@@ -23,6 +23,7 @@ export default class HeaderTripInfo extends AbstractView {
   }
 
   getTemplate() {
+    debugger
     return createHeaderTripInfoTemplate(this._tripInfo);
   }
 }
