@@ -9,30 +9,29 @@ self.addEventListener(`install`, (evt) => {
   evt.waitUntil(
       caches.open(CACHE_NAME)
         .then((cache) => {
-           // зачем делаем return ?
           return cache.addAll([
             `/`,
             `/index.html`,
             `/bundle.js`,
             `/css/style.css`,
-            // `/img/icons/bus.png`,
-            // `/img/icons/check-in.png`,
-            // `/img/icons/drive.png`,
-            // `/img/icons/flight.png`,
-            // `/img/icons/restaurant.png`,
-            // `/img/icons/ship.png`,
-            // `/img/icons/sightseeing.png`,
-            // `/img/icons/taxi.png`,
-            // `/img/icons/train.png`,
-            // `/img/icons/transport.png`,
-            // `/img/photos/1.jpg`,
-            // `/img/photos/2.png`,
-            // `/img/photos/3.png`,
-            // `/img/photos/4.png`,
-            // `/img/photos/5.png`,
-            // `/img/header-bg.png`,
-            // `/img/header-bg@2x.png`,
-            // `/logo.png`,
+            `/img/icons/bus.png`,
+            `/img/icons/check-in.png`,
+            `/img/icons/drive.png`,
+            `/img/icons/flight.png`,
+            `/img/icons/restaurant.png`,
+            `/img/icons/ship.png`,
+            `/img/icons/sightseeing.png`,
+            `/img/icons/taxi.png`,
+            `/img/icons/train.png`,
+            `/img/icons/transport.png`,
+            `/img/photos/1.jpg`,
+            `/img/photos/2.jpg`,
+            `/img/photos/3.jpg`,
+            `/img/photos/4.jpg`,
+            `/img/photos/5.jpg`,
+            `/img/header-bg.png`,
+            `/img/header-bg@2x.png`,
+            `/img/logo.png`,
           ]);
         })
   );
@@ -65,7 +64,6 @@ const handleFetch = (evt) => {
   evt.respondWith(
       caches.match(request)
         .then((cacheResponse) => {
-          // debugger
           if (cacheResponse) {
             return cacheResponse;
           }
