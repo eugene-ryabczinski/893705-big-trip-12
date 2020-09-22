@@ -48,9 +48,7 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((point) => { // eslint-disable-line
-        return EventsModel.adaptToClient(point);
-      });
+      .then((updatedPoint) => EventsModel.adaptToClient(updatedPoint));
   }
 
   addPoint(point) {
@@ -61,9 +59,7 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((point) => { // eslint-disable-line
-        return EventsModel.adaptToClient(point);
-      });
+      .then((newPoint) => EventsModel.adaptToClient(newPoint));
   }
 
   deletePoint(point) {
