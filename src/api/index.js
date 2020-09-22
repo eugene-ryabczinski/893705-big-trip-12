@@ -1,5 +1,5 @@
-import EventsModel from "./models/event.js";
-import OffersModel from "./models/offers";
+import EventsModel from "../models/event.js";
+import OffersModel from "../models/offers";
 
 const Method = {
   GET: `GET`,
@@ -23,21 +23,21 @@ export default class Api {
     return this._load({url: `points`})
       .then(Api.toJSON)
       .then((points) => {
-        return points.map(point => EventsModel.adaptToClient(point))
-      })
+        return points.map((point) => EventsModel.adaptToClient(point));
+      });
   }
 
   getDestinations() {
     return this._load({url: `destinations`})
-      .then(Api.toJSON)
+      .then(Api.toJSON);
   }
 
   getOffers() {
     return this._load({url: `offers`})
       .then(Api.toJSON)
       .then((offers) => {
-        return offers.map(offer => OffersModel.adaptToClient(offer))
-      })
+        return offers.map((offer) => OffersModel.adaptToClient(offer));
+      });
   }
 
   updatePoint(point) {
@@ -48,9 +48,7 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((point) => {
-        return EventsModel.adaptToClient(point);
-      })
+      .then((updatedPoint) => EventsModel.adaptToClient(updatedPoint));
   }
 
   addPoint(point) {
@@ -61,9 +59,7 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((point) => {
-        return EventsModel.adaptToClient(point);
-      })
+      .then((newPoint) => EventsModel.adaptToClient(newPoint));
   }
 
   deletePoint(point) {
@@ -71,6 +67,16 @@ export default class Api {
       url: `points/${point.id}`,
       method: Method.DELETE
     });
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 
   _load({

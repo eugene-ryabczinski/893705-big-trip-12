@@ -5,7 +5,6 @@ import {EVENT_TRANSFER_LIST} from '../const';
 import moment from 'moment';
 const BAR_HEIGHT = 55;
 
-// TODO рефакторинг подготовки данных для chart.js
 const renderMoneyChart = (moneyCtx, events) => {
   const costMap = events
   .reduce((prev, cur) => {

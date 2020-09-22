@@ -98,7 +98,7 @@ const createEventSelectorTemplate = (type) => {
   const createElementListTemplate = (event) => {
     return (
       `<div class="event__type-item">
-        <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event.toLowerCase() === type ? `checked` : ``}>
+        <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event.toLowerCase() === type.toLowerCase() ? `checked` : ``}>
         <label class="event__type-label  event__type-label--${event.toLowerCase()}" for="event-type-${event.toLowerCase()}">${event}</label>
       </div>
       `
@@ -277,8 +277,8 @@ export default class TripEventItemEdit extends Smart {
         this.getElement().querySelector(`#event-end-time-1`),
         {
           ...config,
-          defaultDate: this._data.endDate,
-          onChange: this._endDateInputhandler
+          defaultDate: this._data.endDate || new Date(),
+          onChange: this._endDateInputhandler || new Date()
         }
     );
   }
@@ -348,7 +348,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _priceInputHandler(evt) {
-    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``); // временное решение запрещать ввод не числовых значений через regexp
+    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``);
     this._cost = Number(evt.currentTarget.value);
     this._data.cost = this._cost;
 

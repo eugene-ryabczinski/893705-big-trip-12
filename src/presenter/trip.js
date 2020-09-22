@@ -41,7 +41,7 @@ export default class TripPresenter {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange); // передаём модель? т.к. от кол-ва ивентов будет зависить куда рендерить форму
+    this._newEventPresenter = new EventNew(this._tripEventsMainContainerElement, this._handleViewAction, this._handleModeChange); // передаём модель т.к. от кол-ва ивентов будет зависить куда рендерить форму
   }
 
   init() {
@@ -93,7 +93,7 @@ export default class TripPresenter {
       case SORT_TYPE.PRICE:
         return filteredEvents.sort(sortByPrice);
     }
-    return filteredEvents; // error  Method '_getEvents' expected a return value linter
+    return filteredEvents;
   }
 
   _handleModeChange() {
@@ -212,7 +212,7 @@ export default class TripPresenter {
     });
   }
 
-  _renderTrip() { // todo: рефакторинг условий
+  _renderTrip() {
     if (this._isLoading) {
       this._renderLoading();
       return;
