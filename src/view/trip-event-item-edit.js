@@ -341,10 +341,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _isValidPriceInput() {
-    if (this._data.cost === ``) {
-      return false;
-    }
-    return true;
+    return this._data.cost !== ``;
   }
 
   _priceInputHandler(evt) {

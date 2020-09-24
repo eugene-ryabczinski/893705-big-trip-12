@@ -22,11 +22,11 @@ export const createTripEventItemTemplate = (event) => {
 
     let resultString = ``;
 
-    for (let part of dateParts) {
+    dateParts.forEach(((part) => {
       if (duration[part]() !== 0) {
         resultString = resultString.concat(`${duration[part]()}${(part.substring(0, 1)).toUpperCase()} `);
       }
-    }
+    }));
 
     return resultString;
   };
