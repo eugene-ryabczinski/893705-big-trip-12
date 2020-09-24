@@ -322,7 +322,6 @@ export default class TripEventItemEdit extends Smart {
 
   _isValidDestination() {
     const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
-
     if (destinationSelector.value === `` || !this._cities.map((city) => city.toLowerCase()).includes(destinationSelector.value.toLowerCase())) {
       return false;
     }
@@ -333,7 +332,6 @@ export default class TripEventItemEdit extends Smart {
   _isValidDateRange() {
     const start = moment(this._startDate);
     const end = moment(this._endDate);
-
     if ((start.isSame(end)) || (start.isAfter(end))) {
       return false;
     }
@@ -341,10 +339,7 @@ export default class TripEventItemEdit extends Smart {
   }
 
   _isValidPriceInput() {
-    if (this._data.cost === ``) {
-      return false;
-    }
-    return true;
+    return this._data.cost !== ``;
   }
 
   _priceInputHandler(evt) {
@@ -417,6 +412,7 @@ export default class TripEventItemEdit extends Smart {
       });
     }
     this._validateForm();
+    // this._isValidDestination();
   }
 
   getTemplate() {
