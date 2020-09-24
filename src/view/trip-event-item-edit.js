@@ -412,7 +412,6 @@ export default class TripEventItemEdit extends Smart {
       });
     }
     this._validateForm();
-    // this._isValidDestination();
   }
 
   getTemplate() {
