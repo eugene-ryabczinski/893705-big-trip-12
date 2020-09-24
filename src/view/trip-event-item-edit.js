@@ -223,7 +223,7 @@ export default class TripEventItemEdit extends Smart {
     this._destinations = destinations;
     this._cities = this._destinations.map((destination) => destination.name);
 
-    this._mode = mode || MODE.EDITING; // по умолчанию edit
+    this._mode = mode || MODE.EDITING;
 
     this._data = TripEventItemEdit.parseEventToData(this._event);
 
