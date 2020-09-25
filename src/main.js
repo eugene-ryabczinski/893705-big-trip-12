@@ -18,14 +18,12 @@ import Provider from "./api/provider.js";
 
 const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
-const STORE_PREFIX = `bigtrip-localstorage`;
-const STORE_VER = `v12`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const store = new Store(window.localStorage);
 const apiWithProvider = new Provider(api, store);
+
 // models
 const eventsModel = new EventsModel();
 const filtersModel = new FiltersModel();
@@ -43,7 +41,7 @@ const tripControsMakrsElements = headerTripControlsElement.querySelectorAll(`h2`
 const tripControsMakrsElementsArray = [...tripControsMakrsElements];
 
 const mainContentContainerElemant = document.querySelector(`.page-main`);
-const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); //main container where events will be drawn
+const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`); // main container where events will be drawn
 
 // presenters
 const tripInfoPresenter = new TripInfoPresenter(headerTripContainerElement, eventsModel);
@@ -51,22 +49,20 @@ const tripPresenter = new TripPresenter(tripEventsContainerElement, eventsModel,
 const menuPresenter = new MenuPresenter(tripControsMakrsElementsArray[0], tripEventsContainerElement, tripPresenter, eventsModel);
 const filterPresenter = new FilterPresenter(tripControsMakrsElementsArray[1], filtersModel, eventsModel);
 
-
 tripInfoPresenter.init();
 menuPresenter.init();
 tripPresenter.init();
 filterPresenter.init();
 
-
-const handleNewEventFormClose = (evt) => {
+const handleNewEventFormClose = () => {
   newTaskButton.removeAttribute(`disabled`);
-}
+};
 
 newTaskButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
   tripPresenter.addNewEvent(handleNewEventFormClose);
   newTaskButton.setAttribute(`disabled`, `disabled`);
-})
+});
 
 Promise.all([
   apiWithProvider.getPoints(),
@@ -85,15 +81,10 @@ Promise.all([
   offersModel.setOffers(null, []);
   destinationsModel.setDestinations(null, []);
   eventsModel.setEvents(UPDATE_TYPE.INIT, []);
-})
+});
 
 window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      console.log(`ServiceWorker available`);
-    }).catch(() => {
-      console.error(`ServiceWorker isn't available`); // eslint-disable-line
-    });
+  navigator.serviceWorker.register(`/sw.js`);
 });
 
 window.addEventListener(`online`, () => {
