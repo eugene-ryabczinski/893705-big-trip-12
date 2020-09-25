@@ -215,11 +215,11 @@ const renderTimeSpentChart = (timeSpentCtx, events) => {
     const momentDuration = moment.duration(val);
     const dateParts = [`days`, `hours`, `minutes`];
     let formatedDuration = ``;
-    for (let part of dateParts) {
+    dateParts.forEach((part) => {
       if (momentDuration[part]() !== 0) {
         formatedDuration = formatedDuration.concat(`${momentDuration[part]()}${(part.substring(0, 1)).toUpperCase()} `);
       }
-    }
+    })
     return formatedDuration;
   };
 

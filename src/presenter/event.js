@@ -154,7 +154,7 @@ export default class Event {
   }
 
   _isFavouriteClick(evt, data) {
-    let updated = Object.assign({}, data, {isFavourite: evt});
+    const updated = Object.assign({}, data, {isFavourite: evt});
     this._changeData(
         USER_ACTION.UPDATE_EVENT,
         UPDATE_TYPE.PATCH,

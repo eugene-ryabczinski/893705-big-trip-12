@@ -71,7 +71,7 @@ export default class EventNew {
   }
 
   _handleFormSubmit(tripEvent) {
-    let updateType = UPDATE_TYPE.MINOR;
+    const updateType = UPDATE_TYPE.MINOR;
 
     this._changeData(
         USER_ACTION.ADD_EVENT,
@@ -94,7 +94,7 @@ export default class EventNew {
   }
 
   _isFavouriteClick(evt, data) {
-    let updated = Object.assign({}, data, {isFavourite: evt});
+    const updated = Object.assign({}, data, {isFavourite: evt});
     this._changeData(
         USER_ACTION.UPDATE_EVENT,
         UPDATE_TYPE.PATCH,
